@@ -30,6 +30,8 @@ def main() -> None:
             root_console.print(x=player_x, y=player_y, string="@")
 
             context.present(root_console)
+            
+            root_console.clear()
 
             for event in tcod.event.wait():
                 action = event_handler.dispatch(event)
