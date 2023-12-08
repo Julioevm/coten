@@ -68,7 +68,7 @@ def place_entities(
     """
     number_of_monsters = random.randint(0, maximum_monsters)
 
-    for i in range(number_of_monsters):
+    for _i in range(number_of_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
 
@@ -113,7 +113,7 @@ def generate_dungeon(
 
     rooms: List[RectangularRoom] = []
 
-    for r in range(max_rooms):
+    for _r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
         room_height = random.randint(room_min_size, room_max_size)
 
