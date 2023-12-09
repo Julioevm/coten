@@ -7,6 +7,7 @@ from render_order import RenderOrder
 
 if TYPE_CHECKING:
     from components.ai import BaseAI
+    from components.consumable import Consumable
     from components.fighter import Fighter
     from game_map import GameMap
 
@@ -47,7 +48,7 @@ class Entity:
     @property
     def gamemap(self) -> GameMap:
         return self.parent.gamemap
-    
+
     def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
@@ -76,6 +77,7 @@ class Entity:
 
 class Actor(Entity):
     """An entity that can act."""
+
     def __init__(
         self,
         *,
@@ -106,3 +108,28 @@ class Actor(Entity):
     def is_alive(self) -> bool:
         """Returns True as long as this actor can perform actions."""
         return bool(self.ai)
+
+
+class Item(Entity):
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        char: str = "?",
+        color: Tuple[int, int, int] = (255, 255, 255),
+        name: str = "<Unnamed>",
+        consumable: Consumable,
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            char=char,
+            color=color,
+            name=name,
+            blocks_movement=False,
+            render_order=RenderOrder.ITEM,
+        )
+
+        self.consumable = consumable
+        self.consumable.parent = self
