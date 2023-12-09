@@ -31,6 +31,7 @@ class Action:
         """
         raise NotImplementedError()
 
+
 class PickupAction(Action):
     """Pickup an item and add it to the inventory, if there is room for it."""
 
@@ -56,6 +57,7 @@ class PickupAction(Action):
 
         raise exceptions.Impossible("There is nothing here to pick up.")
 
+
 class ItemAction(Action):
     def __init__(
         self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
@@ -75,9 +77,10 @@ class ItemAction(Action):
         """Invoke the items ability, this action will be given to provide context."""
         self.item.consumable.activate(self)
 
-class EscapeAction(Action):
+
+class DropItem(ItemAction):
     def perform(self) -> None:
-        raise SystemExit()
+        self.entity.inventory.drop(self.item)
 
 
 class WaitAction(Action):
