@@ -5,7 +5,7 @@ from typing import Optional, TYPE_CHECKING
 import tcod.event
 from tcod import libtcodpy
 
-from actions import Action, BumpAction, EscapeAction, WaitAction
+from actions import Action, BumpAction, EscapeAction, PickupAction, WaitAction
 import color
 import exceptions
 
@@ -104,6 +104,9 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.KeySym.v:
             self.engine.event_handler = HistoryViewer(self.engine)
+
+        elif key == tcod.event.KeySym.g:
+            action = PickupAction(player)
         # No valid key was pressed
         return action
 
