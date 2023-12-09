@@ -6,7 +6,6 @@ import color
 from engine import Engine
 import entity_factories
 from procgen import generate_dungeon
-from input_handlers import EventHandler
 
 
 def main() -> None:
@@ -30,7 +29,7 @@ def main() -> None:
     player = copy.deepcopy(entity_factories.player)
 
     engine = Engine(player=player)
-    
+
     engine.game_map = generate_dungeon(
         max_rooms=max_rooms,
         room_min_size=room_min_size,
@@ -38,11 +37,11 @@ def main() -> None:
         map_width=map_width,
         map_height=map_height,
         max_monsters_per_room=max_monsters_per_room,
-        engine=engine
+        engine=engine,
     )
 
     engine.update_fov()
-    
+
     engine.message_log.add_message(
         "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
     )
@@ -56,9 +55,11 @@ def main() -> None:
     ) as context:
         root_console = tcod.console.Console(screen_width, screen_height, order="F")
         while True:
-            engine.render(console=root_console, context=context)
+            root_console.clear()
+            engine.event_handler.on_render(console=root_console)
+            context.present(root_console)
 
-            engine.event_handler.handle_events()
+            engine.event_handler.handle_events(context)
 
 
 if __name__ == "__main__":
