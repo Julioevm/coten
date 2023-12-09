@@ -287,6 +287,49 @@ class SingleRangedAttackHandler(SelectIndexHandler):
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
 
+
+class AreaRangedAttackHandler(SelectIndexHandler):
+    """Handles targeting an area within a given radius. Any entity within the area will be affected."""
+
+    def __init__(
+        self,
+        engine: Engine,
+        radius: int,
+        callback: Callable[[Tuple[int, int]], Optional[Action]],
+    ):
+        super().__init__(engine)
+
+        self.radius = radius
+        self.callback = callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        """Highlight the tile under the cursor and the tiles within the radius."""
+        super().on_render(console)
+
+        x, y = self.engine.mouse_location
+
+        # Get the range of tiles to highlight
+        start_x = x - self.radius
+        start_y = y - self.radius
+        end_x = x + self.radius + 1
+        end_y = y + self.radius + 1
+
+        # Highlight the individual tiles within the radius
+        for tile_x in range(start_x, end_x):
+            for tile_y in range(start_y, end_y):
+                # Check if the tile is within the circular radius
+                if (tile_x - x) ** 2 + (tile_y - y) ** 2 <= self.radius**2:
+                    console.tiles_rgb["bg"][tile_x, tile_y] = color.red
+
+        # Mark the center tile with a special character or color
+        center_mark_char = "+"  # Choose a character that stands out
+        center_mark_color = color.yellow  # Choose a bright color for the center mark
+        console.print(x, y, center_mark_char, fg=center_mark_color)
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback((x, y))
+
+
 class MainGameEventHandler(EventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
