@@ -17,7 +17,7 @@ class Action:
     @property
     def engine(self) -> Engine:
         """Return the engine this action belongs to."""
-        return self.entity.gamemap.engine
+        return self.entity.parent.engine
 
     def perform(self) -> None:
         """Perform this action with the objects needed to determine its scope.
