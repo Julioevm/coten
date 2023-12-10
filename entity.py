@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from components.consumable import Consumable
     from components.fighter import Fighter
     from components.inventory import Inventory
+    from components.level import Level
     from game_map import GameMap
 
 T = TypeVar("T", bound="Entity")
@@ -82,6 +83,7 @@ class Entity:
         """
         return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
+
 class Actor(Entity):
     """An entity that can act."""
 
@@ -96,6 +98,7 @@ class Actor(Entity):
         ai_cls: Type[BaseAI],
         fighter: Fighter,
         inventory: Inventory,
+        level: Level,
     ):
         super().__init__(
             x=x,
@@ -114,6 +117,10 @@ class Actor(Entity):
 
         self.inventory = inventory
         self.inventory.parent = self
+
+        self.level = level
+        self.level.parent = self
+
     @property
     def is_alive(self) -> bool:
         """Returns True as long as this actor can perform actions."""

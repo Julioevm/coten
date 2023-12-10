@@ -43,7 +43,7 @@ class Fighter(BaseComponent):
         self.hp = new_hp_value
 
         return amount_recovered
-    
+
     def take_damage(self, amount: int) -> None:
         self.hp -= amount
 
@@ -63,3 +63,5 @@ class Fighter(BaseComponent):
         self.parent.render_order = RenderOrder.CORPSE
 
         self.engine.message_log.add_message(death_message, death_message_color)
+
+        self.engine.player.level.add_xp(self.parent.level.xp_given)
