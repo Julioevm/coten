@@ -404,8 +404,14 @@ class MainGameEventHandler(EventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         action: Optional[Action] = None
         key = event.sym
+        modifier = event.mod
 
         player = self.engine.player
+
+        if key == tcod.event.KeySym.COMMA and modifier & (
+            tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+        ):
+            return actions.TakeStairsAction(player)
 
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]

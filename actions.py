@@ -88,6 +88,20 @@ class WaitAction(Action):
         pass
 
 
+class TakeStairsAction(Action):
+    def perform(self) -> None:
+        """
+        Take the stairs, if any exist at the entity's location.
+        """
+        if (self.entity.x, self.entity.y) == self.engine.game_map.upstairs_location:
+            self.engine.game_world.generate_floor()
+            self.engine.message_log.add_message(
+                "You ascend the staircase.", color.ascend
+            )
+        else:
+            raise exceptions.Impossible("There are no stairs here.")
+
+
 class ActionWithDirection(Action):
     """An action with a direction."""
 
