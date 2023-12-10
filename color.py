@@ -23,5 +23,5 @@ bar_text = white
 bar_filled = (0x0, 0x60, 0x0)
 bar_empty = (0x40, 0x10, 0x10)
 
-menu_title = (255, 255, 63)
+menu_title = (0xE6, 00, 00)
 menu_text = white

@@ -49,7 +49,8 @@ def new_game() -> Engine:
     engine.update_fov()
 
     engine.message_log.add_message(
-        "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
+        "As you step into the darkness, a malevolent laughter echoes from the castle!",
+        color.welcome_text,
     )
     return engine
 
@@ -73,14 +74,14 @@ class MainMenu(input_handlers.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            "TOMBS OF THE ANCIENT KINGS",
+            "Castle of the Eternal Night",
             fg=color.menu_title,
             alignment=tcod.CENTER,
         )
         console.print(
             console.width // 2,
             console.height - 2,
-            "By (Your name here)",
+            "By Julio Valls",
             fg=color.menu_title,
             alignment=tcod.CENTER,
         )
