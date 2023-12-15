@@ -40,7 +40,7 @@ def new_game() -> Engine:
         room_min_size=room_min_size,
         room_max_size=room_max_size,
         map_width=map_width,
-        map_height=map_height
+        map_height=map_height,
     )
 
     engine.game_world.generate_floor()
@@ -50,6 +50,19 @@ def new_game() -> Engine:
         "As you step into the darkness, a malevolent laughter echoes from the castle!",
         color.welcome_text,
     )
+
+    dagger = copy.deepcopy(entity_factories.dagger)
+    leather_armor = copy.deepcopy(entity_factories.leather_armor)
+
+    dagger.parent = player.inventory
+    leather_armor.parent = player.inventory
+
+    player.inventory.items.append(dagger)
+    player.equipment.toggle_equip(dagger, add_message=False)
+
+    player.inventory.items.append(leather_armor)
+    player.equipment.toggle_equip(leather_armor, add_message=False)
+
     return engine
 
 
