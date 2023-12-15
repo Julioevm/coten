@@ -18,10 +18,10 @@ player = Actor(
     level=Level(level_up_base=200),
 )
 
-orc = Actor(
-    char="o",
+zombie = Actor(
+    char="z",
     color=(63, 127, 63),
-    name="Orc",
+    name="Zombie",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=10, base_defense=0, base_power=3),
@@ -29,10 +29,10 @@ orc = Actor(
     level=Level(xp_given=35),
 )
 
-troll = Actor(
-    char="T",
+ghoul = Actor(
+    char="G",
     color=(0, 127, 0),
-    name="Troll",
+    name="Ghoul",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
     fighter=Fighter(hp=16, base_defense=1, base_power=4),
@@ -44,7 +44,7 @@ health_potion = Item(
     char="!",
     color=(127, 0, 255),
     name="Health Potion",
-    consumable=consumable.HealingConsumable(amount=4),
+    consumable=consumable.HealingConsumable(amount=5),
 )
 
 lightning_scroll = Item(
