@@ -29,6 +29,29 @@ zombie = Actor(
     level=Level(xp_given=35),
 )
 
+# Variant of a zombie with more health and stronger attack
+brute_zombie = Actor(
+    char="Z",
+    color=(0, 127, 0),
+    name="Brute Zombie",
+    ai_cls=HostileEnemy,
+    equipment=Equipment(),
+    fighter=Fighter(hp=20, base_defense=2, base_power=4),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=80),
+)
+
+hound = Actor(
+    char="h",
+    color=(0, 127, 0),
+    name="Hound",
+    ai_cls=HostileEnemy,
+    equipment=Equipment(),
+    fighter=Fighter(hp=6, base_defense=0, base_power=5),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=50),
+)
+
 ghoul = Actor(
     char="G",
     color=(0, 127, 0),
@@ -38,6 +61,17 @@ ghoul = Actor(
     fighter=Fighter(hp=16, base_defense=1, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=75),
+)
+
+werewolf = Actor(
+    char="W",
+    color=('d3', 'd3', 'd3'),
+    name="Werewolf",
+    ai_cls=HostileEnemy,
+    equipment=Equipment(),
+    fighter=Fighter(hp=30, base_defense=2, base_power=6),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=300),
 )
 
 health_potion = Item(

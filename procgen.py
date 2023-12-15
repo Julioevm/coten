@@ -1,43 +1,16 @@
 from __future__ import annotations
-
-import random
 from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
-
+import random
 import tcod
+import parameters
 
-import entity_factories
+
 from game_map import GameMap
 import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
-
-max_items_by_floor = [
-    (1, 1),
-    (4, 2),
-]
-
-max_monsters_by_floor = [
-    (1, 1),
-    (2, 2),
-    (4, 3),
-    (6, 5),
-]
-
-item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35), (entity_factories.dagger, 10)],
-    2: [(entity_factories.confusion_scroll, 10), (entity_factories.leather_armor, 10)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
-    6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
-}
-
-enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.zombie, 80)],
-    3: [(entity_factories.ghoul, 15)],
-    5: [(entity_factories.ghoul, 30)],
-    7: [(entity_factories.ghoul, 60)],
-}
 
 
 def get_max_value_for_floor(
@@ -132,17 +105,17 @@ def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int) -
         None
     """
     number_of_monsters = random.randint(
-        0, get_max_value_for_floor(max_monsters_by_floor, floor_number)
+        0, get_max_value_for_floor(parameters.max_monsters_by_floor, floor_number)
     )
     number_of_items = random.randint(
-        0, get_max_value_for_floor(max_items_by_floor, floor_number)
+        0, get_max_value_for_floor(parameters.max_items_by_floor, floor_number)
     )
 
     monsters: List[Entity] = get_entities_at_random(
-        enemy_chances, number_of_monsters, floor_number
+        parameters.enemy_chances, number_of_monsters, floor_number
     )
     items: List[Entity] = get_entities_at_random(
-        item_chances, number_of_items, floor_number
+        parameters.item_chances, number_of_items, floor_number
     )
 
     for entity in monsters + items:
