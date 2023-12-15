@@ -40,6 +40,7 @@ class GameMap:
         )  # Tiles the player has seen before
 
         self.upstairs_location = (0, 0)
+        self.downstairs_location = (0, 0)
 
     @property
     def gamemap(self) -> GameMap:
