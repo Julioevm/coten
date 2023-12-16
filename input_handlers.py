@@ -152,11 +152,11 @@ class EventHandler(BaseEventHandler):
             return False  # Skip enemy turn on exceptions.
 
         self.engine.handle_enemy_turns()
-        
+
         self.engine.process_scheduled_effects()
-        
+
         self.engine.update_fov()
-        
+
         self.engine.tick()
         return True
 
@@ -204,8 +204,8 @@ class CharacterScreenEventHandler(AskUserEventHandler):
 
     def on_render(self, console: tcod.Console) -> None:
         super().on_render(console)
-
-        if self.engine.player.x <= 30:
+        player = self.engine.player
+        if player.x <= 30:
             x = 40
         else:
             x = 0
@@ -225,27 +225,43 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             bg=(0, 0, 0),
         )
 
-        console.print(
-            x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}"
-        )
-        console.print(
-            x=x + 1, y=y + 2, string=f"XP: {self.engine.player.level.current_xp}"
-        )
+        console.print(x=x + 1, y=y + 1, string=f"Level: {player.level.current_level}")
+        console.print(x=x + 1, y=y + 2, string=f"XP: {player.level.current_xp}")
         console.print(
             x=x + 1,
             y=y + 3,
-            string=f"XP for next Level: {self.engine.player.level.experience_to_next_level}",
+            string=f"XP for next Level: {player.level.experience_to_next_level}",
         )
 
-        console.print(
-            x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}"
-        )
-        console.print(
-            x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}"
-        )
-        console.print(
-            x=x + 1, y=y + 6, string=f"Turns: {self.engine.current_turn}"
-        )
+        if player.fighter.power_boost > 1:
+            console.print(
+                x=x + 1,
+                y=y + 4,
+                string=f"Attack: {player.fighter.base_power} + ({player.equipment.power_bonus}) + {player.fighter.power_boost}",
+                fg=color.power_boost,
+            )
+        else:
+            console.print(
+                x=x + 1,
+                y=y + 4,
+                string=f"Attack: {player.fighter.base_power} + ({player.equipment.power_bonus})",
+            )
+
+        if player.fighter.defense_boost > 1:
+            console.print(
+                x=x + 1,
+                y=y + 5,
+                string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus}) + {player.fighter.defense_boost}",
+                fg=color.defense_boost,
+            )
+        else:
+            console.print(
+                x=x + 1,
+                y=y + 5,
+                string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus})",
+            )
+
+        console.print(x=x + 1, y=y + 6, string=f"Turns: {self.engine.current_turn}")
 
 
 class LevelUpEventHandler(AskUserEventHandler):

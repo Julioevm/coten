@@ -85,9 +85,40 @@ class DefenseBoostConsumable(Consumable):
             consumer.fighter.defense_boost -= self.amount
             self.engine.message_log.add_message(
                 f"The effect of the {self.parent.name} wears off, and your defense returns to normal.",
-                color.defense_boost_fade,
+                color.boost_fade,
             )
 
+
+class PowerBoostConsumable(Consumable):
+    def __init__(self, amount: int, duration: int):
+        self.amount = amount
+        self.duration = duration
+
+    def activate(self, action: actions.ItemAction) -> None:
+        consumer = action.entity
+        if consumer.fighter:
+            # Apply the power boost
+            consumer.fighter.power_boost += self.amount
+            self.engine.message_log.add_message(
+                f"You use the {self.parent.name}, and your power increases by {self.amount} for {self.duration} turns!",
+                color.power_boost,
+            )
+            # Schedule the removal of the boost after the duration expires
+            self.engine.schedule_effect(
+                self.duration, lambda: self.remove_boost(consumer)
+            )
+            self.consume()
+        else:
+            raise Impossible("This item cannot be used by this entity.")
+
+    def remove_boost(self, consumer: Actor) -> None:
+        # Assuming consumer still exists and has a fighter component
+        if consumer and consumer.fighter:
+            consumer.fighter.power_boost -= self.amount
+            self.engine.message_log.add_message(
+                f"The effect of the {self.parent.name} wears off, and your defense returns to normal.",
+                color.boost_fade,
+            )
 
 
 class FireballDamageConsumable(Consumable):

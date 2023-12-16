@@ -16,6 +16,13 @@ defense_boost_potion = Item(
     consumable=consumable.DefenseBoostConsumable(amount=3, duration=10),
 )
 
+power_boost_potion = Item(
+    char="!",
+    color=(255, 10, 10),
+    name="Berserker Potion",
+    consumable=consumable.PowerBoostConsumable(amount=3, duration=10),
+)
+
 lightning_scroll = Item(
     char="~",
     color=(255, 255, 0),
