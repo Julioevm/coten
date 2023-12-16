@@ -12,7 +12,8 @@ from tcod import libtcodpy
 
 import color
 from engine import Engine
-import entity_factories
+import actor_factories
+import item_factories
 from game_world import GameWorld
 import input_handlers
 
@@ -30,7 +31,7 @@ def new_game() -> Engine:
     room_min_size = 6
     max_rooms = 30
 
-    player = copy.deepcopy(entity_factories.player)
+    player = copy.deepcopy(actor_factories.player)
 
     engine = Engine(player=player)
 
@@ -51,17 +52,14 @@ def new_game() -> Engine:
         color.welcome_text,
     )
 
-    dagger = copy.deepcopy(entity_factories.dagger)
-    leather_armor = copy.deepcopy(entity_factories.leather_armor)
+    dagger = copy.deepcopy(item_factories.dagger)
+    leather_armor = copy.deepcopy(item_factories.leather_armor)
 
     dagger.parent = player.inventory
     leather_armor.parent = player.inventory
 
     player.inventory.items.append(dagger)
     player.equipment.toggle_equip(dagger, add_message=False)
-
-    player.inventory.items.append(leather_armor)
-    player.equipment.toggle_equip(leather_armor, add_message=False)
 
     return engine
 

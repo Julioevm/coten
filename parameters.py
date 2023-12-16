@@ -1,6 +1,7 @@
+"""Parameters for different settings of the dungeon generation."""
 from typing import Dict, List, Tuple
-import entity_factories
-
+import actor_factories
+import item_factories
 from entity import Entity
 
 # if TYPE_CHECKING:
@@ -18,29 +19,33 @@ max_monsters_by_floor = [
 ]
 
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35), (entity_factories.dagger, 10)],
-    2: [(entity_factories.confusion_scroll, 10), (entity_factories.leather_armor, 10)],
-    4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
-    6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
+    0: [(item_factories.health_potion, 35), (item_factories.defense_boost_potion, 5)],
+    2: [
+        (item_factories.confusion_scroll, 10),
+        (item_factories.leather_armor, 10),
+        (item_factories.defense_boost_potion, 10),
+    ],
+    4: [(item_factories.lightning_scroll, 25), (item_factories.sword, 5)],
+    6: [(item_factories.fireball_scroll, 25), (item_factories.chain_mail, 15)],
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.zombie, 80), (entity_factories.hound, 10)],
+    0: [(actor_factories.zombie, 80), (actor_factories.hound, 10)],
     3: [
-        (entity_factories.ghoul, 15),
-        (entity_factories.brute_zombie, 15),
-        (entity_factories.hound, 15),
+        (actor_factories.ghoul, 15),
+        (actor_factories.brute_zombie, 15),
+        (actor_factories.hound, 15),
     ],
     5: [
-        (entity_factories.ghoul, 30),
-        (entity_factories.brute_zombie, 30),
-        (entity_factories.hound, 30),
-        (entity_factories.werewolf, 5),
+        (actor_factories.ghoul, 30),
+        (actor_factories.brute_zombie, 30),
+        (actor_factories.hound, 30),
+        (actor_factories.werewolf, 5),
     ],
     7: [
-        (entity_factories.ghoul, 40),
-        (entity_factories.brute_zombie, 35),
-        (entity_factories.hound, 35),
-        (entity_factories.werewolf, 10),
+        (actor_factories.ghoul, 40),
+        (actor_factories.brute_zombie, 35),
+        (actor_factories.hound, 35),
+        (actor_factories.werewolf, 10),
     ],
 }

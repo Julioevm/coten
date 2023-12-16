@@ -152,8 +152,12 @@ class EventHandler(BaseEventHandler):
             return False  # Skip enemy turn on exceptions.
 
         self.engine.handle_enemy_turns()
-
+        
+        self.engine.process_scheduled_effects()
+        
         self.engine.update_fov()
+        
+        self.engine.tick()
         return True
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
@@ -214,7 +218,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=7,
+            height=9,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -238,6 +242,9 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         )
         console.print(
             x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}"
+        )
+        console.print(
+            x=x + 1, y=y + 6, string=f"Turns: {self.engine.current_turn}"
         )
 
 

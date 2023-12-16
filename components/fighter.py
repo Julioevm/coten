@@ -18,6 +18,8 @@ class Fighter(BaseComponent):
         self._hp = hp
         self.base_defense = base_defense
         self.base_power = base_power
+        self.power_boost = 0
+        self.defense_boost = 0
 
     @property
     def hp(self) -> int:
@@ -31,11 +33,11 @@ class Fighter(BaseComponent):
 
     @property
     def defense(self) -> int:
-        return self.base_defense + self.defense_bonus
+        return self.base_defense + self.defense_bonus + self.defense_boost
 
     @property
     def power(self) -> int:
-        return self.base_power + self.power_bonus
+        return self.base_power + self.power_bonus + self.power_boost
 
     @property
     def defense_bonus(self) -> int:
