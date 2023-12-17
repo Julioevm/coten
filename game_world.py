@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, List
+from debug_room import create_debug_room
 from exceptions import Impossible
 from procgen import generate_dungeon
 
@@ -49,6 +50,14 @@ class GameWorld:
             engine=self.engine,
         )
 
+        self.floors.append(game_map)
+        self.engine.game_map = game_map
+
+    def load_prefab_map(self, map_name: str) -> None:
+        self.current_floor += 1
+        game_map = create_debug_room(
+            map_width=self.map_width, map_height=self.map_height, engine=self.engine
+        )
         self.floors.append(game_map)
         self.engine.game_map = game_map
 

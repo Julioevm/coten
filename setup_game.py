@@ -16,6 +16,7 @@ import actor_factories
 import item_factories
 from game_world import GameWorld
 import input_handlers
+import globals
 
 
 # Load the background image and remove the alpha channel.
@@ -33,7 +34,7 @@ def new_game() -> Engine:
 
     player = copy.deepcopy(actor_factories.player)
 
-    engine = Engine(player=player)
+    engine = Engine(player=player, debug_mode=globals.DEBUG_MODE)
 
     engine.game_world = GameWorld(
         engine=engine,
@@ -44,7 +45,15 @@ def new_game() -> Engine:
         map_height=map_height,
     )
 
-    engine.game_world.generate_floor()
+    if globals.DEBUG_MODE:
+        engine.game_world.load_prefab_map("debug_room")
+        engine.message_log.add_message(
+            "DEBUG MODE ENABLED",
+            color.yellow,
+        )
+    else:
+        engine.game_world.generate_floor()
+
     engine.update_fov()
 
     engine.message_log.add_message(

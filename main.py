@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 import traceback
 import tcod
 
@@ -6,6 +7,7 @@ import color
 import exceptions
 import input_handlers
 import setup_game
+import globals
 
 
 def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
@@ -26,11 +28,21 @@ def main() -> None:
 
     handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
 
+    # Check if '-debug' is present in sys.argv
+    debug_mode = "-debug" in sys.argv
+
+    globals.DEBUG_MODE = debug_mode
+    title = (
+        "Castle of the eternal Night - DEBUG MODE"
+        if debug_mode
+        else "Castle of the eternal Night"
+    )
+
     with tcod.context.new_terminal(
         screen_width,
         screen_height,
         tileset=tileset,
-        title="Castle of the Eternal Night",
+        title=title,
         vsync=True,
     ) as context:
         root_console = tcod.console.Console(screen_width, screen_height, order="F")
