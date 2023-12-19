@@ -6,12 +6,12 @@ import actions
 import color
 import components.inventory
 from components.base_component import BaseComponent
-from exceptions import Impossible
-from input_handlers import (
-    ActionOrHandler,
+from event_handlers.base_event_handler import ActionOrHandler
+from event_handlers.select_index_handler import (
     AreaRangedAttackHandler,
     SingleRangedAttackHandler,
 )
+from exceptions import Impossible
 
 if TYPE_CHECKING:
     from entity import Actor, Item

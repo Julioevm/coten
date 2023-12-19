@@ -4,15 +4,17 @@ import traceback
 import tcod
 
 import color
+from event_handlers.base_event_handler import BaseEventHandler
+from event_handlers.event_handler import EventHandler
 import exceptions
-import input_handlers
+
 import setup_game
 import globals
 
 
-def save_game(handler: input_handlers.BaseEventHandler, filename: str) -> None:
+def save_game(handler: BaseEventHandler, filename: str) -> None:
     """If the current event handler has an active Engine then save it."""
-    if isinstance(handler, input_handlers.EventHandler):
+    if isinstance(handler, EventHandler):
         handler.engine.save_as(filename)
         print("Game saved.")
 
@@ -26,7 +28,7 @@ def main() -> None:
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
-    handler: input_handlers.BaseEventHandler = setup_game.MainMenu()
+    handler: BaseEventHandler = setup_game.MainMenu()
 
     # Check if '-debug' is present in sys.argv
     debug_mode = "-debug" in sys.argv
@@ -59,7 +61,7 @@ def main() -> None:
                 except Exception:  # Handle exceptions in game.
                     traceback.print_exc()  # Print error to stderr.
                     # Then print the error to the message log.
-                    if isinstance(handler, input_handlers.EventHandler):
+                    if isinstance(handler, EventHandler):
                         handler.engine.message_log.add_message(
                             traceback.format_exc(), color.error
                         )

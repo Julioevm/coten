@@ -13,9 +13,12 @@ from tcod import libtcodpy
 import color
 from engine import Engine
 import actor_factories
+from event_handlers.base_event_handler import BaseEventHandler
+from event_handlers.main_game_event_handler import MainGameEventHandler
+from event_handlers.pop_up_message_event_handler import PopupMessage
 import item_factories
 from game_world import GameWorld
-import input_handlers
+
 import globals
 
 
@@ -78,10 +81,10 @@ def load_game(filename: str) -> Engine:
     return engine
 
 
-class MainMenu(input_handlers.BaseEventHandler):
+class MainMenu(BaseEventHandler):
     """Handle the main menu rendering and input."""
 
-    def on_render(self, console: tcod.Console) -> None:
+    def on_render(self, console: tcod.console.Console) -> None:
         """Render the main menu on a background image."""
         # Make the image fill in the console size with the background image
         console.draw_semigraphics(background_image, 0, 0)
@@ -117,18 +120,18 @@ class MainMenu(input_handlers.BaseEventHandler):
 
     def ev_keydown(
         self, event: tcod.event.KeyDown
-    ) -> Optional[input_handlers.BaseEventHandler]:
+    ) -> Optional[BaseEventHandler]:
         if event.sym in (tcod.event.KeySym.q, tcod.event.KeySym.ESCAPE):
             raise SystemExit()
         elif event.sym == tcod.event.KeySym.c:
             try:
-                return input_handlers.MainGameEventHandler(load_game("savegame.sav"))
+                return MainGameEventHandler(load_game("savegame.sav"))
             except FileNotFoundError:
-                return input_handlers.PopupMessage(self, "No saved game to load.")
+                return PopupMessage(self, "No saved game to load.")
             except Exception as exc:
                 traceback.print_exc()  # Print to stderr.
-                return input_handlers.PopupMessage(self, f"Failed to load save:\n{exc}")
+                return PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.KeySym.n:
-            return input_handlers.MainGameEventHandler(new_game())
+            return MainGameEventHandler(new_game())
 
         return None
