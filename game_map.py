@@ -109,3 +109,7 @@ class GameMap:
                 console.print(
                     x=entity.x, y=entity.y, string=entity.char, fg=entity.color
                 )
+
+    def reveal_map(self) -> None:
+        """Reveals the entire map."""
+        self.explored = np.full((self.width, self.height), fill_value=True, order="F")

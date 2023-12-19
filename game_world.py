@@ -60,6 +60,7 @@ class GameWorld:
         )
         self.floors.append(game_map)
         self.engine.game_map = game_map
+        self.engine.game_map.reveal_map()
 
     def load_floor(self, floor: int) -> None:
         """
