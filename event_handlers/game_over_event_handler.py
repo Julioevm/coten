@@ -5,6 +5,7 @@ import os
 from typing import Optional
 
 import tcod.event
+from tcod import libtcodpy
 
 import color
 from event_handlers.event_handler import EventHandler
@@ -14,29 +15,30 @@ import exceptions
 
 class GameOverEventHandler(EventHandler):
     """Event handler for the game over screen."""
+
     def on_render(self, console: tcod.console.Console) -> None:
-        console.tiles_rgb["bg"] = color.black
-        console.tiles_rgb["fg"] = color.red
+        console.rgb["bg"] = color.black
+        console.rgb["fg"] = color.red
         console.print(
             console.width // 2,
             console.height // 2,
             "YOU DIED!",
             fg=color.red,
-            alignment=tcod.CENTER,
+            alignment=libtcodpy.CENTER,
         )
         console.print(
             console.width // 2,
             console.height // 2 + 1,
             "Press any key to continue",
             fg=color.red,
-            alignment=tcod.CENTER,
+            alignment=libtcodpy.CENTER,
         )
         console.print(
             console.width // 2,
             console.height // 2 + 2,
             "Press Esc to exit",
             fg=color.red,
-            alignment=tcod.CENTER,
+            alignment=libtcodpy.CENTER,
         )
 
     def on_quit(self) -> None:
