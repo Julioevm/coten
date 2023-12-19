@@ -8,6 +8,7 @@ from actions import Action, BumpAction, PickupAction, WaitAction
 from event_handlers import keys
 from event_handlers.base_event_handler import ActionOrHandler
 from event_handlers.character_screen_event_handler import CharacterScreenEventHandler
+from event_handlers.debug_menu import DebugMenuEventHandler
 from event_handlers.event_handler import EventHandler
 
 
@@ -25,6 +26,7 @@ class MainGameEventHandler(EventHandler):
         modifier = event.mod
 
         player = self.engine.player
+        is_debug_mode = self.engine.debug_mode
 
         if (
             key == tcod.event.KeySym.COMMA or key == tcod.event.KeySym.PERIOD
@@ -57,6 +59,9 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.KeySym.SLASH:
             return LookHandler(self.engine)
+        
+        elif key == tcod.event.KeySym.QUOTE and is_debug_mode:
+            return DebugMenuEventHandler(self.engine)
 
         # No valid key was pressed
         return action
