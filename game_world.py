@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, List
-from debug_room import create_debug_room
 from exceptions import Impossible
-from procgen import generate_dungeon
+from map_gen.debug_room import create_debug_room
+from map_gen.generate_dungeon import generate_dungeon
 
 from engine import Engine
 

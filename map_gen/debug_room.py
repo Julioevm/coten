@@ -1,5 +1,5 @@
 from game_map import GameMap
-from procgen import RectangularRoom
+from map_gen.rectangular_room import RectangularRoom
 import tile_types
 
 from engine import Engine
