@@ -74,7 +74,6 @@ class GameWorld:
         self.engine.game_map = game_map
 
     def load_prefab_map(self, map_name: str) -> None:
-        self.current_floor += 1
         game_map = create_debug_room(
             map_width=self.map_width, map_height=self.map_height, engine=self.engine
         )

@@ -6,6 +6,7 @@ import random
 from map_gen.procgen import (
     get_entities_at_random,
     get_max_value_for_floor,
+    place_entities,
     tunnel_between,
 )
 from map_gen.rectangular_room import RectangularRoom
@@ -18,32 +19,6 @@ import tile_types
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Entity
-
-
-def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int) -> None:
-    """
-    Place entities in a given room of a dungeon.
-    """
-    number_of_monsters = random.randint(
-        0, get_max_value_for_floor(parameters.max_monsters_by_floor, floor_number)
-    )
-    number_of_items = random.randint(
-        0, get_max_value_for_floor(parameters.max_items_by_floor, floor_number)
-    )
-
-    monsters: List[Entity] = get_entities_at_random(
-        parameters.enemy_chances, number_of_monsters, floor_number
-    )
-    items: List[Entity] = get_entities_at_random(
-        parameters.item_chances, number_of_items, floor_number
-    )
-
-    for entity in monsters + items:
-        x = random.randint(room.x1 + 1, room.x2 - 1)
-        y = random.randint(room.y1 + 1, room.y2 - 1)
-
-        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            entity.spawn(dungeon, x, y)
 
 
 def generate_dungeon(
