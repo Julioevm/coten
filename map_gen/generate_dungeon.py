@@ -23,14 +23,6 @@ if TYPE_CHECKING:
 def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int) -> None:
     """
     Place entities in a given room of a dungeon.
-
-    Args:
-        room (RectangularRoom): The room in which entities will be placed.
-        dungeon (GameMap): The dungeon map.
-        maximum_monsters (int): The maximum number of monsters to place.
-
-    Returns:
-        None
     """
     number_of_monsters = random.randint(
         0, get_max_value_for_floor(parameters.max_monsters_by_floor, floor_number)

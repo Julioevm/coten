@@ -26,8 +26,8 @@ class CaveLikeRoom:
             fill_probability (float): Probability of a cell being filled initially.
             generations (int): Number of generations to run the cellular automata.
         """
-        self.x = x
-        self.y = y
+        self.x1 = x
+        self.y1 = y
         self.x2 = x + width
         self.y2 = y + height
         self.width = width
@@ -85,13 +85,13 @@ class CaveLikeRoom:
     @property
     def center(self) -> Tuple[int, int]:
         """Return the center coordinates of this cave-like room."""
-        return (self.x + self.width // 2, self.y + self.height // 2)
+        return (self.x1 + self.width // 2, self.y1 + self.height // 2)
 
     def intersects(self, other: CaveLikeRoom) -> bool:
         """Return True if this room overlaps with another RectangularRoom."""
         return (
-            self.x <= other.x
-            and self.x + self.width >= other.x + other.width
-            and self.y <= other.y
-            and self.y + self.height >= other.y + other.height
+            self.x1 <= other.x1
+            and self.x1 + self.width >= other.x1 + other.width
+            and self.y1 <= other.y1
+            and self.y1 + self.height >= other.y1 + other.height
         )

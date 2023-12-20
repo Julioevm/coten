@@ -1,12 +1,19 @@
 from typing import TYPE_CHECKING, List
 from exceptions import Impossible
 from map_gen.debug_room import create_debug_room
+from map_gen.generate_cave import generate_cave
 from map_gen.generate_dungeon import generate_dungeon
 
 from engine import Engine
 
 if TYPE_CHECKING:
     from game_map import GameMap
+
+floor_map_generator = {
+    0: generate_cave,
+    4: generate_dungeon,
+    # Add more floors and corresponding functions as needed.
+}
 
 
 class GameWorld:
@@ -40,8 +47,21 @@ class GameWorld:
         self.floors: List[GameMap] = []
 
     def generate_floor(self) -> None:
+        """Generate a new floor, using the corresponding floor generator function."""
         self.current_floor += 1
-        game_map = generate_dungeon(
+
+        floor_generator = None
+        for floor in sorted(floor_map_generator.keys(), reverse=True):
+            if self.current_floor >= floor:
+                floor_generator = floor_map_generator[floor]
+                break
+
+        # If no generator is found, default to generate_dungeon
+        if floor_generator is None:
+            floor_generator = generate_dungeon
+
+        # Generate the game map using the chosen generator function
+        game_map = floor_generator(
             max_rooms=self.max_rooms,
             room_min_size=self.room_min_size,
             room_max_size=self.room_max_size,

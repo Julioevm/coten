@@ -19,38 +19,30 @@ if TYPE_CHECKING:
     from entity import Entity
 
 
-def place_entities(room: CaveLikeRoom, dungeon: GameMap, floor_number: int) -> None:
+def place_entities(room, dungeon, floor):
     """
-    Place entities in a given room of a dungeon.
-
-    Args:
-        room (RectangularRoom): The room in which entities will be placed.
-        dungeon (GameMap): The dungeon map.
-        maximum_monsters (int): The maximum number of monsters to place.
-
-    Returns:
-        None
+    Place entities in a given room of a cave.
     """
-    number_of_monsters = random.randint(
-        0, get_max_value_for_floor(parameters.max_monsters_by_floor, floor_number)
-    )
-    number_of_items = random.randint(
-        0, get_max_value_for_floor(parameters.max_items_by_floor, floor_number)
-    )
+    max_monsters = get_max_value_for_floor(parameters.max_monsters_by_floor, floor)
+    max_items = get_max_value_for_floor(parameters.max_items_by_floor, floor)
 
-    monsters: List[Entity] = get_entities_at_random(
-        parameters.enemy_chances, number_of_monsters, floor_number
-    )
-    items: List[Entity] = get_entities_at_random(
-        parameters.item_chances, number_of_items, floor_number
-    )
+    num_monsters = random.randint(0, max_monsters)
+    num_items = random.randint(0, max_items)
+
+    monsters = get_entities_at_random(parameters.enemy_chances, num_monsters, floor)
+    items = get_entities_at_random(parameters.item_chances, num_items, floor)
 
     for entity in monsters + items:
-        x = random.randint(room.x1 + 1, room.x2 - 1)
-        y = random.randint(room.y1 + 1, room.y2 - 1)
+        placed = False
+        while not placed:
+            x = random.randint(room.x1 + 1, room.x2 - 1)
+            y = random.randint(room.y1 + 1, room.y2 - 1)
 
-        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            entity.spawn(dungeon, x, y)
+            if dungeon.tiles[x, y]["walkable"] and not any(
+                e.x == x and e.y == y for e in dungeon.entities
+            ):
+                entity.spawn(dungeon, x, y)
+                placed = True
 
 
 def generate_cave(
@@ -65,7 +57,7 @@ def generate_cave(
     player = engine.player
     dungeon = GameMap(engine, map_width, map_height, entities=[player])
 
-    rooms: List = []
+    rooms: List[CaveLikeRoom] = []
 
     for _r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
@@ -90,8 +82,8 @@ def generate_cave(
             for w in range(new_room.width):
                 if new_room.inner[h][w] == 1:  # If the cell is filled
                     # Map the local room coordinates to the GameMap coordinates
-                    game_map_x = new_room.x + w
-                    game_map_y = new_room.y + h
+                    game_map_x = new_room.x1 + w
+                    game_map_y = new_room.y1 + h
 
                     # Check bounds and place the tile if it's within the GameMap
                     if dungeon.in_bounds(game_map_x, game_map_y):

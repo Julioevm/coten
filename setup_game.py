@@ -31,6 +31,7 @@ def new_game() -> Engine:
     map_width = 80
     map_height = 43
 
+    # TODO: Remove these and put them in their respective generators
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
@@ -118,9 +119,7 @@ class MainMenu(BaseEventHandler):
                 bg_blend=libtcodpy.BKGND_ALPHA(64),
             )
 
-    def ev_keydown(
-        self, event: tcod.event.KeyDown
-    ) -> Optional[BaseEventHandler]:
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[BaseEventHandler]:
         if event.sym in (tcod.event.KeySym.q, tcod.event.KeySym.ESCAPE):
             raise SystemExit()
         elif event.sym == tcod.event.KeySym.c:
