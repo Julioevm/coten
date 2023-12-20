@@ -8,7 +8,8 @@ from event_handlers.base_event_handler import ActionOrHandler
 class DebugMenuEventHandler(AskUserEventHandler):
     TITLE = "Debug Menu"
     debug_options = [
-        "Reveal Map"
+        "Reveal Map",
+        "Heal Player",
         # Add more debug options here
     ]
 
@@ -45,12 +46,16 @@ class DebugMenuEventHandler(AskUserEventHandler):
         if 0 <= index <= len(self.debug_options) - 1:
             if index == 0:  # Reveal Map option
                 return self.reveal_map()
+            if index == 1:  # Heal Player option
+                self.heal()
             # Add more index checks here if you add more debug options
         return super().ev_keydown(event)
 
     def reveal_map(self) -> Optional[ActionOrHandler]:
-        # Call the reveal_map function here
+        """Reveals the entire map."""
         self.engine.game_map.reveal_map()
         return None
 
-    # Add more debug actions here
+    def heal(self) -> None:
+        """Heals the player to full health."""
+        self.engine.player.fighter.heal(self.engine.player.fighter.max_hp)
