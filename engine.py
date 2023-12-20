@@ -8,6 +8,7 @@ from tcod.map import compute_fov
 import exceptions
 from message_log import MessageLog
 import render_functions
+import color
 
 import lzma
 import pickle
@@ -22,7 +23,7 @@ class Engine:
     game_map: GameMap
     game_world: GameWorld
 
-    def __init__(self, player: Actor, debug_mode = False):
+    def __init__(self, player: Actor, debug_mode=False):
         self.debug_mode = debug_mode
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
@@ -58,11 +59,32 @@ class Engine:
 
         self.message_log.render(console=console, x=21, y=45, width=40, height=5)
 
+        # HP Bar
         render_functions.render_bar(
             console=console,
             current_value=self.player.fighter.hp,
             maximum_value=self.player.fighter.max_hp,
             total_width=20,
+            bar_color=color.hp_bar_filled,
+            empty_bar_color=color.hp_bar_empty,
+            text_color=color.hp_bar_text,
+            x=0,
+            y=45,
+            label="HP",
+        )
+
+        # XP bar
+        render_functions.render_bar(
+            console=console,
+            current_value=self.player.level.current_xp,
+            maximum_value=self.player.level.experience_to_next_level,
+            total_width=20,
+            x=0,
+            y=46,
+            bar_color=color.exp_bar_filled,
+            empty_bar_color=color.exp_bar_empty,
+            text_color=color.exp_bar_text,
+            label="EXP",
         )
 
         render_functions.render_dungeon_level(

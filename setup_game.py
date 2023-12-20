@@ -19,7 +19,7 @@ from event_handlers.pop_up_message_event_handler import PopupMessage
 import item_factories
 from game_world import GameWorld
 
-import globals
+import global_vars
 
 
 # Load the background image and remove the alpha channel.
@@ -37,7 +37,7 @@ def new_game() -> Engine:
 
     player = copy.deepcopy(actor_factories.player)
 
-    engine = Engine(player=player, debug_mode=globals.DEBUG_MODE)
+    engine = Engine(player=player, debug_mode=global_vars.DEBUG_MODE)
 
     engine.game_world = GameWorld(
         engine=engine,
@@ -48,7 +48,7 @@ def new_game() -> Engine:
         map_height=map_height,
     )
 
-    if globals.DEBUG_MODE:
+    if global_vars.DEBUG_MODE:
         engine.game_world.load_prefab_map("debug_room")
         engine.message_log.add_message(
             "DEBUG MODE ENABLED",

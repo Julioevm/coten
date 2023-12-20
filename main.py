@@ -9,7 +9,7 @@ from event_handlers.event_handler import EventHandler
 import exceptions
 
 import setup_game
-import globals
+import global_vars
 
 
 def save_game(handler: BaseEventHandler, filename: str) -> None:
@@ -33,7 +33,7 @@ def main() -> None:
     # Check if '-debug' is present in sys.argv
     debug_mode = "-debug" in sys.argv
 
-    globals.DEBUG_MODE = debug_mode
+    global_vars.DEBUG_MODE = debug_mode
     title = (
         "Castle of the eternal Night - DEBUG MODE"
         if debug_mode

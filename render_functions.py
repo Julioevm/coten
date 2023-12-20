@@ -3,8 +3,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Tuple
 
-import color
-
 if TYPE_CHECKING:
     from tcod import Console
     from engine import Engine
@@ -23,19 +21,44 @@ def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
 
 
 def render_bar(
-    console: Console, current_value: int, maximum_value: int, total_width: int
+    console: Console,
+    current_value: int,
+    maximum_value: int,
+    total_width: int,
+    bar_color,
+    empty_bar_color,
+    text_color,
+    x: int,
+    y: int,
+    label: str = "",
 ) -> None:
+    """
+    Renders a progress bar on the console.
+
+        Parameters:
+        console (Console): The console object where the bar will be rendered.
+        current_value (int): The current value represented by the bar.
+        maximum_value (int): The maximum value the bar can represent.
+        total_width (int): The total width of the bar in characters.
+        bar_color: The color of the filled portion of the bar.
+        empty_bar_color: The color of the empty portion of the bar.
+        text_color: The color of the text that will be displayed.
+        x (int): The x-coordinate on the console where the bar starts.
+        y (int): The y-coordinate on the console where the bar starts.
+        label (str, optional): A label displayed before the bar values. Defaults to an empty string.
+    """
     bar_width = int(float(current_value) / maximum_value * total_width)
 
-    console.draw_rect(x=0, y=45, width=total_width, height=1, ch=1, bg=color.bar_empty)
+    # Draw the background (empty bar)
+    console.draw_rect(x=x, y=y, width=total_width, height=1, ch=1, bg=empty_bar_color)
 
+    # Draw the bar on top
     if bar_width > 0:
-        console.draw_rect(
-            x=0, y=45, width=bar_width, height=1, ch=1, bg=color.bar_filled
-        )
+        console.draw_rect(x=x, y=y, width=bar_width, height=1, ch=1, bg=bar_color)
 
+    # Print the text with the values
     console.print(
-        x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text
+        x=x + 1, y=y, string=f"{label}: {current_value}/{maximum_value}", fg=text_color
     )
 
 
