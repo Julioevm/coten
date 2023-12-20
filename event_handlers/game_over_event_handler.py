@@ -29,7 +29,7 @@ class GameOverEventHandler(EventHandler):
         console.print(
             console.width // 2,
             console.height // 2 + 1,
-            "Press any key to continue",
+            "Press any key to restart",
             fg=color.red,
             alignment=libtcodpy.CENTER,
         )
