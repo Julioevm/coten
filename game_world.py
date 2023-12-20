@@ -10,9 +10,16 @@ if TYPE_CHECKING:
     from game_map import GameMap
 
 floor_map_generator = {
-    0: generate_cave,
-    4: generate_dungeon,
-    # Add more floors and corresponding functions as needed.
+    0: lambda **kwargs: generate_cave(
+        max_rooms=8, room_min_size=6, room_max_size=10, **kwargs
+    ),
+    1: lambda **kwargs: generate_cave(
+        max_rooms=12, room_min_size=8, room_max_size=12, **kwargs
+    ),
+    4: lambda **kwargs: generate_dungeon(
+        max_rooms=10, room_min_size=8, room_max_size=12, **kwargs
+    ),
+    # Add more floors and corresponding functions with parameters as needed.
 }
 
 
@@ -27,23 +34,12 @@ class GameWorld:
         engine: Engine,
         map_width: int,
         map_height: int,
-        max_rooms: int,
-        room_min_size: int,
-        room_max_size: int,
         current_floor: int = 0,
     ):
         self.engine = engine
-
         self.map_width = map_width
         self.map_height = map_height
-
-        self.max_rooms = max_rooms
-
-        self.room_min_size = room_min_size
-        self.room_max_size = room_max_size
-
         self.current_floor = current_floor
-
         self.floors: List[GameMap] = []
 
     def generate_floor(self) -> None:
@@ -60,15 +56,13 @@ class GameWorld:
         if floor_generator is None:
             floor_generator = generate_dungeon
 
+        additional_params = {
+            "map_width": self.map_width,
+            "map_height": self.map_height,
+            "engine": self.engine,
+        }
         # Generate the game map using the chosen generator function
-        game_map = floor_generator(
-            max_rooms=self.max_rooms,
-            room_min_size=self.room_min_size,
-            room_max_size=self.room_max_size,
-            map_width=self.map_width,
-            map_height=self.map_height,
-            engine=self.engine,
-        )
+        game_map = floor_generator(**additional_params)
 
         self.floors.append(game_map)
         self.engine.game_map = game_map

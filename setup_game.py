@@ -31,20 +31,12 @@ def new_game() -> Engine:
     map_width = 80
     map_height = 43
 
-    # TODO: Remove these and put them in their respective generators
-    room_max_size = 10
-    room_min_size = 6
-    max_rooms = 30
-
     player = copy.deepcopy(actor_factories.player)
 
     engine = Engine(player=player, debug_mode=global_vars.DEBUG_MODE)
 
     engine.game_world = GameWorld(
         engine=engine,
-        max_rooms=max_rooms,
-        room_min_size=room_min_size,
-        room_max_size=room_max_size,
         map_width=map_width,
         map_height=map_height,
     )
