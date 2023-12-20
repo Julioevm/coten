@@ -1,10 +1,11 @@
 """Parameters for different settings of the dungeon generation."""
-from typing import Dict, List, Tuple
+from __future__ import annotations
+from typing import Dict, List, Tuple, TYPE_CHECKING
 import actor_factories
 import item_factories
-from entity import Entity
 
-# if TYPE_CHECKING:
+if TYPE_CHECKING:
+    from entity import Entity
 
 max_items_by_floor = [
     (1, 1),

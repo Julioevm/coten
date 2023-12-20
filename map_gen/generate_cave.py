@@ -53,7 +53,7 @@ def place_entities(room: CaveLikeRoom, dungeon: GameMap, floor_number: int) -> N
             entity.spawn(dungeon, x, y)
 
 
-def generate_dungeon(
+def generate_cave(
     max_rooms: int,
     room_min_size: int,
     room_max_size: int,
