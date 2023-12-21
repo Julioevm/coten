@@ -206,6 +206,11 @@ class MovementAction(ActionWithDirection):
 
         self.entity.move(self.dx, self.dy)
 
+        if self.engine.game_map.get_item_at_location(dest_x, dest_y):
+            self.engine.message_log.add_message(
+                f"There is a {self.engine.game_map.get_item_at_location(dest_x, dest_y).name} here."
+            )
+
 
 class BumpAction(ActionWithDirection):
     """This class determines wether the entity moves or attacks."""
