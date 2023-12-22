@@ -220,3 +220,28 @@ class BumpAction(ActionWithDirection):
             return MeleeAction(self.entity, self.dx, self.dy).perform()
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()
+
+
+class QuickHealAction(Action):
+    """Use a healing item from your inventory."""
+
+    def perform(self) -> None:
+        from components import consumable
+
+        # Get all of the healing items in the player's inventory
+        healing_items = [
+            item
+            for item in self.entity.inventory.items
+            if item.consumable
+            and isinstance(item.consumable, consumable.HealingConsumable)
+        ]
+
+        if self.entity.fighter.hp == self.entity.fighter.max_hp:
+            raise exceptions.Impossible("Your health is already full.")
+        elif healing_items:
+            # Todo: Maybe use the item that wastes less if it would over heal the player?
+            # Get the first item in the list
+            item = healing_items[0]
+            item.consumable.activate(item.consumable.get_action(self.entity))
+        else:
+            raise exceptions.Impossible("You don't have any healing items.")

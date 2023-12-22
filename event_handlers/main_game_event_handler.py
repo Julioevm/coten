@@ -1,15 +1,17 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 import tcod.event
 
 import actions
-from actions import Action, BumpAction, PickupAction, WaitAction
+from actions import Action, BumpAction, PickupAction, QuickHealAction, WaitAction
 from event_handlers import keys
-from event_handlers.base_event_handler import ActionOrHandler
 from event_handlers.character_screen_event_handler import CharacterScreenEventHandler
 from event_handlers.debug_menu import DebugMenuEventHandler
 from event_handlers.event_handler import EventHandler
+
+if TYPE_CHECKING:
+    from event_handlers.base_event_handler import ActionOrHandler
 
 
 class MainGameEventHandler(EventHandler):
@@ -57,9 +59,12 @@ class MainGameEventHandler(EventHandler):
         elif key == tcod.event.KeySym.c:
             return CharacterScreenEventHandler(self.engine)
 
+        elif key == tcod.event.KeySym.q:
+            action = QuickHealAction(player)
+
         elif key == tcod.event.KeySym.SLASH:
             return LookHandler(self.engine)
-        
+
         elif key == tcod.event.KeySym.QUOTE and is_debug_mode:
             return DebugMenuEventHandler(self.engine)
 

@@ -6,7 +6,6 @@ import actions
 import color
 import components.inventory
 from components.base_component import BaseComponent
-from event_handlers.base_event_handler import ActionOrHandler
 from event_handlers.select_index_handler import (
     AreaRangedAttackHandler,
     SingleRangedAttackHandler,
@@ -14,6 +13,7 @@ from event_handlers.select_index_handler import (
 from exceptions import Impossible
 
 if TYPE_CHECKING:
+    from event_handlers.base_event_handler import ActionOrHandler
     from entity import Actor, Item
 
 
