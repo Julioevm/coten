@@ -89,6 +89,7 @@ class Engine:
 
         render_functions.render_dungeon_level(
             console=console,
+            name=self.game_map.name,
             dungeon_level=self.game_world.current_floor,
             location=(0, 47),
         )

@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
-    from tcod import Console
+    from tcod.console import Console
     from engine import Engine
     from game_map import GameMap
 
@@ -63,14 +63,14 @@ def render_bar(
 
 
 def render_dungeon_level(
-    console: Console, dungeon_level: int, location: Tuple[int, int]
+    console: Console, name: str, dungeon_level: int, location: Tuple[int, int]
 ) -> None:
     """
     Render the level the player is currently on, at the given location.
     """
     x, y = location
 
-    console.print(x=x, y=y, string=f"Castle floor: {dungeon_level}")
+    console.print(x=x, y=y, string=f"{name} floor: {dungeon_level}")
 
 
 def render_names_at_mouse_location(

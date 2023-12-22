@@ -23,7 +23,7 @@ class GameMap:
         height: int,
         entities: Iterable[Entity] = (),
         fill_wall_tile=tile_types.wall,
-        name="New Map",
+        name="???",
     ):
         """
         Initializes a new instance of the class.
