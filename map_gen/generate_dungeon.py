@@ -4,13 +4,10 @@ from typing import List, TYPE_CHECKING
 import random
 
 from map_gen.procgen import (
-    get_entities_at_random,
-    get_max_value_for_floor,
     place_entities,
     tunnel_between,
 )
 from map_gen.rectangular_room import RectangularRoom
-import parameters
 
 
 from game_map import GameMap
@@ -18,7 +15,6 @@ import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
 
 
 def generate_dungeon(
@@ -31,7 +27,7 @@ def generate_dungeon(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    dungeon = GameMap(engine, map_width, map_height, entities=[player], name="Crypt")
 
     rooms: List[RectangularRoom] = []
 

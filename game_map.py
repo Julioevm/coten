@@ -17,20 +17,23 @@ class GameMap:
     """Class to manage map mechanics, and render the map to the console."""
 
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+        self,
+        engine: Engine,
+        width: int,
+        height: int,
+        entities: Iterable[Entity] = (),
+        fill_wall_tile=tile_types.wall,
+        name="New Map",
     ):
         """
         Initializes a new instance of the class.
-
-        Args:
-            width (int): The width of the entity grid.
-            height (int): The height of the entity grid.
-            entities (Iterable[Entity], optional): The initial entities on the grid. Defaults to an empty iterable.
         """
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
+        self.fill_wall_tile = fill_wall_tile
+        self.tiles = np.full((width, height), fill_value=fill_wall_tile, order="F")
+        self.name = name
 
         self.visible = np.full(
             (width, height), fill_value=False, order="F"

@@ -27,7 +27,14 @@ def generate_cave(
 ) -> GameMap:
     """Generate a new dungeon map."""
     player = engine.player
-    dungeon = GameMap(engine, map_width, map_height, entities=[player])
+    dungeon = GameMap(
+        engine,
+        map_width,
+        map_height,
+        entities=[player],
+        fill_wall_tile=tile_types.cave_wall,
+        name="Cave",
+    )
 
     rooms: List[CaveLikeRoom] = []
 
@@ -59,7 +66,7 @@ def generate_cave(
 
                     # Check bounds and place the tile if it's within the GameMap
                     if dungeon.in_bounds(game_map_x, game_map_y):
-                        dungeon.tiles[game_map_x, game_map_y] = tile_types.floor
+                        dungeon.tiles[game_map_x, game_map_y] = tile_types.dirt_floor
 
         if len(rooms) == 0:
             # The first room, where the player starts.
@@ -67,7 +74,7 @@ def generate_cave(
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
-                dungeon.tiles[x, y] = tile_types.floor
+                dungeon.tiles[x, y] = tile_types.dirt_floor
 
         place_entities(new_room, dungeon, engine.game_world.current_floor)
 
@@ -76,10 +83,10 @@ def generate_cave(
     # Place stairs going down to the previous level, unless this is the first level.
 
     if engine.game_world.current_floor > 1:
-        dungeon.tiles[rooms[0].center] = tile_types.down_stairs
+        dungeon.tiles[rooms[0].center] = tile_types.cave_down_stairs
         dungeon.downstairs_location = rooms[0].center
 
-    dungeon.tiles[rooms[-1].center] = tile_types.up_stairs
+    dungeon.tiles[rooms[-1].center] = tile_types.cave_up_stairs
     dungeon.upstairs_location = rooms[-1].center
 
     return dungeon
