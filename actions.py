@@ -182,6 +182,8 @@ class MeleeAction(ActionWithDirection):
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
             target.fighter.hp -= damage
+
+            self.engine.game_map.bloody_tiles.add((target.x, target.y))
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color

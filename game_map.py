@@ -4,9 +4,10 @@ from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 from tcod.console import Console
+import color
 
-from entity import Actor, Item
 import tile_types
+from entity import Actor, Item
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -33,6 +34,7 @@ class GameMap:
         self.entities = set(entities)
         self.fill_wall_tile = fill_wall_tile
         self.tiles = np.full((width, height), fill_value=fill_wall_tile, order="F")
+        self.bloody_tiles = set()
         self.name = name
 
         self.visible = np.full(
@@ -104,6 +106,15 @@ class GameMap:
             choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=tile_types.SHROUD,
         )
+
+        # Modify the background color of bloody tiles
+        for x, y in self.bloody_tiles:
+            if self.in_bounds(x, y) and self.visible[x, y]:
+                # Retrieve the current tile at position (x, y)
+                char, fg, bg = console.rgb[x, y]
+
+                # Modify the background color to red, keeping the char and fg color
+                console.rgb[x, y] = (char, fg, color.blood)
 
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
