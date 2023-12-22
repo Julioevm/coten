@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -19,11 +19,10 @@ jobs:
         python-version: 3.11
 
     - name: Install dependencies
-      run: |
-        pip install pyinstaller tcod numpy
+      run: pip install pyinstaller tcod numpy
 
     - name: Build Windows Executable
-      run: pyinstaller --onefile main.py --add-data="dejavu10x10_gs_tc.png:img" --add-data="menu_background.png:img" 
+      run: pyinstaller --noconsole --onefile main.py --add-data="dejavu10x10_gs_tc.png:img" --add-data="menu_background.png:img" 
 
     - name: Upload executable
       uses: actions/upload-artifact@v2
