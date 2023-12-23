@@ -22,7 +22,7 @@ jobs:
       run: pip install pyinstaller tcod numpy
 
     - name: Build Windows Executable
-      run: pyinstaller --noconsole --onefile main.py --add-data="dejavu10x10_gs_tc.png:img" --add-data="menu_background.png:img" 
+      run: pyinstaller --name coten --onefile main.py --add-data="dejavu10x10_gs_tc.png:img" --add-data="menu_background.png:img" 
 
     - name: Upload executable
       uses: actions/upload-artifact@v4
