@@ -4,7 +4,6 @@ from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 from tcod.console import Console
-import color
 
 import tile_types
 from entity import Actor, Item
@@ -110,11 +109,7 @@ class GameMap:
         # Modify the background color of bloody tiles
         for x, y in self.bloody_tiles:
             if self.in_bounds(x, y) and self.visible[x, y]:
-                # Retrieve the current tile at position (x, y)
-                char, fg, bg = console.rgb[x, y]
-
-                # Modify the background color to red, keeping the char and fg color
-                console.rgb[x, y] = (char, fg, color.blood)
+                bloodify_tile(x, y, console)
 
         entities_sorted_for_rendering = sorted(
             self.entities, key=lambda x: x.render_order.value
@@ -130,3 +125,15 @@ class GameMap:
     def reveal_map(self) -> None:
         """Reveals the entire map."""
         self.explored = np.full((self.width, self.height), fill_value=True, order="F")
+
+
+def bloodify_tile(x: int, y: int, console: Console) -> None:
+    """Changes the tile at the given (x, y) coordinate to blood."""
+    # Retrieve the current tile values at position (x, y)
+    char, fg, bg = console.rgb[x, y]
+
+    # Blend the existing bg color with red
+    red_bg = (min(bg[0] * 1.5, 255), bg[1] * 0.7, bg[2] * 0.7)
+
+    # Set the new background color, keeping the char and fg color the same
+    console.rgb[x, y] = (char, fg, red_bg)

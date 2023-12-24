@@ -1,4 +1,5 @@
 from __future__ import annotations
+import random
 
 from typing import Optional, Tuple, TYPE_CHECKING
 
@@ -186,7 +187,7 @@ class MeleeAction(ActionWithDirection):
             )
             target.fighter.hp -= damage
 
-            self.engine.game_map.bloody_tiles.add((target.x, target.y))
+            set_bloody_tiles(self.engine, target)
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color
@@ -250,3 +251,18 @@ class QuickHealAction(Action):
             item.consumable.activate(item.consumable.get_action(self.entity))
         else:
             raise exceptions.Impossible("You don't have any healing items.")
+
+
+def set_bloody_tiles(engine: Engine, target: Actor) -> None:
+    """Set the bloody tiles position for targeted entities."""
+    engine.game_map.bloody_tiles.add((target.x, target.y))
+    # Small random chance of adding one adjacent tile to the bloody tile list
+    if random.random() < 0.2:
+        adjacent_tiles = [
+            (target.x + 1, target.y),
+            (target.x - 1, target.y),
+            (target.x, target.y + 1),
+            (target.x, target.y - 1),
+        ]
+        random_tile = random.choice(adjacent_tiles)
+        engine.game_map.bloody_tiles.add(random_tile)
