@@ -34,7 +34,7 @@ class GameWorld:
         engine: Engine,
         map_width: int,
         map_height: int,
-        current_floor: int = 0,
+        current_floor: int = 1,
     ):
         self.engine = engine
         self.map_width = map_width
@@ -44,8 +44,8 @@ class GameWorld:
 
     def generate_floor(self) -> None:
         """Generate a new floor, using the corresponding floor generator function."""
-        self.current_floor += 1
-
+        if self.engine.debug_mode:
+            print(f"Generating floor {self.current_floor}")
         floor_generator = None
         for floor in sorted(floor_map_generator.keys(), reverse=True):
             if self.current_floor >= floor:
@@ -84,10 +84,22 @@ class GameWorld:
 
         if floor < 1 or floor > len(self.floors):
             raise Impossible("Invalid floor number")
-        self.current_floor = floor
+
+        if self.engine.debug_mode:
+            print(f"Loading floor {floor}")
+
+        # Update current loaded floor with the new floor
         self.engine.game_map = self.floors[floor - 1]
+
+        # Set the pair of stairs to put the player on depending if we're ascending or descending
+        stairs = (
+            self.engine.game_map.downstairs_location
+            if self.current_floor < floor
+            else self.engine.game_map.upstairs_location
+        )
+        self.current_floor = floor
         self.engine.player.place(
-            self.engine.game_map.upstairs_location[0],
-            self.engine.game_map.upstairs_location[1],
+            stairs[0],
+            stairs[1],
             self.engine.game_map,
         )
