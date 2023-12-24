@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import List, TYPE_CHECKING
 
+from components import consumable
 from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
@@ -9,11 +10,23 @@ if TYPE_CHECKING:
 
 
 class Inventory(BaseComponent):
+    """Hold a list of items and sets a max capacity."""
+
     parent: Actor
 
     def __init__(self, capacity: int):
         self.capacity = capacity
         self.items: List[Item] = []
+
+    @property
+    def healing_items(self) -> List[Item]:
+        """Returns s list of healing items in the inventory."""
+        return [
+            item
+            for item in self.items
+            if item.consumable
+            and isinstance(item.consumable, consumable.HealingConsumable)
+        ]
 
     def drop(self, item: Item) -> None:
         """

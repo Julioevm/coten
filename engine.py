@@ -94,6 +94,12 @@ class Engine:
             location=(0, 47),
         )
 
+        render_functions.render_potions(
+            console=console,
+            location=(0, 48),
+            potions=len(self.player.inventory.healing_items),
+        )
+
         render_functions.render_names_at_mouse_location(
             console=console, x=21, y=44, engine=self
         )

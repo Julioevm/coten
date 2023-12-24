@@ -232,15 +232,7 @@ class QuickHealAction(Action):
     """Use a healing item from your inventory."""
 
     def perform(self) -> None:
-        from components import consumable
-
-        # Get all of the healing items in the player's inventory
-        healing_items = [
-            item
-            for item in self.entity.inventory.items
-            if item.consumable
-            and isinstance(item.consumable, consumable.HealingConsumable)
-        ]
+        healing_items = self.entity.inventory.healing_items
 
         if self.entity.fighter.hp == self.entity.fighter.max_hp:
             raise exceptions.Impossible("Your health is already full.")

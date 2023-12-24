@@ -73,6 +73,11 @@ def render_dungeon_level(
     console.print(x=x, y=y, string=f"{name} floor: {dungeon_level}")
 
 
+def render_potions(console: Console, location: Tuple[int, int], potions: int) -> None:
+    x, y = location
+    console.print(x=x, y=y, string=f"Potions: {potions}")
+
+
 def render_names_at_mouse_location(
     console: Console, x: int, y: int, engine: Engine
 ) -> None:
