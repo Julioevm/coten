@@ -31,7 +31,13 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (item_factories.defense_boost_potion, 10),
         (item_factories.power_boost_potion, 10),
     ],
-    4: [(item_factories.lightning_scroll, 25), (item_factories.sword, 5)],
+    3: [
+        (item_factories.fireball_scroll, 5),
+        (item_factories.chain_mail, 5),
+        (item_factories.axe, 5),
+    ],
+    4: [(item_factories.lightning_scroll, 10), (item_factories.sword, 5)],
+    5: [(item_factories.fireball_scroll, 10), (item_factories.plate_armor, 5)],
     6: [(item_factories.fireball_scroll, 25), (item_factories.chain_mail, 15)],
 }
 
