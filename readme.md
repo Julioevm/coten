@@ -23,3 +23,5 @@ c character sheet
 d drop item
 
 / inspect surroundings (also mouse pointer)
+
+q quick heal (uses a potion from the inventory)
