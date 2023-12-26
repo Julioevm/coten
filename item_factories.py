@@ -37,11 +37,27 @@ confusion_scroll = Item(
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 
+holy_water_vial = Item(
+    char="~",
+    color=(200, 200, 255),
+    name="Holy Water Vial",
+    consumable=consumable.AOEDamageConsumable(
+        damage=6,
+        radius=2,
+        damage_msg="The {0} is splashed by holy water, taking {1} damage!",
+    ),
+)
+
 fireball_scroll = Item(
     char="~",
     color=(255, 0, 0),
     name="Fireball Scroll",
-    consumable=consumable.FireballDamageConsumable(damage=12, radius=3),
+    consumable=consumable.AOEDamageConsumable(
+        damage=12,
+        radius=3,
+        damage_msg="The {0} is engulfed in a fiery explosion, taking {1} damage!",
+        damages_player=True,
+    ),
 )
 
 dagger = Item(

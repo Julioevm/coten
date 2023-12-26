@@ -121,10 +121,20 @@ class PowerBoostConsumable(Consumable):
             )
 
 
-class FireballDamageConsumable(Consumable):
-    def __init__(self, damage: int, radius: int):
+class AOEDamageConsumable(Consumable):
+    def __init__(
+        self,
+        damage: int,
+        radius: int,
+        damage_msg: str,
+        damages_player=False,
+        needs_target=False,
+    ):
         self.damage = damage
         self.radius = radius
+        self.damage_msg = damage_msg
+        self.damages_player = damages_player
+        self.needs_target = needs_target
 
     def get_action(self, consumer: Actor) -> AreaRangedAttackHandler:
         self.engine.message_log.add_message(
@@ -145,13 +155,17 @@ class FireballDamageConsumable(Consumable):
         targets_hit = False
         for actor in self.engine.game_map.actors:
             if actor.distance(*target_xy) <= self.radius:
+                if not self.damages_player and actor is self.engine.player:
+                    continue
+
                 self.engine.message_log.add_message(
-                    f"The {actor.name} is engulfed in a fiery explosion, taking {self.damage} damage!"
+                    self.damage_msg.format(actor.name, self.damage)
                 )
+
                 actor.fighter.take_damage(self.damage)
                 targets_hit = True
 
-        if not targets_hit:
+        if self.needs_target and not targets_hit:
             raise Impossible("There are no targets in the radius.")
         self.consume()
 
