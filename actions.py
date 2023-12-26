@@ -4,7 +4,7 @@ import random
 from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
-import exceptions
+from exceptions import Impossible
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -47,7 +47,7 @@ class PickupAction(Action):
         for item in self.engine.game_map.items:
             if actor_location_x == item.x and actor_location_y == item.y:
                 if len(inventory.items) >= inventory.capacity:
-                    raise exceptions.Impossible("Your inventory is full.")
+                    raise Impossible("Your inventory is full.")
 
                 self.engine.game_map.entities.remove(item)
                 item.parent = self.entity.inventory
@@ -56,7 +56,7 @@ class PickupAction(Action):
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
                 return
 
-        raise exceptions.Impossible("There is nothing here to pick up.")
+        raise Impossible("There is nothing here to pick up.")
 
 
 class ItemAction(Action):
@@ -133,7 +133,7 @@ class TakeStairsAction(Action):
                 "You descend the staircase.", color.ascend
             )
         else:
-            raise exceptions.Impossible("There are no stairs here.")
+            raise Impossible("There are no stairs here.")
 
 
 class ActionWithDirection(Action):
@@ -164,13 +164,41 @@ class ActionWithDirection(Action):
         raise NotImplementedError()
 
 
+class ActionWithRangedTarget(Action):
+    """An action with a ranged targeted entity."""
+
+    def __init__(self, entity: Actor, target_xy: Tuple[int, int]):
+        super().__init__(entity)
+
+        self.target_xy = target_xy
+
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        target = self.engine.game_map.get_actor_at_location(*self.target_xy)
+
+        if target is None:
+            raise Impossible("Nothing to target.")
+        return self.engine.game_map.get_actor_at_location(*self.target_xy)
+
+    @property
+    def is_target_clear(self) -> bool:
+        """Return True if there are no entities blocking the path to the target."""
+        return self.entity.ai.is_line_of_sight_clear(
+            self.entity.x, self.entity.y, self.target_actor.x, self.target_actor.y
+        )
+
+    def perform(self) -> None:
+        raise NotImplementedError()
+
+
 class MeleeAction(ActionWithDirection):
     """Perform an attack towards a direction."""
 
     def perform(self) -> None:
         target = self.target_actor
         if not target:
-            raise exceptions.Impossible("Nothing to attack.")
+            raise Impossible("Nothing to attack.")
 
         damage = self.entity.fighter.power - target.fighter.defense
 
@@ -194,6 +222,34 @@ class MeleeAction(ActionWithDirection):
             )
 
 
+class RangedAttackAction(ActionWithRangedTarget):
+    """Perform an attack against a ranged target."""
+
+    def perform(self) -> None:
+        if not self.is_target_clear:
+            raise Impossible("You have no clear shot!")
+
+        damage = self.entity.fighter.power - self.target_actor.fighter.defense
+        attack_desc = (
+            f"{self.entity.name.capitalize()} attacks {self.target_actor.name}"
+        )
+
+        if self.entity is self.engine.player:
+            attack_color = color.player_atk
+        else:
+            attack_color = color.enemy_atk
+
+        if damage > 0:
+            self.engine.message_log.add_message(
+                f"{attack_desc} for {damage} hit points.", attack_color
+            )
+            self.target_actor.fighter.hp -= damage
+        else:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but does no damage.", attack_color
+            )
+
+
 class MovementAction(ActionWithDirection):
     """Action for moving an entity."""
 
@@ -202,13 +258,13 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
-            raise exceptions.Impossible("That way is blocked.")
+            raise Impossible("That way is blocked.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             # Destination is blocked by a tile.
-            raise exceptions.Impossible("That way is blocked.")
+            raise Impossible("That way is blocked.")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is blocked by an entity.
-            raise exceptions.Impossible("That way is blocked.")
+            raise Impossible("That way is blocked.")
 
         self.entity.move(self.dx, self.dy)
 
@@ -224,8 +280,8 @@ class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         if self.target_actor:
             return MeleeAction(self.entity, self.dx, self.dy).perform()
-        else:
-            return MovementAction(self.entity, self.dx, self.dy).perform()
+
+        return MovementAction(self.entity, self.dx, self.dy).perform()
 
 
 class QuickHealAction(Action):
@@ -235,14 +291,15 @@ class QuickHealAction(Action):
         healing_items = self.entity.inventory.healing_items
 
         if self.entity.fighter.hp == self.entity.fighter.max_hp:
-            raise exceptions.Impossible("Your health is already full.")
-        elif healing_items:
+            raise Impossible("Your health is already full.")
+
+        if healing_items:
             # Todo: Maybe use the item that wastes less if it would over heal the player?
             # Get the first item in the list
             item = healing_items[0]
             item.consumable.activate(item.consumable.get_action(self.entity))
         else:
-            raise exceptions.Impossible("You don't have any healing items.")
+            raise Impossible("You don't have any healing items.")
 
 
 def set_bloody_tiles(engine: Engine, target: Actor) -> None:

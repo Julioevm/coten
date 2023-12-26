@@ -4,7 +4,14 @@ from typing import Optional, TYPE_CHECKING
 import tcod.event
 
 import actions
-from actions import Action, BumpAction, PickupAction, QuickHealAction, WaitAction
+from actions import (
+    Action,
+    BumpAction,
+    PickupAction,
+    QuickHealAction,
+    WaitAction,
+    RangedAttackAction,
+)
 from event_handlers import keys
 from event_handlers.character_screen_event_handler import CharacterScreenEventHandler
 from event_handlers.debug_menu import DebugMenuEventHandler
@@ -16,6 +23,7 @@ if TYPE_CHECKING:
 
 class MainGameEventHandler(EventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
+        from event_handlers.select_index_handler import SingleRangedAttackHandler
         from event_handlers.history_viewer import HistoryViewer
         from event_handlers.inventory_event_handler import (
             InventoryActivateHandler,
@@ -52,6 +60,11 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.KeySym.i:
             return InventoryActivateHandler(self.engine)
+
+        elif key == tcod.event.KeySym.f:
+            return SingleRangedAttackHandler(
+                self.engine, callback=lambda xy: RangedAttackAction(player, xy)
+            )
 
         elif key == tcod.event.KeySym.d:
             return InventoryDropHandler(self.engine)

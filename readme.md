@@ -20,6 +20,8 @@ i Inventory
 
 c character sheet
 
+f shot ranged weapon
+
 d drop item
 
 / inspect surroundings (also mouse pointer)

@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 import tcod
+from tcod import libtcodpy
 from actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
 
 if TYPE_CHECKING:
@@ -43,6 +44,23 @@ class BaseAI(Action):
 
         # Convert from List[List[int]] to List[Tuple[int, int]].
         return [(index[0], index[1]) for index in path]
+
+    def is_line_of_sight_clear(
+        self, start_x: int, start_y: int, end_x: int, end_y: int
+    ) -> bool:
+        """Check if a straight line path is clear of obstacles."""
+        tiles = (
+            self.entity.parent.tiles
+        )  # Assumes you have a tiles structure similar to get_path_to
+        walkable = tiles["walkable"]
+
+        # Bresenham's Line Algorithm
+        points = list(libtcodpy.line_iter(start_x, start_y, end_x, end_y))
+        for x, y in points:
+            # If the tile is not walkable, there is an obstacle in the way.
+            if not walkable[x, y]:
+                return False
+        return True
 
 
 class ConfusedEnemy(BaseAI):
