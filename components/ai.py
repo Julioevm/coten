@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 import tcod
-from tcod import libtcodpy
 from actions import Action, BumpAction, MeleeAction, MovementAction, WaitAction
 
 if TYPE_CHECKING:
@@ -55,7 +54,7 @@ class BaseAI(Action):
         walkable = tiles["walkable"]
 
         # Bresenham's Line Algorithm
-        points = list(libtcodpy.line_iter(start_x, start_y, end_x, end_y))
+        points = tcod.los.bresenham(start=(start_x, start_y), end=(end_x, end_y))
         for x, y in points:
             # If the tile is not walkable, there is an obstacle in the way.
             if not walkable[x, y]:

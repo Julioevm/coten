@@ -229,7 +229,10 @@ class RangedAttackAction(ActionWithRangedTarget):
         if not self.is_target_clear:
             raise Impossible("You have no clear shot!")
 
-        damage = self.entity.fighter.power - self.target_actor.fighter.defense
+        damage = (
+            self.entity.equipment.ranged.equippable.power_bonus  # Ranged attacks use the ranged item's power
+            - self.target_actor.fighter.defense
+        )
         attack_desc = (
             f"{self.entity.name.capitalize()} attacks {self.target_actor.name}"
         )
