@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 
 import tcod.event
-
+import color
 import actions
 from actions import (
     Action,
@@ -16,6 +16,7 @@ from event_handlers import keys
 from event_handlers.character_screen_event_handler import CharacterScreenEventHandler
 from event_handlers.debug_menu import DebugMenuEventHandler
 from event_handlers.event_handler import EventHandler
+
 
 if TYPE_CHECKING:
     from event_handlers.base_event_handler import ActionOrHandler
@@ -62,6 +63,12 @@ class MainGameEventHandler(EventHandler):
             return InventoryActivateHandler(self.engine)
 
         elif key == tcod.event.KeySym.f:
+            if not self.engine.player.equipment.ranged:
+                self.engine.message_log.add_message(
+                    "You have no ranged weapon equipped.", color.invalid
+                )
+
+                return action
             return SingleRangedAttackHandler(
                 self.engine, callback=lambda xy: RangedAttackAction(player, xy)
             )
