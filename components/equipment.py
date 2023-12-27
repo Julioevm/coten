@@ -27,7 +27,7 @@ class Equipment(BaseComponent):
         bonus = 0
 
         if self.weapon is not None and self.weapon.equippable is not None:
-            bonus += self.weapon.equippable.power_bonus
+            bonus += self.weapon.equippable.defense_bonus
 
         if self.armor is not None and self.armor.equippable is not None:
             bonus += self.armor.equippable.defense_bonus
@@ -36,6 +36,18 @@ class Equipment(BaseComponent):
 
     @property
     def power_bonus(self) -> int:
+        bonus = 0
+
+        if self.weapon is not None and self.weapon.equippable is not None:
+            bonus += self.weapon.equippable.power_bonus
+
+        if self.armor is not None and self.armor.equippable is not None:
+            bonus += self.armor.equippable.power_bonus
+
+        return bonus
+
+    @property
+    def ranged_bonus(self) -> int:
         bonus = 0
 
         if self.weapon is not None and self.weapon.equippable is not None:
