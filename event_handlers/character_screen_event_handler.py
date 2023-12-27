@@ -22,7 +22,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             x=x,
             y=y,
             width=width,
-            height=9,
+            height=10,
             title=self.TITLE,
             clear=True,
             fg=(255, 255, 255),
@@ -50,19 +50,23 @@ class CharacterScreenEventHandler(AskUserEventHandler):
                 y=y + 4,
                 string=f"Attack: {player.fighter.base_power} + ({player.equipment.power_bonus})",
             )
-
+        console.print(
+            x=x + 1,
+            y=y + 5,
+            string=f"Ranged: ({player.equipment.ranged.equippable.power_bonus})",
+        )
         if player.fighter.defense_boost > 1:
             console.print(
                 x=x + 1,
-                y=y + 5,
+                y=y + 6,
                 string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus}) + {player.fighter.defense_boost}",
                 fg=color.defense_boost,
             )
         else:
             console.print(
                 x=x + 1,
-                y=y + 5,
+                y=y + 7,
                 string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus})",
             )
 
-        console.print(x=x + 1, y=y + 6, string=f"Turns: {self.engine.current_turn}")
+        console.print(x=x + 1, y=y + 7, string=f"Turns: {self.engine.current_turn}")
