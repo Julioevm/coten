@@ -39,7 +39,7 @@ confusion_scroll = Item(
 
 holy_water_vial = Item(
     char="~",
-    color=(200, 200, 255),
+    color=(220, 220, 255),
     name="Holy Water Vial",
     consumable=consumable.AOEDamageConsumable(
         damage=6,
