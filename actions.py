@@ -229,15 +229,19 @@ class RangedAttackAction(ActionWithRangedTarget):
         if not self.is_target_clear:
             raise Impossible("You have no clear shot!")
 
-        damage = self.entity.equipment.ranged_bonus - self.target_actor.fighter.defense
-        attack_desc = (
-            f"{self.entity.name.capitalize()} attacks {self.target_actor.name}"
-        )
-
         if self.entity is self.engine.player:
             attack_color = color.player_atk
+            # only the player gets ranged attack from an item, monsters use the power value.
+            attacker_power = self.entity.equipment.ranged_bonus
         else:
             attack_color = color.enemy_atk
+            attacker_power = self.entity.fighter.power
+
+        damage = attacker_power - self.target_actor.fighter.defense
+
+        attack_desc = (
+            f"{self.entity.name.capitalize()} shots at {self.target_actor.name}"
+        )
 
         if damage > 0:
             self.engine.message_log.add_message(

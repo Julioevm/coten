@@ -1,5 +1,5 @@
 """Library of different types of entities."""
-from components.ai import HostileEnemy
+from components.ai import HostileEnemy, StaticRangedEnemy
 from components.inventory import Inventory
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -60,6 +60,17 @@ ghoul = Actor(
     fighter=Fighter(hp=14, base_defense=1, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=75),
+)
+
+skeleton_archer = Actor(
+    char="s",
+    color=(0, 127, 0),
+    name="Skeleton Archer",
+    ai_cls=StaticRangedEnemy,
+    equipment=Equipment(),
+    fighter=Fighter(hp=6, base_defense=1, base_power=2),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=40),
 )
 
 werewolf = Actor(
