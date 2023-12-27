@@ -38,7 +38,7 @@ confusion_scroll = Item(
 )
 
 holy_water_vial = Item(
-    char="~",
+    char="!",
     color=(220, 220, 255),
     name="Holy Water Vial",
     consumable=consumable.AOEDamageConsumable(
@@ -68,7 +68,7 @@ sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.
 
 axe = Item(char="/", color=(0, 191, 255), name="Axe", equippable=equippable.Axe())
 
-bow = Item(char=")", color=(0, 191, 255), name="Bow", equippable=equippable.Bow())
+bow = Item(char=")", color=(80, 191, 255), name="Bow", equippable=equippable.Bow())
 
 leather_armor = Item(
     char="[",

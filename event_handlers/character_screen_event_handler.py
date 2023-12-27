@@ -53,7 +53,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         console.print(
             x=x + 1,
             y=y + 5,
-            string=f"Ranged: ({player.equipment.ranged.equippable.power_bonus})",
+            string=f"Ranged: ({player.equipment.ranged_bonus})",
         )
         if player.fighter.defense_boost > 1:
             console.print(

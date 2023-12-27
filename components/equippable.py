@@ -16,12 +16,14 @@ class Equippable(BaseComponent):
         self,
         equipment_type: EquipmentType,
         power_bonus: int = 0,
+        ranged_bonus: int = 0,
         defense_bonus: int = 0,
         ranged: bool = False,
     ):
         self.equipment_type = equipment_type
 
         self.power_bonus = power_bonus
+        self.ranged_bonus = ranged_bonus
         self.defense_bonus = defense_bonus
         self.ranged = ranged
 
@@ -44,7 +46,7 @@ class Sword(Equippable):
 class Bow(Equippable):
     def __init__(self) -> None:
         super().__init__(
-            equipment_type=EquipmentType.RANGED, power_bonus=2, ranged=True
+            equipment_type=EquipmentType.RANGED, ranged_bonus=3, ranged=True
         )
 
 
