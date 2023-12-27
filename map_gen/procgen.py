@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
 import random
 import tcod
-import parameters
+
+from map_gen import parameters
 
 
 if TYPE_CHECKING:
