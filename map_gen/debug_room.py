@@ -32,6 +32,9 @@ def create_debug_room(map_width: int, map_height: int, engine: Engine) -> GameMa
     arrows = deepcopy(item_factories.arrows)
     arrows.place(new_room.x1 + 14, new_room.y1 + 14, dungeon)
 
+    bolts = deepcopy(item_factories.bolts)
+    bolts.place(new_room.x1 + 16, new_room.y1 + 16, dungeon)
+
     player.place(*new_room.center, dungeon)
 
     dungeon.tiles[new_room.center] = tile_types.up_stairs

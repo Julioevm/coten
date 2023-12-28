@@ -29,14 +29,14 @@ class Equippable(BaseComponent):
 class Ranged(Equippable):
     def __init__(self, ammo_type: AmmoType, ranged_bonus: int) -> None:
         self.ammo_type = ammo_type
-        self.ranged_bonus = ranged_bonus
-        super().__init__(equipment_type=EquipmentType.RANGED)
+        super().__init__(equipment_type=EquipmentType.RANGED, ranged_bonus=ranged_bonus)
 
 
 class Ammo(Equippable):
     parent: Item
 
-    def __init__(self, amount: int):
+    def __init__(self, ammo_type: AmmoType, amount: int):
+        self.ammo_type = ammo_type
         self.amount = amount
         super().__init__(equipment_type=EquipmentType.AMMO)
 
@@ -66,7 +66,12 @@ class Bow(Ranged):
 
 class Arrows(Ammo):
     def __init__(self) -> None:
-        super().__init__(amount=20)
+        super().__init__(ammo_type=AmmoType.ARROW, amount=20)
+
+
+class Bolts(Ammo):
+    def __init__(self) -> None:
+        super().__init__(ammo_type=AmmoType.BOLT, amount=15)
 
 
 class LeatherArmor(Equippable):

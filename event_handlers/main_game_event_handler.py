@@ -68,9 +68,12 @@ class MainGameEventHandler(EventHandler):
                     "You have no ranged weapon equipped.", color.invalid
                 )
                 return action
-            if not self.engine.player.equipment.has_ammo:
+            if (
+                not self.engine.player.equipment.has_ammo
+                or not self.engine.player.equipment.has_matching_ammo
+            ):
                 self.engine.message_log.add_message(
-                    "You have no ammo equipped.", color.invalid
+                    "You have no right ammo equipped.", color.invalid
                 )
                 return action
             return SingleRangedAttackHandler(

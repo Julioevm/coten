@@ -75,6 +75,13 @@ class Equipment(BaseComponent):
     def has_ammo(self) -> bool:
         return self.ammo and self.ammo.equippable.amount > 0
 
+    @property
+    def has_matching_ammo(self) -> bool:
+        return (
+            self.ammo
+            and self.ammo.equippable.ammo_type == self.ranged.equippable.ammo_type
+        )
+
     def item_is_equipped(self, item: Item) -> bool:
         return item in (self.weapon, self.armor, self.ranged, self.ammo)
 
