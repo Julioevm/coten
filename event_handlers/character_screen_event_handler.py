@@ -50,11 +50,13 @@ class CharacterScreenEventHandler(AskUserEventHandler):
                 y=y + 4,
                 string=f"Attack: {player.fighter.base_power} + ({player.equipment.power_bonus})",
             )
+
         console.print(
             x=x + 1,
             y=y + 5,
             string=f"Ranged: ({player.equipment.ranged_bonus})",
         )
+
         if player.fighter.defense_boost > 1:
             console.print(
                 x=x + 1,
@@ -65,7 +67,7 @@ class CharacterScreenEventHandler(AskUserEventHandler):
         else:
             console.print(
                 x=x + 1,
-                y=y + 7,
+                y=y + 6,
                 string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus})",
             )
 
