@@ -1,3 +1,6 @@
 __pycache__/
 savegame.sav
 .DS_Store
+dist
+build
+.venv
