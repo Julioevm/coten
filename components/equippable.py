@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from components.base_component import BaseComponent
 from equipment_types import AmmoType, EquipmentType
+from exceptions import Impossible
 
 if TYPE_CHECKING:
     from entity import Item
@@ -39,6 +40,11 @@ class Ammo(Equippable):
         self.ammo_type = ammo_type
         self.amount = amount
         super().__init__(equipment_type=EquipmentType.AMMO)
+
+    def consume(self) -> None:
+        if self.amount == 0:
+            raise Impossible("No ammo left!")
+        self.amount -= 1
 
 
 class Dagger(Equippable):

@@ -233,6 +233,8 @@ class RangedAttackAction(ActionWithRangedTarget):
             attack_color = color.player_atk
             # only the player gets ranged attack from an item, monsters use the power value.
             attacker_power = self.entity.equipment.ranged_bonus
+            ammo = self.entity.equipment.get_ammo_equippable
+            ammo.consume()
         else:
             attack_color = color.enemy_atk
             attacker_power = self.entity.fighter.power

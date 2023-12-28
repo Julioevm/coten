@@ -7,6 +7,7 @@ from equipment_types import EquipmentType
 
 if TYPE_CHECKING:
     from entity import Actor, Item
+    from components.equippable import Ammo
 
 
 class Equipment(BaseComponent):
@@ -25,6 +26,14 @@ class Equipment(BaseComponent):
         self.ranged = ranged
         self.armor = armor
         self.ammo = ammo
+
+    @property
+    def get_ammo_equippable(self) -> Optional[Ammo]:
+        """Get the equippable ammo."""
+        if self.ammo is not None and self.ammo.equippable is not None:
+            return self.ammo.equippable
+
+        return None
 
     @property
     def defense_bonus(self) -> int:
