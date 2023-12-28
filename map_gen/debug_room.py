@@ -26,6 +26,12 @@ def create_debug_room(map_width: int, map_height: int, engine: Engine) -> GameMa
     holy_water = deepcopy(item_factories.holy_water_vial)
     holy_water.place(new_room.x1 + 1, new_room.y1 + 2, dungeon)
 
+    bow = deepcopy(item_factories.bow)
+    bow.place(new_room.x1 + 12, new_room.y1 + 12, dungeon)
+
+    arrows = deepcopy(item_factories.arrows)
+    arrows.place(new_room.x1 + 14, new_room.y1 + 14, dungeon)
+
     player.place(*new_room.center, dungeon)
 
     dungeon.tiles[new_room.center] = tile_types.up_stairs

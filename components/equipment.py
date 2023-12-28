@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 
 class Equipment(BaseComponent):
+    """Component that holds the current Actors equipment."""
+
     parent: Actor
 
     def __init__(
@@ -17,10 +19,12 @@ class Equipment(BaseComponent):
         weapon: Optional[Item] = None,
         armor: Optional[Item] = None,
         ranged: Optional[Item] = None,
+        ammo: Optional[Item] = None,
     ):
         self.weapon = weapon
         self.ranged = ranged
         self.armor = armor
+        self.ammo = ammo
 
     @property
     def defense_bonus(self) -> int:
@@ -68,7 +72,7 @@ class Equipment(BaseComponent):
         return bonus
 
     def item_is_equipped(self, item: Item) -> bool:
-        return item in (self.weapon, self.armor, self.ranged)
+        return item in (self.weapon, self.armor, self.ranged, self.ammo)
 
     def unequip_message(self, item_name: str) -> None:
         self.parent.gamemap.engine.message_log.add_message(
@@ -100,18 +104,16 @@ class Equipment(BaseComponent):
         setattr(self, slot, None)
 
     def toggle_equip(self, equippable_item: Item, add_message: bool = True) -> None:
-        if (
-            equippable_item.equippable
-            and equippable_item.equippable.equipment_type == EquipmentType.WEAPON
-        ):
-            slot = "weapon"
-        elif (
-            equippable_item.equippable
-            and equippable_item.equippable.equipment_type == EquipmentType.RANGED
-        ):
-            slot = "ranged"
-        else:
-            slot = "armor"
+        equipment_type = (
+            equippable_item.equippable.equipment_type
+            if equippable_item.equippable
+            else None
+        )
+        slot = {
+            EquipmentType.WEAPON: "weapon",
+            EquipmentType.RANGED: "ranged",
+            EquipmentType.AMMO: "ammo",
+        }.get(equipment_type, "armor")
 
         if getattr(self, slot) == equippable_item:
             self.unequip_from_slot(slot, add_message)

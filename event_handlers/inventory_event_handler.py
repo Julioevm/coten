@@ -1,10 +1,14 @@
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 import tcod
+from equipment_types import EquipmentType
 from event_handlers.ask_user_event_handler import AskUserEventHandler
 from event_handlers.base_event_handler import ActionOrHandler
 import color
 from actions import Action, DropItem, EquipAction
 from entity import Item
+
+if TYPE_CHECKING:
+    from components.equippable import Ammo
 
 
 class InventoryEventHandler(AskUserEventHandler):
@@ -53,8 +57,13 @@ class InventoryEventHandler(AskUserEventHandler):
                 item_key = chr(ord("a") + i)
 
                 is_equipped = self.engine.player.equipment.item_is_equipped(item)
-
+                is_ammo = item.equippable.equipment_type == EquipmentType.AMMO
                 item_string = f"({item_key}) {item.name}"
+
+                if is_ammo:
+                    ammo = item.equippable  # type: Ammo
+                    ammo_amount = ammo.amount
+                    item_string = f"{item_string} ({ammo_amount})"
 
                 if is_equipped:
                     item_string = f"{item_string} (E)"
