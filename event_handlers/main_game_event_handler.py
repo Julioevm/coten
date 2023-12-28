@@ -67,7 +67,11 @@ class MainGameEventHandler(EventHandler):
                 self.engine.message_log.add_message(
                     "You have no ranged weapon equipped.", color.invalid
                 )
-
+                return action
+            if not self.engine.player.equipment.has_ammo:
+                self.engine.message_log.add_message(
+                    "You have no ammo equipped.", color.invalid
+                )
                 return action
             return SingleRangedAttackHandler(
                 self.engine, callback=lambda xy: RangedAttackAction(player, xy)
