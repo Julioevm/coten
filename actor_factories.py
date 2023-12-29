@@ -75,7 +75,7 @@ skeleton_archer = Actor(
 
 werewolf = Actor(
     char="W",
-    color=("d3", "d3", "d3"),
+    color=(230, 230, 230),
     name="Werewolf",
     ai_cls=HostileEnemy,
     equipment=Equipment(),
