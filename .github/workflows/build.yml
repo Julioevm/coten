@@ -19,15 +19,10 @@ jobs:
         python-version: 3.11
 
     - name: Install dependencies
-      run: |
-        py -m venv .venv
-        .venv\bin\activate.ps1
-        pip install pyinstaller tcod numpy
+      run: pip install pyinstaller tcod numpy
 
     - name: Build Windows Executable
-      run: |
-        .venv\bin\activate.ps1
-        pyinstaller -n coten -w --paths "map_gen:components:event_handlers" --add-data "dejavu10x10_gs_tc.png;." --add-data "menu_background.png;." main.py
+      run: pyinstaller -n coten -w --paths "map_gen:components:event_handlers" --add-data "dejavu10x10_gs_tc.png;." --add-data "menu_background.png;." main.py
 
     - name: Upload executable
       uses: actions/upload-artifact@v4
