@@ -20,12 +20,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        py -m venv .venv 
+        py -m venv .venv
+        .venv\bin\activate.ps1
         pip install pyinstaller tcod numpy
 
     - name: Build Windows Executable
       run: |
-        .venv\bin\activate.bat
+        .venv\bin\activate.ps1
         pyinstaller -n coten -w --paths "map_gen:components:event_handlers" --add-data "dejavu10x10_gs_tc.png;." --add-data "menu_background.png;." main.py
 
     - name: Upload executable
