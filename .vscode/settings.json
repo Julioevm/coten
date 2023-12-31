@@ -9,5 +9,6 @@
         "tileset",
         "tilesheet",
         "vsync"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "off"
 }

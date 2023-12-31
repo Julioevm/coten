@@ -116,7 +116,7 @@ class ConfusedEnemy(BaseAI):
             ).perform()
 
 
-class HostileEnemy(BaseAI):
+class BasicMeleeEnemyAI(BaseAI):
     def __init__(self, entity: Actor):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []

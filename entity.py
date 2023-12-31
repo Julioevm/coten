@@ -96,7 +96,8 @@ class Actor(Entity):
         y: int = 0,
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
-        name: str = "<Unnamed>",
+        remains_color: Tuple[int, int, int] = (191, 0, 0),
+        name="<Unnamed>",
         ai_cls: Type[BaseAI],
         equipment: Equipment,
         fighter: Fighter,
@@ -126,6 +127,8 @@ class Actor(Entity):
 
         self.level = level
         self.level.parent = self
+
+        self.remains_color = remains_color
 
     @property
     def is_alive(self) -> bool:

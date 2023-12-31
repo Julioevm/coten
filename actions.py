@@ -215,7 +215,8 @@ class MeleeAction(ActionWithDirection):
             )
             target.fighter.hp -= damage
 
-            set_bloody_tiles(self.engine, target)
+            if target.fighter.bleeds:
+                set_bloody_tiles(self.engine, target)
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color

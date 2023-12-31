@@ -7,19 +7,20 @@ from components.base_component import BaseComponent
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
-    from parent import Actor
+    from entity import Actor
 
 
 class Fighter(BaseComponent):
     parent: Actor
 
-    def __init__(self, hp: int, base_defense: int, base_power: int):
+    def __init__(self, hp: int, base_defense: int, base_power: int, bleeds = True):
         self.max_hp = hp
         self._hp = hp
         self.base_defense = base_defense
         self.base_power = base_power
         self.power_boost = 0
         self.defense_boost = 0
+        self.bleeds = bleeds
 
     @property
     def hp(self) -> int:
@@ -80,7 +81,7 @@ class Fighter(BaseComponent):
             death_message_color = color.enemy_die
 
         self.parent.char = "%"
-        self.parent.color = (191, 0, 0)
+        self.parent.color = self.parent.remains_color
         self.parent.blocks_movement = False
         self.parent.ai = None
         self.parent.name = f"remains of {self.parent.name}"
