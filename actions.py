@@ -201,8 +201,9 @@ class MeleeAction(ActionWithDirection):
             raise Impossible("Nothing to attack.")
 
         damage = self.entity.fighter.power
+        # accuracy = accuracy = 100 * 1.065 ** (weapon net enchant)
 
-        hit_probability = 100 * 0.987 ** (target.fighter.defense * 10)
+        hit_probability = 100 * 0.987 ** (target.fighter.defense)
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
 
