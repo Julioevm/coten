@@ -200,7 +200,10 @@ class MeleeAction(ActionWithDirection):
         if not target:
             raise Impossible("Nothing to attack.")
 
-        damage = self.entity.fighter.power - target.fighter.defense
+        damage = self.entity.fighter.power
+
+        hit_probability = 100 * 0.987 ** (target.fighter.defense * 10)
+        print(f"hit probability: {hit_probability}")
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
 
@@ -208,6 +211,12 @@ class MeleeAction(ActionWithDirection):
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
+
+        if hit_probability < random.random() * 100:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but misses.", attack_color
+            )
+            return
 
         if damage > 0:
             self.engine.message_log.add_message(
