@@ -263,6 +263,11 @@ class MovementAction(ActionWithDirection):
     def perform(self) -> None:
         dest_x, dest_y = self.dest_xy
 
+        is_grappled = self.entity.status.is_grappled
+
+        if is_grappled:
+            raise Impossible("You can't move while being grappled!")
+
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
             # Destination is out of bounds.
             raise Impossible("That way is blocked.")

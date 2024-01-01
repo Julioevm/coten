@@ -11,9 +11,11 @@ if TYPE_CHECKING:
 
 
 class Fighter(BaseComponent):
+    """Actor component that holds the relevant information to handle combat."""
+
     parent: Actor
 
-    def __init__(self, hp: int, base_defense: int, base_power: int, bleeds = True):
+    def __init__(self, hp: int, base_defense: int, base_power: int, bleeds=True):
         self.max_hp = hp
         self._hp = hp
         self.base_defense = base_defense

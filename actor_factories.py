@@ -4,6 +4,7 @@ from components.inventory import Inventory
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.level import Level
+from components.status import Status
 from entity import Actor
 
 player = Actor(
@@ -15,6 +16,7 @@ player = Actor(
     fighter=Fighter(hp=30, base_defense=1, base_power=2),
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
+    status=Status(),
 )
 
 zombie = Actor(
@@ -26,6 +28,7 @@ zombie = Actor(
     fighter=Fighter(hp=8, base_defense=0, base_power=2),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
+    status=Status(),
 )
 
 # Variant of a zombie with more health and stronger attack
@@ -38,6 +41,7 @@ brute_zombie = Actor(
     fighter=Fighter(hp=16, base_defense=2, base_power=2),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=80),
+    status=Status(),
 )
 
 hound = Actor(
@@ -49,6 +53,7 @@ hound = Actor(
     fighter=Fighter(hp=6, base_defense=0, base_power=5),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=50),
+    status=Status(),
 )
 
 ghoul = Actor(
@@ -60,6 +65,7 @@ ghoul = Actor(
     fighter=Fighter(hp=14, base_defense=1, base_power=4),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=75),
+    status=Status(),
 )
 
 skeleton_archer = Actor(
@@ -72,6 +78,7 @@ skeleton_archer = Actor(
     fighter=Fighter(hp=6, base_defense=1, base_power=2, bleeds=False),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=40),
+    status=Status(),
 )
 
 werewolf = Actor(
@@ -83,4 +90,5 @@ werewolf = Actor(
     fighter=Fighter(hp=18, base_defense=2, base_power=6),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=160),
+    status=Status(),
 )

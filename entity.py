@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from components.fighter import Fighter
     from components.inventory import Inventory
     from components.level import Level
+    from components.status import Status
     from game_map import GameMap
 
 T = TypeVar("T", bound="Entity")
@@ -103,6 +104,7 @@ class Actor(Entity):
         fighter: Fighter,
         inventory: Inventory,
         level: Level,
+        status: Status,
     ):
         super().__init__(
             x=x,
@@ -127,6 +129,9 @@ class Actor(Entity):
 
         self.level = level
         self.level.parent = self
+
+        self.status = status
+        self.status.parent = self
 
         self.remains_color = remains_color
 
