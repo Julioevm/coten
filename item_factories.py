@@ -9,6 +9,13 @@ health_potion = Item(
     consumable=consumable.HealingConsumable(amount=5),
 )
 
+great_health_potion = Item(
+    char="!",
+    color=(147, 40, 255),
+    name="Great Health Potion",
+    consumable=consumable.HealingConsumable(amount=10),
+)
+
 defense_boost_potion = Item(
     char="!",
     color=(0, 255, 255),

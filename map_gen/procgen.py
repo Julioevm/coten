@@ -16,13 +16,14 @@ if TYPE_CHECKING:
 def get_max_value_for_floor(
     max_value_by_floor: List[Tuple[int, int]], floor: int
 ) -> int:
+    """Iterate though the list and find the max value for the given floor."""
     current_value = 0
 
     for floor_minimum, value in max_value_by_floor:
         if floor_minimum > floor:
             break
-        else:
-            current_value = value
+
+        current_value = value
 
     return current_value
 
@@ -32,17 +33,18 @@ def get_entities_at_random(
     number_of_entities: int,
     floor: int,
 ) -> List[Entity]:
+    """Get a list of entities from a list based on their weight, with a given number for a specific floor."""
     entity_weighted_chances = {}
 
     for key, values in weighted_chances_by_floor.items():
         if key > floor:
             break
-        else:
-            for value in values:
-                entity = value[0]
-                weighted_chance = value[1]
 
-                entity_weighted_chances[entity] = weighted_chance
+        for value in values:
+            entity = value[0]
+            weighted_chance = value[1]
+
+            entity_weighted_chances[entity] = weighted_chance
 
     entities = list(entity_weighted_chances.keys())
     entity_weighted_chance_values = list(entity_weighted_chances.values())
