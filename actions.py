@@ -270,7 +270,6 @@ class RangedAttackAction(ActionWithRangedTarget):
             target.fighter.defense + (distance * 2)
         )
 
-        print(hit_probability)
         attack_desc = (
             f"{self.entity.name.capitalize()} shots at {self.target_actor.name}"
         )
