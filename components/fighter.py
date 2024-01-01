@@ -15,11 +15,19 @@ class Fighter(BaseComponent):
 
     parent: Actor
 
-    def __init__(self, hp: int, base_defense: int, base_power: int, bleeds=True):
+    def __init__(
+        self,
+        hp: int,
+        base_defense: int,
+        base_power: int,
+        base_accuracy: int = 100,
+        bleeds=True,
+    ):
         self.max_hp = hp
         self._hp = hp
         self.base_defense = base_defense
         self.base_power = base_power
+        self.base_accuracy = base_accuracy
         self.power_boost = 0
         self.defense_boost = 0
         self.bleeds = bleeds
@@ -43,6 +51,10 @@ class Fighter(BaseComponent):
         return self.base_power + self.power_bonus + self.power_boost
 
     @property
+    def accuracy(self) -> int:
+        return self.base_accuracy + self.accuracy_bonus
+
+    @property
     def defense_bonus(self) -> int:
         if self.parent.equipment:
             return self.parent.equipment.defense_bonus
@@ -53,6 +65,13 @@ class Fighter(BaseComponent):
     def power_bonus(self) -> int:
         if self.parent.equipment:
             return self.parent.equipment.power_bonus
+        else:
+            return 0
+
+    @property
+    def accuracy_bonus(self) -> int:
+        if self.parent.equipment:
+            return self.parent.equipment.accuracy_bonus
         else:
             return 0
 

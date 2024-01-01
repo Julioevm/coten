@@ -30,7 +30,7 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (item_factories.bow, 15),
         (item_factories.arrows, 20),
         (item_factories.confusion_scroll, 10),
-        (item_factories.leather_armor, 10),
+        (item_factories.leather_armor, 15),
         (item_factories.defense_boost_potion, 10),
         (item_factories.power_boost_potion, 10),
     ],

@@ -19,8 +19,8 @@ great_health_potion = Item(
 defense_boost_potion = Item(
     char="!",
     color=(0, 255, 255),
-    name="Leather Skin Potion",
-    consumable=consumable.DefenseBoostConsumable(amount=3, duration=10),
+    name="Protection Potion",
+    consumable=consumable.DefenseBoostConsumable(amount=30, duration=10),
 )
 
 power_boost_potion = Item(

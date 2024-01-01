@@ -1,1 +1,5 @@
 DEBUG_MODE = False
+
+# Combat
+
+HIT_CHANCE_BASE =  0.987

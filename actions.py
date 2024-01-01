@@ -5,6 +5,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
 from exceptions import Impossible
+from global_vars import HIT_CHANCE_BASE
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -203,7 +204,9 @@ class MeleeAction(ActionWithDirection):
         damage = self.entity.fighter.power
         # accuracy = accuracy = 100 * 1.065 ** (weapon net enchant)
 
-        hit_probability = 100 * 0.987 ** (target.fighter.defense)
+        hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
+            target.fighter.defense
+        )
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
 
@@ -259,7 +262,9 @@ class RangedAttackAction(ActionWithRangedTarget):
 
         damage = attacker_power
 
-        hit_probability = 90 * 0.987 ** (target.fighter.defense)
+        hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
+            target.fighter.defense
+        )
 
         attack_desc = (
             f"{self.entity.name.capitalize()} shots at {self.target_actor.name}"

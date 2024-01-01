@@ -19,12 +19,14 @@ class Equippable(BaseComponent):
         power_bonus: int = 0,
         ranged_bonus: int = 0,
         defense_bonus: int = 0,
+        accuracy_bonus: int = 0,
     ):
         self.equipment_type = equipment_type
 
         self.power_bonus = power_bonus
         self.ranged_bonus = ranged_bonus
         self.defense_bonus = defense_bonus
+        self.accuracy_bonus = accuracy_bonus
 
 
 class Ranged(Equippable):
