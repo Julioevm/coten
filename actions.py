@@ -215,6 +215,12 @@ class MeleeAction(ActionWithDirection):
             )
             target.fighter.hp -= damage
 
+            # Check if the entity has status effects that can trigger on attack, and apply them.
+            if self.entity.status.status_effects:
+                for status_effect, chance in self.entity.status.status_effects:
+                    if random.random() < chance:
+                        status_effect.apply(target)
+
             if target.fighter.bleeds:
                 set_bloody_tiles(self.engine, target)
         else:

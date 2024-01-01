@@ -5,6 +5,7 @@ from components.base_component import BaseComponent
 
 if TYPE_CHECKING:
     from entity import Actor
+    from status_effect import StatusEffect
 
 
 class Status(BaseComponent):
@@ -12,5 +13,7 @@ class Status(BaseComponent):
 
     parent: Actor
 
-    def __init__(self):
+    def __init__(self, status_effects: list[tuple[StatusEffect, int]] = []):
         self.is_grappled = False
+        # a list of tuples with a status effect, chance of triggering
+        self.status_effects = status_effects

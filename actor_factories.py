@@ -6,6 +6,7 @@ from components.fighter import Fighter
 from components.level import Level
 from components.status import Status
 from entity import Actor
+from status_effect import Grappled
 
 player = Actor(
     char="@",
@@ -28,7 +29,7 @@ zombie = Actor(
     fighter=Fighter(hp=8, base_defense=0, base_power=2),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
-    status=Status(),
+    status=Status(status_effects=[(Grappled(), 90)]),
 )
 
 # Variant of a zombie with more health and stronger attack
