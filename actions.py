@@ -262,8 +262,12 @@ class RangedAttackAction(ActionWithRangedTarget):
 
         damage = attacker_power
 
+        # get distance from target to entity
+        distance = self.entity.distance(*self.target_xy)
+
+        # ranged attacks get a small penalty to accuracy based on distance
         hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
-            target.fighter.defense
+            target.fighter.defense + (distance * 2)
         )
 
         attack_desc = (
