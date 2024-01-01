@@ -220,11 +220,6 @@ class MeleeAction(ActionWithDirection):
                 for status_effect, chance in self.entity.status.status_effects:
                     if random.random() < chance:
                         status_effect.apply(target)
-                        # Remove the effect after its duration expires.
-                        # self.engine.schedule_effect(
-                        #     status_effect.duration,
-                        #     lambda s=status_effect: s.remove(target),
-                        # )
 
             if target.fighter.bleeds:
                 set_bloody_tiles(self.engine, target)
