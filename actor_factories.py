@@ -42,7 +42,7 @@ brute_zombie = Actor(
     fighter=Fighter(hp=16, base_defense=2, base_power=2),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=80),
-    status=Status(),
+    status=Status(status_effects=[(Grappled(), 90)]),
 )
 
 hound = Actor(

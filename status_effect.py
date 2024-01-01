@@ -24,7 +24,7 @@ class Grappled(StatusEffect):
 
     def apply(self, entity: Actor):
         # Todo: Add a message to the log
-        entity.status.is_grappled = True
+        entity.status.grappled = self.duration
 
     def remove(self, entity: Actor):
-        entity.status.is_grappled = False
+        entity.status.grappled = 0

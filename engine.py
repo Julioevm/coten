@@ -44,6 +44,12 @@ class Engine:
                 except exceptions.Impossible:
                     pass  # Ignore impossible action exceptions from AI.
 
+            if entity.status:
+                try:
+                    entity.status.process_active_effects()
+                except exceptions.Impossible:
+                    pass  # Ignore impossible status exceptions from AI.
+
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""
         self.game_map.visible[:] = compute_fov(
