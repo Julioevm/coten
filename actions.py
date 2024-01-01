@@ -242,6 +242,8 @@ class RangedAttackAction(ActionWithRangedTarget):
     """Perform an attack against a ranged target."""
 
     def perform(self) -> None:
+        target = self.target_actor
+
         if not self.is_target_clear:
             raise Impossible("You have no clear shot!")
 
@@ -255,17 +257,34 @@ class RangedAttackAction(ActionWithRangedTarget):
             attack_color = color.enemy_atk
             attacker_power = self.entity.fighter.power
 
-        damage = attacker_power - self.target_actor.fighter.defense
+        damage = attacker_power
+
+        hit_probability = 90 * 0.987 ** (target.fighter.defense)
 
         attack_desc = (
             f"{self.entity.name.capitalize()} shots at {self.target_actor.name}"
         )
 
+        if hit_probability < random.random() * 100:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but misses.", attack_color
+            )
+            return
+
         if damage > 0:
             self.engine.message_log.add_message(
                 f"{attack_desc} for {damage} hit points.", attack_color
             )
-            self.target_actor.fighter.hp -= damage
+            target.fighter.hp -= damage
+
+            # Check if the entity has status effects that can trigger on attack, and apply them.
+            if self.entity.status.status_effects:
+                for status_effect, chance in self.entity.status.status_effects:
+                    if random.random() < chance:
+                        status_effect.apply(target)
+
+            if target.fighter.bleeds:
+                set_bloody_tiles(self.engine, target)
         else:
             self.engine.message_log.add_message(
                 f"{attack_desc} but does no damage.", attack_color
