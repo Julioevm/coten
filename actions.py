@@ -203,7 +203,6 @@ class MeleeAction(ActionWithDirection):
         damage = self.entity.fighter.power
 
         hit_probability = 100 * 0.987 ** (target.fighter.defense * 10)
-        print(f"hit probability: {hit_probability}")
 
         attack_desc = f"{self.entity.name.capitalize()} attacks {target.name}"
 
