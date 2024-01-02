@@ -17,7 +17,10 @@ floor_map_generator = {
         max_rooms=12, room_min_size=8, room_max_size=12, **kwargs
     ),
     4: lambda **kwargs: generate_dungeon(
-        max_rooms=10, room_min_size=8, room_max_size=12, **kwargs
+        max_rooms=15, room_min_size=6, room_max_size=10, **kwargs
+    ),
+    6: lambda **kwargs: generate_dungeon(
+        max_rooms=10, room_min_size=8, room_max_size=16, **kwargs
     ),
     # Add more floors and corresponding functions with parameters as needed.
 }
