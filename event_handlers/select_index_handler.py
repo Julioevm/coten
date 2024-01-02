@@ -66,6 +66,7 @@ class SelectIndexHandler(AskUserEventHandler):
         """Called when an index is selected."""
         raise NotImplementedError()
 
+
 class LookHandler(SelectIndexHandler):
     """Lets the player look around using the keyboard."""
 
@@ -119,7 +120,7 @@ class AreaRangedAttackHandler(SelectIndexHandler):
             for tile_y in range(start_y, end_y):
                 # Check if the tile is within the circular radius
                 if (tile_x - x) ** 2 + (tile_y - y) ** 2 <= self.radius**2:
-                    console.tiles_rgb["bg"][tile_x, tile_y] = color.red
+                    console.rgb["bg"][tile_x, tile_y] = color.red
 
         # Mark the center tile with a special character or color
         center_mark_char = "+"  # Choose a character that stands out
@@ -128,4 +129,3 @@ class AreaRangedAttackHandler(SelectIndexHandler):
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
-
