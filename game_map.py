@@ -4,6 +4,7 @@ from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
 import numpy as np  # type: ignore
 from tcod.console import Console
+from components.consumable import HealingConsumable
 
 import tile_types
 from entity import Actor, Item
@@ -62,6 +63,16 @@ class GameMap:
     @property
     def items(self) -> Iterator[Item]:
         yield from (entity for entity in self.entities if isinstance(entity, Item))
+
+    @property
+    def healing_items(self) -> Iterator[Item]:
+        yield from (
+            entity
+            for entity in self.entities
+            if isinstance(entity, Item)
+            and entity.consumable
+            and isinstance(entity.consumable, HealingConsumable)
+        )
 
     def get_blocking_entity_at_location(
         self,
