@@ -62,11 +62,13 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (actor_factories.hound, 15),
     ],
     5: [
+        (actor_factories.zombie, 30),
         (actor_factories.ghoul, 30),
         (actor_factories.brute_zombie, 30),
         (actor_factories.hound, 30),
         (actor_factories.werewolf, 5),
     ],
+    6: [(actor_factories.vampire, 10), (actor_factories.hound, 40)],
     7: [
         (actor_factories.ghoul, 40),
         (actor_factories.brute_zombie, 35),

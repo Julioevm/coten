@@ -6,7 +6,7 @@ from components.fighter import Fighter
 from components.level import Level
 from components.status import Status
 from entity import Actor
-from status_effect import Grappled
+from status_effect import BloodDrain, Grappled
 
 player = Actor(
     char="@",
@@ -41,7 +41,7 @@ brute_zombie = Actor(
     equipment=Equipment(),
     fighter=Fighter(hp=16, base_defense=0, base_power=2, base_accuracy=90),
     inventory=Inventory(capacity=0),
-    level=Level(xp_given=80),
+    level=Level(xp_given=60),
     status=Status(status_effects=[(Grappled(), 90)]),
 )
 
@@ -53,7 +53,7 @@ hound = Actor(
     equipment=Equipment(),
     fighter=Fighter(hp=6, base_defense=15, base_power=4),
     inventory=Inventory(capacity=0),
-    level=Level(xp_given=50),
+    level=Level(xp_given=40),
     status=Status(),
 )
 
@@ -65,7 +65,7 @@ ghoul = Actor(
     equipment=Equipment(),
     fighter=Fighter(hp=14, base_defense=10, base_power=4),
     inventory=Inventory(capacity=0),
-    level=Level(xp_given=75),
+    level=Level(xp_given=80),
     status=Status(),
 )
 
@@ -78,7 +78,7 @@ skeleton_archer = Actor(
     equipment=Equipment(),
     fighter=Fighter(hp=6, base_defense=0, base_power=1, base_accuracy=60, bleeds=False),
     inventory=Inventory(capacity=0),
-    level=Level(xp_given=40),
+    level=Level(xp_given=35),
     status=Status(),
 )
 
@@ -90,6 +90,18 @@ werewolf = Actor(
     equipment=Equipment(),
     fighter=Fighter(hp=18, base_defense=30, base_power=6),
     inventory=Inventory(capacity=0),
-    level=Level(xp_given=160),
+    level=Level(xp_given=90),
     status=Status(),
+)
+
+vampire = Actor(
+    char="v",
+    color=(63, 127, 63),
+    name="Vampire",
+    ai_cls=BasicMeleeEnemyAI,
+    equipment=Equipment(),
+    fighter=Fighter(hp=16, base_defense=20, base_power=5),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=90),
+    status=Status(status_effects=[(BloodDrain(heal_amount=3), 90)]),
 )

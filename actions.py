@@ -231,7 +231,7 @@ class MeleeAction(ActionWithDirection):
             if self.entity.status.status_effects:
                 for status_effect, chance in self.entity.status.status_effects:
                     if random.random() < chance:
-                        status_effect.apply(target)
+                        status_effect.apply(target=target, entity=self.entity)
 
             if target.fighter.bleeds:
                 set_bloody_tiles(self.engine, target)
@@ -290,7 +290,7 @@ class RangedAttackAction(ActionWithRangedTarget):
             if self.entity.status.status_effects:
                 for status_effect, chance in self.entity.status.status_effects:
                     if random.random() < chance:
-                        status_effect.apply(target)
+                        status_effect.apply(target=target, entity=self.entity)
 
             if target.fighter.bleeds:
                 set_bloody_tiles(self.engine, target)

@@ -13,7 +13,7 @@ class StatusEffect:
         self.name = name
         self.duration = duration
 
-    def apply(self, entity: Actor):
+    def apply(self, entity: Actor, target: Actor):
         raise NotImplementedError()
 
     def remove(self, entity: Actor):
@@ -24,12 +24,29 @@ class Grappled(StatusEffect):
     def __init__(self, duration=1):
         super().__init__("grappled", duration)
 
-    def apply(self, entity: Actor):
+    def apply(self, entity: Actor, target: Actor):
         engine = entity.parent.engine
         # check if the entity is the player
-        if entity is engine.player and not entity.status.grappled:
+        if target is engine.player and not target.status.grappled:
             engine.message_log.add_message("You are being grappled!", color.yellow)
-        entity.status.grappled = self.duration
+        target.status.grappled = self.duration
+
+    def remove(self, entity: Actor):
+        entity.status.grappled = 0
+
+
+class BloodDrain(StatusEffect):
+    def __init__(self, heal_amount: int, duration=0):
+        self.heal_amount = heal_amount
+        super().__init__("blood drain", duration)
+
+    def apply(self, entity: Actor, target: Actor):
+        engine = entity.parent.engine
+        entity.fighter.heal(self.heal_amount)
+        if target is engine.player:
+            engine.message_log.add_message(
+                "{entity.name} is draining your blood!", color.yellow
+            )
 
     def remove(self, entity: Actor):
         entity.status.grappled = 0
