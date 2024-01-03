@@ -1,5 +1,7 @@
+import utils
 from typing import TYPE_CHECKING, List
 from exceptions import Impossible
+from map_gen import procgen
 from map_gen.debug_room import create_debug_room
 from map_gen.generate_cave import generate_cave
 from map_gen.generate_dungeon import generate_dungeon
@@ -45,6 +47,14 @@ class GameWorld:
         self.current_floor = current_floor
         self.floors: List[GameMap] = []
 
+    def set_fixed_items(self, items) -> None:
+        items = list(items)
+        fixed_items = procgen.get_fixed_items(self.current_floor)
+
+        # replace some items with the items in fixed_items if there are any
+        if len(fixed_items) > 0:
+            utils.replace_items_in_list(items, 0, fixed_items)
+
     def generate_floor(self) -> None:
         """Generate a new floor, using the corresponding floor generator function."""
         if self.engine.debug_mode:
@@ -66,6 +76,8 @@ class GameWorld:
         }
         # Generate the game map using the chosen generator function
         game_map = floor_generator(**additional_params)
+
+        self.set_fixed_items(game_map.items)
 
         self.floors.append(game_map)
         self.engine.game_map = game_map

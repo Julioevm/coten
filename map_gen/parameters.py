@@ -76,3 +76,22 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (actor_factories.werewolf, 10),
     ],
 }
+
+
+fixed_item_by_floor: Dict[int, List[Tuple[Entity, int]]] = {
+    1: [
+        (item_factories.health_potion, 1),
+    ],
+    2: [
+        (item_factories.health_potion, 2),
+    ],
+    3: [
+        (item_factories.health_potion, 2),
+    ],
+    4: [
+        (item_factories.great_health_potion, 1),
+    ],
+    5: [
+        (item_factories.great_health_potion, 1),
+    ],
+}

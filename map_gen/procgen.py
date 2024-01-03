@@ -76,6 +76,12 @@ def tunnel_between(
         yield x, y
 
 
+def get_fixed_items(floor: int) -> List[Entity]:
+    items_with_counts = parameters.fixed_item_by_floor.get(floor, [])
+    result = [item for item, count in items_with_counts for _ in range(count)]
+    return result
+
+
 def place_entities(room: Room, dungeon: GameMap, floor: int):
     """
     Place entities in a given room of a cave.
@@ -88,6 +94,7 @@ def place_entities(room: Room, dungeon: GameMap, floor: int):
 
     monsters = get_entities_at_random(parameters.enemy_chances, num_monsters, floor)
     items = get_entities_at_random(parameters.item_chances, num_items, floor)
+
 
     for entity in monsters + items:
         placed = False
