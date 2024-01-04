@@ -20,6 +20,7 @@ import item_factories
 from game_world import GameWorld
 
 import global_vars
+from turn_manager import TurnManager
 
 
 # Load the background image and remove the alpha channel.
@@ -40,6 +41,8 @@ def new_game() -> Engine:
         map_width=map_width,
         map_height=map_height,
     )
+    
+    engine.turn_manager = TurnManager()
 
     if global_vars.DEBUG_MODE:
         engine.game_world.load_prefab_map("debug_room")
