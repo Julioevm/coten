@@ -29,3 +29,5 @@ f shot ranged weapon
 / inspect surroundings (also mouse pointer)
 
 q quick heal (uses a potion from the inventory)
+
+< and > go downstairs or upstairs
