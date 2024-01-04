@@ -67,16 +67,15 @@ class Engine:
                             can_act = False
                             pass  # Ignore impossible action exceptions from AI.
 
-                if entity is entity.parent.engine.player and entity.fighter.next_action:
-                    if entity.fighter.next_action.can_perform:
-                        try:
-                            action = entity.fighter.next_action
-                            action.exhaust_energy()
-                            action.perform()
-                        except exceptions.Impossible as exc:
-                            self.message_log.add_message(exc.args[0], color.impossible)
-                            return False  # Skip enemy turn on exceptions.
-                            # Todo: Actually prevent turns on playe exceptions, for now they still happen.
+                elif entity is entity.parent.engine.player:
+                    try:
+                        action = entity.fighter.next_action
+                        action.exhaust_energy()
+                        action.perform()
+                    except exceptions.Impossible as exc:
+                        self.message_log.add_message(exc.args[0], color.impossible)
+                        return False  # Skip enemy turn on exceptions.
+                        # Todo: Actually prevent turns on playe exceptions, for now they still happen.
 
             if entity.status:
                 try:
