@@ -18,11 +18,13 @@ Arrows, VIM keys and numpad for movement.
 
 i Inventory
 
+g grab item
+
+d drop item
+
 c character sheet
 
 f shot ranged weapon
-
-d drop item
 
 / inspect surroundings (also mouse pointer)
 
