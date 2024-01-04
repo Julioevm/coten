@@ -12,7 +12,7 @@ player = Actor(
     char="@",
     color=(255, 255, 255),
     name="Player",
-    ai_cls=BasicMeleeEnemyAI,
+    ai_cls=None,
     equipment=Equipment(),
     fighter=Fighter(hp=30, base_defense=10, base_power=2),
     inventory=Inventory(capacity=26),
@@ -26,7 +26,9 @@ zombie = Actor(
     name="Zombie",
     ai_cls=BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=8, base_defense=0, base_power=2, base_accuracy=80),
+    fighter=Fighter(
+        hp=8, base_defense=0, base_power=2, base_accuracy=80, base_speed=70
+    ),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
     status=Status(status_effects=[(Grappled(), 90)]),
@@ -39,7 +41,9 @@ brute_zombie = Actor(
     name="Brute Zombie",
     ai_cls=BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=16, base_defense=0, base_power=2, base_accuracy=90),
+    fighter=Fighter(
+        hp=16, base_defense=0, base_power=3, base_accuracy=90, base_speed=60
+    ),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=60),
     status=Status(status_effects=[(Grappled(), 90)]),
@@ -47,13 +51,25 @@ brute_zombie = Actor(
 
 hound = Actor(
     char="h",
-    color=(0, 127, 0),
+    color=(48, 44, 21),
     name="Hound",
     ai_cls=BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=6, base_defense=15, base_power=4),
+    fighter=Fighter(hp=6, base_defense=15, base_power=3, base_speed=150),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=40),
+    status=Status(),
+)
+
+wolf = Actor(
+    char="w",
+    color=(88, 84, 61),
+    name="Wolf",
+    ai_cls=BasicMeleeEnemyAI,
+    equipment=Equipment(),
+    fighter=Fighter(hp=6, base_defense=20, base_power=4, base_speed=180),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=50),
     status=Status(),
 )
 
@@ -88,7 +104,7 @@ werewolf = Actor(
     name="Werewolf",
     ai_cls=BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=18, base_defense=30, base_power=6),
+    fighter=Fighter(hp=18, base_defense=30, base_power=6, base_speed=150),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=90),
     status=Status(),
@@ -100,7 +116,7 @@ vampire = Actor(
     name="Vampire",
     ai_cls=BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=16, base_defense=20, base_power=5),
+    fighter=Fighter(hp=16, base_defense=20, base_power=5, base_speed=120),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=90),
     status=Status(status_effects=[(BloodDrain(heal_amount=3), 90)]),
