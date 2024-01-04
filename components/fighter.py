@@ -8,6 +8,7 @@ from render_order import RenderOrder
 
 if TYPE_CHECKING:
     from entity import Actor
+    from actions import Action
 
 
 class Fighter(BaseComponent):
@@ -21,6 +22,7 @@ class Fighter(BaseComponent):
         base_defense: int,
         base_power: int,
         base_accuracy: int = 100,
+        base_speed=100,
         bleeds=True,
     ):
         self.max_hp = hp
@@ -28,9 +30,13 @@ class Fighter(BaseComponent):
         self.base_defense = base_defense
         self.base_power = base_power
         self.base_accuracy = base_accuracy
+        self.energy = 0
         self.power_boost = 0
         self.defense_boost = 0
+        self.base_speed = base_speed
         self.bleeds = bleeds
+
+        self.next_action: Action | None = None
 
     @property
     def hp(self) -> int:
@@ -39,7 +45,7 @@ class Fighter(BaseComponent):
     @hp.setter
     def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self.max_hp))
-        if self._hp == 0 and self.parent.ai:
+        if self._hp == 0:
             self.die()
 
     @property
@@ -75,6 +81,9 @@ class Fighter(BaseComponent):
         else:
             return 0
 
+    def regain_energy(self):
+        self.energy += self.base_speed
+
     def heal(self, amount: int) -> int:
         if self.hp == self.max_hp:
             return 0
@@ -105,6 +114,7 @@ class Fighter(BaseComponent):
         self.parent.color = self.parent.remains_color
         self.parent.blocks_movement = False
         self.parent.ai = None
+        self.parent.is_alive = False
         self.parent.name = f"remains of {self.parent.name}"
         self.parent.render_order = RenderOrder.CORPSE
 
