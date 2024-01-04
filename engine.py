@@ -13,6 +13,8 @@ import color
 import lzma
 import pickle
 
+from turn_manager import TurnManager
+
 if TYPE_CHECKING:
     from entity import Actor
     from game_map import GameMap
@@ -22,6 +24,7 @@ if TYPE_CHECKING:
 class Engine:
     game_map: GameMap
     game_world: GameWorld
+    turn_manager: TurnManager
 
     def __init__(self, player: Actor, debug_mode=False):
         self.debug_mode = debug_mode
@@ -35,14 +38,45 @@ class Engine:
         """Increase the turn counter"""
         self.current_turn += 1
 
-    def handle_enemy_turns(self) -> None:
-        """Iterate over all enemies, and for each one, call the enemy.ai.perform() method."""
-        for entity in set(self.game_map.actors) - {self.player}:
-            if entity.ai:
-                try:
-                    entity.ai.perform()
-                except exceptions.Impossible:
-                    pass  # Ignore impossible action exceptions from AI.
+    def start_turn(self) -> None:
+        """Give each entity energy to act, then add them to the turn manager."""
+        for entity in set(self.game_map.actors):
+            entity.fighter.regain_energy()
+
+        for entity in set(self.game_map.actors):
+            self.turn_manager.add_actor(entity)
+
+    def handle_entity_turns(self) -> None:
+        """Iterate over the entities and handle their actions."""
+
+        while self.turn_manager.has_actors:
+            entity = self.turn_manager.get_next_actor()
+
+            can_act = True
+            while entity and entity.fighter.energy > 0 and can_act:
+                can_act = False
+
+                if entity.ai:
+                    action = entity.ai.get_action()
+                    if action.can_perform:
+                        try:
+                            can_act = True
+                            action.exhaust_energy()
+                            action.perform()
+                        except exceptions.Impossible:
+                            can_act = False
+                            pass  # Ignore impossible action exceptions from AI.
+
+                if entity is entity.parent.engine.player and entity.fighter.next_action:
+                    if entity.fighter.next_action.can_perform:
+                        try:
+                            action = entity.fighter.next_action
+                            action.exhaust_energy()
+                            action.perform()
+                        except exceptions.Impossible as exc:
+                            self.message_log.add_message(exc.args[0], color.impossible)
+                            return False  # Skip enemy turn on exceptions.
+                            # Todo: Actually prevent turns on playe exceptions, for now they still happen.
 
             if entity.status:
                 try:

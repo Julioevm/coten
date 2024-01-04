@@ -6,10 +6,8 @@ from typing import Optional
 import tcod.event
 from actions import Action
 
-import color
 from engine import Engine
 from event_handlers.base_event_handler import BaseEventHandler
-import exceptions
 
 
 class EventHandler(BaseEventHandler):
@@ -44,21 +42,18 @@ class EventHandler(BaseEventHandler):
         if action is None:
             return False
 
-        try:
-            action.perform()
-        except exceptions.Impossible as exc:
-            self.engine.message_log.add_message(exc.args[0], color.impossible)
-            return False  # Skip enemy turn on exceptions.
+        self.engine.player.fighter.next_action = action
 
-        self.engine.player.status.process_active_effects()
+        self.engine.start_turn()
 
-        self.engine.handle_enemy_turns()
+        self.engine.handle_entity_turns()
 
         self.engine.process_scheduled_effects()
 
         self.engine.update_fov()
 
         self.engine.tick()
+
         return True
 
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
