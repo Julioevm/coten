@@ -90,6 +90,8 @@ class Entity:
 class Actor(Entity):
     """An entity that can act."""
 
+    _id_counter = 0
+
     def __init__(
         self,
         *,
@@ -99,13 +101,17 @@ class Actor(Entity):
         color: Tuple[int, int, int] = (255, 255, 255),
         remains_color: Tuple[int, int, int] = (191, 0, 0),
         name="<Unnamed>",
-        ai_cls: Type[BaseAI],
+        ai_cls: Type[BaseAI] | None,
         equipment: Equipment,
         fighter: Fighter,
         inventory: Inventory,
         level: Level,
         status: Status,
+        is_alive=True,
     ):
+        self.id = Actor._id_counter
+        self.is_alive = is_alive
+        Actor._id_counter += 1
         super().__init__(
             x=x,
             y=y,
@@ -116,7 +122,10 @@ class Actor(Entity):
             render_order=RenderOrder.ACTOR,
         )
 
-        self.ai: Optional[BaseAI] = ai_cls(self)
+        if ai_cls is not None:
+            self.ai = ai_cls(self)
+        else:
+            self.ai = None
 
         self.equipment: Equipment = equipment
         self.equipment.parent = self
@@ -135,10 +144,32 @@ class Actor(Entity):
 
         self.remains_color = remains_color
 
-    @property
-    def is_alive(self) -> bool:
-        """Returns True as long as this actor can perform actions."""
-        return bool(self.ai)
+    def __copy__(self):
+        # Create a shallow copy of the actor
+        cls = self.__class__
+        new_actor = cls.__new__(cls)
+        new_actor.__dict__.update(self.__dict__)
+
+        # Assign a new unique ID
+        new_actor.id = Actor._id_counter
+        Actor._id_counter += 1
+
+        return new_actor
+
+    def __deepcopy__(self, memo):
+        # Create a deep copy of the actor
+        cls = self.__class__
+        new_actor = cls.__new__(cls)
+        memo[id(self)] = new_actor
+
+        for k, v in self.__dict__.items():
+            setattr(new_actor, k, copy.deepcopy(v, memo))
+
+        # Assign a new unique ID
+        new_actor.id = Actor._id_counter
+        Actor._id_counter += 1
+
+        return new_actor
 
 
 class Item(Entity):
