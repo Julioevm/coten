@@ -13,7 +13,7 @@ class Status(BaseComponent):
 
     parent: Actor
 
-    def __init__(self, status_effects: list[tuple[StatusEffect, int]] = []):
+    def __init__(self, status_effects: list[Tuple[StatusEffect, int]] = []):
         self.is_grappled = 0
         # a list of tuples with a status effect, chance of triggering
         self.status_effects = status_effects
