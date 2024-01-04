@@ -13,14 +13,19 @@ if TYPE_CHECKING:
 
 
 class Action:
-    def __init__(self, entity: Actor) -> None:
+    def __init__(self, entity: Actor, cost: int = 100) -> None:
         super().__init__()
         self.entity = entity
+        self.cost = cost
 
     @property
     def engine(self) -> Engine:
         """Return the engine this action belongs to."""
         return self.entity.parent.engine
+
+    @property
+    def can_perform(self) -> bool:
+        return self.entity.fighter.energy >= self.cost
 
     def perform(self) -> None:
         """Perform this action with the objects needed to determine its scope.
@@ -32,6 +37,9 @@ class Action:
         This method must be overridden by Action subclasses.
         """
         raise NotImplementedError()
+
+    def exhaust_energy(self) -> None:
+        self.entity.fighter.energy -= self.cost
 
 
 class PickupAction(Action):
