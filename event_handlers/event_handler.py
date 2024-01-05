@@ -44,15 +44,9 @@ class EventHandler(BaseEventHandler):
 
         self.engine.player.fighter.next_action = action
 
-        self.engine.start_turn()
-
         self.engine.handle_entity_turns()
 
-        self.engine.process_scheduled_effects()
-
         self.engine.update_fov()
-
-        self.engine.tick()
 
         return True
 

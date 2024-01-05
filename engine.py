@@ -26,7 +26,7 @@ class Engine:
     game_world: GameWorld
     turn_manager: TurnManager
 
-    retrying = False
+    retry_turn = False
 
     def __init__(self, player: Actor, debug_mode=False):
         self.debug_mode = debug_mode
@@ -42,8 +42,6 @@ class Engine:
 
     def start_turn(self) -> None:
         """Give each entity energy to act, then add them to the turn manager."""
-        if self.retrying:
-            return
 
         for entity in set(self.game_map.actors):
             entity.fighter.regain_energy()
@@ -53,6 +51,9 @@ class Engine:
 
     def handle_entity_turns(self) -> None:
         """Iterate over the entities and handle their actions."""
+
+        if not self.retry_turn:
+            self.start_turn()
 
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
@@ -70,25 +71,30 @@ class Engine:
                             action.perform()
                         except exceptions.Impossible:
                             can_act = False
-                            pass  # Ignore impossible action exceptions from AI.
 
                 elif entity is entity.parent.engine.player:
                     try:
                         action = entity.fighter.next_action
                         action.perform()
                         action.exhaust_energy()
-                        self.retrying = False
+                        self.retry_turn = False
                     except exceptions.Impossible as exc:
+                        # If the action results in an impossible error, we want to retry the turn.
                         self.message_log.add_message(exc.args[0], color.impossible)
-                        self.turn_manager.add_actor(entity)
-                        self.retrying = True
-                        return False  # Skip enemy turn on exceptions.
+                        self.turn_manager.add_actor(
+                            entity
+                        )  # Add the player back to the turn manager.
+                        self.retry_turn = True
+                        return
 
             if entity.status:
                 try:
                     entity.status.process_active_effects()
                 except exceptions.Impossible:
                     pass  # Ignore impossible status exceptions from AI.
+
+            self.process_scheduled_effects()
+            self.tick()
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""
