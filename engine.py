@@ -26,6 +26,8 @@ class Engine:
     game_world: GameWorld
     turn_manager: TurnManager
 
+    retrying = False
+
     def __init__(self, player: Actor, debug_mode=False):
         self.debug_mode = debug_mode
         self.message_log = MessageLog()
@@ -40,6 +42,9 @@ class Engine:
 
     def start_turn(self) -> None:
         """Give each entity energy to act, then add them to the turn manager."""
+        if self.retrying:
+            return
+
         for entity in set(self.game_map.actors):
             entity.fighter.regain_energy()
 
@@ -70,12 +75,14 @@ class Engine:
                 elif entity is entity.parent.engine.player:
                     try:
                         action = entity.fighter.next_action
-                        action.exhaust_energy()
                         action.perform()
+                        action.exhaust_energy()
+                        self.retrying = False
                     except exceptions.Impossible as exc:
                         self.message_log.add_message(exc.args[0], color.impossible)
+                        self.turn_manager.add_actor(entity)
+                        self.retrying = True
                         return False  # Skip enemy turn on exceptions.
-                        # Todo: Actually prevent turns on playe exceptions, for now they still happen.
 
             if entity.status:
                 try:
