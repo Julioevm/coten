@@ -1,5 +1,6 @@
 DEBUG_MODE = False
+VERSION = "0.1"
 
 # Combat
 
-HIT_CHANCE_BASE =  0.987
+HIT_CHANCE_BASE = 0.987

@@ -18,6 +18,7 @@ from event_handlers.main_game_event_handler import MainGameEventHandler
 from event_handlers.pop_up_message_event_handler import PopupMessage
 import item_factories
 from game_world import GameWorld
+from global_vars import VERSION
 
 import global_vars
 from turn_manager import TurnManager
@@ -41,7 +42,7 @@ def new_game() -> Engine:
         map_width=map_width,
         map_height=map_height,
     )
-    
+
     engine.turn_manager = TurnManager()
 
     if global_vars.DEBUG_MODE:
@@ -98,6 +99,16 @@ class MainMenu(BaseEventHandler):
             "By Julio Valls",
             fg=color.menu_title,
             alignment=libtcodpy.CENTER,
+        )
+        # Version text
+        console.print(
+            console.width - 6,
+            console.height - 2,
+            VERSION,
+            fg=color.menu_title,
+            bg=color.black,
+            alignment=libtcodpy.CENTER,
+            bg_blend=libtcodpy.BKGND_ALPHA(64),
         )
 
         menu_width = 24
