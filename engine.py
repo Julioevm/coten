@@ -40,20 +40,37 @@ class Engine:
         """Increase the turn counter"""
         self.current_turn += 1
 
-    def start_turn(self) -> None:
-        """Give each entity energy to act, then add them to the turn manager."""
-
-        for entity in set(self.game_map.actors):
-            entity.fighter.regain_energy()
-
-        for entity in set(self.game_map.actors):
-            self.turn_manager.add_actor(entity)
-
     def handle_entity_turns(self) -> None:
         """Iterate over the entities and handle their actions."""
 
-        if not self.retry_turn:
-            self.start_turn()
+        # Handle player turn first
+        player = self.player
+
+        try:
+            action = player.fighter.next_action
+            action.perform()
+            action.exhaust_energy()
+            self.retry_turn = False
+        except exceptions.Impossible as exc:
+            # If the action results in an impossible error, we want to retry the turn.
+            self.message_log.add_message(exc.args[0], color.impossible)
+            self.retry_turn = True
+            return
+
+        player.status.process_active_effects()
+
+        # Since the player gets the act first, when he comsumes more energy than the the otehr actors,
+        # we should give a bonus to the other actos, to simulate having more energy.
+        # We could substract the entity.speed from the energy used by the player to get the excess energy and add it to the entity.
+        # E.g. player uses an action of 150 energy. The entity has speed of 100: 150 - 100 = 50 extra energy to add to it.
+        # All actions cost 100 for now so theres no difference at the moment.
+        for entity in set(self.game_map.actors):
+            entity.fighter.regain_energy()
+
+        for entity in set(self.game_map.actors) - {player}:
+            self.turn_manager.add_actor(entity)
+
+        # Handle other actors
 
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
@@ -71,21 +88,6 @@ class Engine:
                             action.perform()
                         except exceptions.Impossible:
                             can_act = False
-
-                elif entity is entity.parent.engine.player:
-                    try:
-                        action = entity.fighter.next_action
-                        action.perform()
-                        action.exhaust_energy()
-                        self.retry_turn = False
-                    except exceptions.Impossible as exc:
-                        # If the action results in an impossible error, we want to retry the turn.
-                        self.message_log.add_message(exc.args[0], color.impossible)
-                        self.turn_manager.add_actor(
-                            entity
-                        )  # Add the player back to the turn manager.
-                        self.retry_turn = True
-                        return
 
             if entity.status:
                 try:
