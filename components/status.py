@@ -40,7 +40,6 @@ class Status(BaseComponent):
 
     def process_active_effects(self):
         for status_effect in self.active_status_effects:
-            print(f" {status_effect} for {status_effect.duration} turns")
             status_effect.duration -= 1
             if status_effect.duration <= 0:
                 # Run the remove method on the status effect
