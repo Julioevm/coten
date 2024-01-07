@@ -314,7 +314,7 @@ class MovementAction(ActionWithDirection):
     def perform(self) -> None:
         dest_x, dest_y = self.dest_xy
 
-        is_grappled = self.entity.status.is_grappled
+        is_grappled = self.entity.status.grappled
 
         if is_grappled:
             raise Impossible("You can't move while being grappled!")

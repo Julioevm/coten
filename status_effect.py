@@ -29,7 +29,7 @@ class Grappled(StatusEffect):
         # check if the entity is the player
         if target is engine.player and not target.status.grappled:
             engine.message_log.add_message("You are being grappled!", color.yellow)
-        target.status.grappled = self.duration
+        target.status.set_active_status_effect(self, self.duration)
 
     def remove(self, entity: Actor):
         entity.status.grappled = 0
