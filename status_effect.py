@@ -1,4 +1,5 @@
 from __future__ import annotations
+from copy import deepcopy
 
 from typing import TYPE_CHECKING
 
@@ -30,7 +31,8 @@ class Grappled(StatusEffect):
         # check if the entity is the player
         if target is engine.player and not target.status.grappled:
             engine.message_log.add_message("You are being grappled!", color.yellow)
-        target.status.set_active_status_effect(self)
+        # Make sure to use deepcopy of the status effect to avoid changing the original
+        target.status.set_active_status_effect(deepcopy(self))
 
     def remove(self, entity: Actor):
         pass
@@ -46,7 +48,7 @@ class Confused(StatusEffect):
         if target is engine.player and not target.status.confused:
             engine.message_log.add_message("You are feeling confused!", color.yellow)
         engine.player.ai = ConfusedEnemy(target)
-        target.status.set_active_status_effect(self)
+        target.status.set_active_status_effect(deepcopy(self))
 
     def remove(self, entity: Actor):
         engine = entity.parent.engine
