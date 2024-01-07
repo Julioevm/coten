@@ -6,7 +6,7 @@ from components.fighter import Fighter
 from components.level import Level
 from components.status import Status
 from entity import Actor
-from status_effect import BloodDrain, Grappled
+from status_effect import BloodDrain, Confused, Grappled
 
 player = Actor(
     char="@",
@@ -120,4 +120,16 @@ vampire = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=90),
     status=Status(status_effects=[(BloodDrain(heal_amount=3), 90)]),
+)
+
+seducer = Actor(
+    char="S",
+    color=(220, 20, 60),
+    name="Seducer",
+    ai_cls=BasicMeleeEnemyAI,
+    equipment=Equipment(),
+    fighter=Fighter(hp=10, base_defense=10, base_power=3, base_speed=120),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=70),
+    status=Status(status_effects=[(Confused(duration=3), 30)]),
 )
