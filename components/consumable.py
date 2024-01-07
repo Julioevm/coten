@@ -11,6 +11,7 @@ from event_handlers.select_index_handler import (
     SingleRangedAttackHandler,
 )
 from exceptions import Impossible
+from status_effect import Confused
 
 if TYPE_CHECKING:
     from event_handlers.base_event_handler import ActionOrHandler
@@ -226,9 +227,5 @@ class ConfusionConsumable(Consumable):
             f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
             color.status_effect_applied,
         )
-        target.ai = components.ai.ConfusedEnemy(
-            entity=target,
-            previous_ai=target.ai,
-            turns_remaining=self.number_of_turns,
-        )
+        Confused(self.number_of_turns).apply(consumer, target)
         self.consume()

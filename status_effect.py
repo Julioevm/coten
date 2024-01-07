@@ -30,7 +30,7 @@ class Grappled(StatusEffect):
         # check if the entity is the player
         if target is engine.player and not target.status.grappled:
             engine.message_log.add_message("You are being grappled!", color.yellow)
-        target.status.set_active_status_effect(self, self.duration)
+        target.status.set_active_status_effect(self)
 
     def remove(self, entity: Actor):
         pass
@@ -42,11 +42,11 @@ class Confused(StatusEffect):
 
     def apply(self, entity: Actor, target: Actor):
         engine = entity.parent.engine
-        # check if the entity is the player
+
         if target is engine.player and not target.status.confused:
-            engine.message_log.add_message("You are confused!", color.yellow)
-            engine.player.ai = ConfusedEnemy(target)
-            target.status.set_active_status_effect(self, self.duration)
+            engine.message_log.add_message("You are feeling confused!", color.yellow)
+        engine.player.ai = ConfusedEnemy(target)
+        target.status.set_active_status_effect(self)
 
     def remove(self, entity: Actor):
         engine = entity.parent.engine

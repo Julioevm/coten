@@ -20,8 +20,8 @@ def create_debug_room(map_width: int, map_height: int, engine: Engine) -> GameMa
     dungeon.tiles[new_room.inner] = tile_types.floor
 
     # Place some items
-    fireball_scroll = deepcopy(item_factories.fireball_scroll)
-    fireball_scroll.place(new_room.x1 + 3, new_room.y1 + 1, dungeon)
+    confusion_scroll = deepcopy(item_factories.confusion_scroll)
+    confusion_scroll.place(new_room.x1 + 3, new_room.y1 + 1, dungeon)
 
     holy_water = deepcopy(item_factories.holy_water_vial)
     holy_water.place(new_room.x1 + 1, new_room.y1 + 2, dungeon)
