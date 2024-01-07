@@ -37,19 +37,18 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             string=f"XP for next Level: {player.level.experience_to_next_level}",
         )
 
-        if player.fighter.power_boost > 1:
-            console.print(
-                x=x + 1,
-                y=y + 4,
-                string=f"Attack: {player.fighter.base_power} + ({player.equipment.power_bonus}) + {player.fighter.power_boost}",
-                fg=color.power_boost,
-            )
-        else:
-            console.print(
-                x=x + 1,
-                y=y + 4,
-                string=f"Attack: {player.fighter.base_power} + ({player.equipment.power_bonus})",
-            )
+        power_string = (
+            f"Power: {player.fighter.base_power} + ({player.equipment.power_bonus})"
+        )
+
+        if player.fighter.power_boost > 0:
+            power_string += f" + {player.fighter.power_boost}"
+        console.print(
+            x=x + 1,
+            y=y + 4,
+            string=power_string,
+            fg=color.power_boost if player.fighter.power_boost > 0 else None,
+        )
 
         console.print(
             x=x + 1,
@@ -57,18 +56,17 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             string=f"Ranged: ({player.equipment.ranged_bonus})",
         )
 
-        if player.fighter.defense_boost > 1:
-            console.print(
-                x=x + 1,
-                y=y + 6,
-                string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus}) + {player.fighter.defense_boost}",
-                fg=color.defense_boost,
-            )
-        else:
-            console.print(
-                x=x + 1,
-                y=y + 6,
-                string=f"Defense: {player.fighter.base_defense} + ({player.equipment.defense_bonus})",
-            )
+        # the defense value displayed is only the 10% of the actual value, rounded
+
+        defense_string = f"Defense: {round(player.fighter.base_defense * 0.1)} + ({round(player.equipment.defense_bonus * 0.1)})"
+        if player.fighter.defense_boost > 0:
+            defense_string += f" + {round(player.fighter.defense_boost * 0.1)}"
+
+        console.print(
+            x=x + 1,
+            y=y + 6,
+            string=defense_string,
+            fg=color.defense_boost if player.fighter.defense_boost > 1 else None,
+        )
 
         console.print(x=x + 1, y=y + 7, string=f"Turns: {self.engine.current_turn}")
