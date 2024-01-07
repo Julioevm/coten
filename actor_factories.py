@@ -1,5 +1,5 @@
 """Library of different types of entities."""
-from components.ai import BasicMeleeEnemyAI, StaticRangedEnemy
+from components.ai import BasicMeleeEnemyAI, BatAI, StaticRangedEnemy
 from components.inventory import Inventory
 from components.equipment import Equipment
 from components.fighter import Fighter
@@ -71,6 +71,20 @@ wolf = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=50),
     status=Status(),
+)
+
+bat = Actor(
+    char="b",
+    color=(160, 160, 160),
+    name="Bat",
+    ai_cls=BatAI,
+    equipment=Equipment(),
+    fighter=Fighter(
+        hp=5, base_defense=0, base_power=2, base_accuracy=80, base_speed=110
+    ),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30),
+    status=Status(status_effects=[(BloodDrain(heal_amount=1), 90)]),
 )
 
 ghoul = Actor(

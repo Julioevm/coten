@@ -128,3 +128,55 @@ class StaticRangedEnemy(BaseAI):
             return RangedAttackAction(self.entity, (target.x, target.y))
 
         return WaitAction(self.entity)
+
+
+class BatAI(BaseAI):
+    """Bat ai flies around and at some point decides to attack the player, entering attack mode.
+    Then the ai will wait for a random period of time and then return to flying mode.
+    """
+
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+        self.path: List[Tuple[int, int]] = []
+        self.attacking = False
+        self.engage_timer = 0
+        self.engage_period = random.randint(3, 10)
+
+    def get_action(self) -> Action:
+        target = self.engine.player
+        dx = target.x - self.entity.x
+        dy = target.y - self.entity.y
+        distance = max(abs(dx), abs(dy))  # Chebyshev distance.
+
+        if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+            if distance <= 1:
+                return MeleeAction(self.entity, dx, dy)
+
+            if self.attacking:
+                self.path = self.get_path_to(target.x, target.y)
+
+                self.engage_timer += 1
+                if self.engage_timer >= self.engage_period:
+                    self.engage_timer = 0
+                    self.attacking = False
+            else:
+                # set path to a random direction
+                x = random.randint(-1, 1)
+                y = random.randint(-1, 1)
+
+                self.engage_timer += 1
+                if self.engage_timer >= self.engage_period:
+                    self.engage_timer = 0
+                    self.attacking = True
+
+                return BumpAction(self.entity, x, y)
+
+        if self.path:
+            dest_x, dest_y = self.path.pop(0)
+            return MovementAction(
+                self.entity,
+                dest_x - self.entity.x,
+                dest_y - self.entity.y,
+            )
+
+        return WaitAction(self.entity)

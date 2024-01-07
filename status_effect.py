@@ -66,7 +66,7 @@ class BloodDrain(StatusEffect):
         entity.fighter.heal(self.heal_amount)
         if target is engine.player:
             engine.message_log.add_message(
-                "{entity.name} is draining your blood!", color.yellow
+                f"{entity.name} is draining your blood!", color.yellow
             )
 
     def remove(self, entity: Actor):
