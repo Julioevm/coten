@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import color
+from components.ai import ConfusedEnemy
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -32,7 +33,25 @@ class Grappled(StatusEffect):
         target.status.set_active_status_effect(self, self.duration)
 
     def remove(self, entity: Actor):
-        entity.status.grappled = 0
+        pass
+
+
+class Confused(StatusEffect):
+    def __init__(self, duration=1):
+        super().__init__("confused", duration)
+
+    def apply(self, entity: Actor, target: Actor):
+        engine = entity.parent.engine
+        # check if the entity is the player
+        if target is engine.player and not target.status.confused:
+            engine.message_log.add_message("You are confused!", color.yellow)
+            engine.player.ai = ConfusedEnemy(target)
+            target.status.set_active_status_effect(self, self.duration)
+
+    def remove(self, entity: Actor):
+        engine = entity.parent.engine
+        engine.message_log.add_message("You are regaining your senses!", color.white)
+        engine.player.ai = None
 
 
 class BloodDrain(StatusEffect):

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple
 from components.base_component import BaseComponent
-from status_effect import Grappled
+from status_effect import Confused, Grappled
 
 
 if TYPE_CHECKING:
@@ -26,11 +26,23 @@ class Status(BaseComponent):
             isinstance(effect, Grappled) for effect, _ in self.active_status_effects
         )
 
+    @property
+    def confused(self) -> bool:
+        return any(
+            isinstance(effect, Confused) for effect, _ in self.active_status_effects
+        )
+
     def set_active_status_effect(self, status_effect: StatusEffect, duration: int):
         self.active_status_effects.append((status_effect, duration))
+
+    def remove_active_status_effect(self, status_effect: StatusEffect):
+        self.active_status_effects.remove((status_effect, status_effect.duration))
 
     def process_active_effects(self):
         for status_effect, duration in self.active_status_effects:
             status_effect.duration -= 1
             if status_effect.duration <= 0:
+                # Run the remove method on the status effect
+                status_effect.remove(self.parent)
+                # Remove the status effect from the list
                 self.active_status_effects.remove((status_effect, duration))
