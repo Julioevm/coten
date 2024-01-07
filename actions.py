@@ -6,6 +6,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 import color
 from exceptions import Impossible
 from global_vars import HIT_CHANCE_BASE
+from map_gen.map_utils import set_bloody_tiles
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -365,16 +366,3 @@ class QuickHealAction(Action):
             raise Impossible("You don't have any healing items.")
 
 
-def set_bloody_tiles(engine: Engine, target: Actor) -> None:
-    """Set the bloody tiles position for targeted entities."""
-    engine.game_map.bloody_tiles.add((target.x, target.y))
-    # Small random chance of adding one adjacent tile to the bloody tile list
-    if random.random() < 0.2:
-        adjacent_tiles = [
-            (target.x + 1, target.y),
-            (target.x - 1, target.y),
-            (target.x, target.y + 1),
-            (target.x, target.y - 1),
-        ]
-        random_tile = random.choice(adjacent_tiles)
-        engine.game_map.bloody_tiles.add(random_tile)

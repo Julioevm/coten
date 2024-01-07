@@ -75,7 +75,7 @@ wolf = Actor(
 
 bat = Actor(
     char="b",
-    color=(160, 160, 160),
+    color=(110, 110, 110),
     name="Bat",
     ai_cls=BatAI,
     equipment=Equipment(),

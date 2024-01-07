@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
 
-import actions
+from actions import ItemAction
 import color
 import components.inventory
 from components.base_component import BaseComponent
@@ -23,9 +23,9 @@ class Consumable(BaseComponent):
 
     def get_action(self, consumer: Actor) -> Optional[ActionOrHandler]:
         """Try to return the action for this item."""
-        return actions.ItemAction(consumer, self.parent)
+        return ItemAction(consumer, self.parent)
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         """Invoke this items ability.
 
         `action` is the context for this activation.
@@ -44,7 +44,7 @@ class HealingConsumable(Consumable):
     def __init__(self, amount: int):
         self.amount = amount
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         consumer = action.entity
         amount_recovered = consumer.fighter.heal(self.amount)
 
@@ -63,7 +63,7 @@ class DefenseBoostConsumable(Consumable):
         self.amount = amount
         self.duration = duration
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         consumer = action.entity
         if consumer.fighter:
             # Apply the defense boost
@@ -95,7 +95,7 @@ class PowerBoostConsumable(Consumable):
         self.amount = amount
         self.duration = duration
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         consumer = action.entity
         if consumer.fighter:
             # Apply the power boost
@@ -144,10 +144,10 @@ class AOEDamageConsumable(Consumable):
         return AreaRangedAttackHandler(
             self.engine,
             radius=self.radius,
-            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+            callback=lambda xy: ItemAction(consumer, self.parent, xy),
         )
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         target_xy = action.target_xy
 
         if not self.engine.game_map.visible[target_xy]:
@@ -176,7 +176,7 @@ class LightningDamageConsumable(Consumable):
         self.damage = damage
         self.maximum_range = maximum_range
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         consumer = action.entity
         target = None
         closest_distance = self.maximum_range + 1.0
@@ -209,10 +209,10 @@ class ConfusionConsumable(Consumable):
         )
         return SingleRangedAttackHandler(
             self.engine,
-            callback=lambda xy: actions.ItemAction(consumer, self.parent, xy),
+            callback=lambda xy: ItemAction(consumer, self.parent, xy),
         )
 
-    def activate(self, action: actions.ItemAction) -> None:
+    def activate(self, action: ItemAction) -> None:
         consumer = action.entity
         target = action.target_actor
 
