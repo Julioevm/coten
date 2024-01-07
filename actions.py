@@ -193,7 +193,7 @@ class ActionWithRangedTarget(Action):
     @property
     def is_target_clear(self) -> bool:
         """Return True if there are no entities blocking the path to the target."""
-        return self.entity.ai.is_line_of_sight_clear(
+        return self.engine.game_map.is_line_of_sight_clear(
             self.entity.x, self.entity.y, self.target_actor.x, self.target_actor.y
         )
 

@@ -54,23 +54,6 @@ class BaseAI(Action):
         # Convert from List[List[int]] to List[Tuple[int, int]].
         return [(index[0], index[1]) for index in path]
 
-    def is_line_of_sight_clear(
-        self, start_x: int, start_y: int, end_x: int, end_y: int
-    ) -> bool:
-        """Check if a straight line path is clear of obstacles."""
-        tiles = (
-            self.entity.parent.tiles
-        )  # Assumes you have a tiles structure similar to get_path_to
-        walkable = tiles["walkable"]
-
-        # Bresenham's Line Algorithm
-        points = tcod.los.bresenham(start=(start_x, start_y), end=(end_x, end_y))
-        for x, y in points:
-            # If the tile is not walkable, there is an obstacle in the way.
-            if not walkable[x, y]:
-                return False
-        return True
-
 
 class ConfusedEnemy(BaseAI):
     """

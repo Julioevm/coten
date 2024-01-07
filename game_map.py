@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
-import numpy as np  # type: ignore
+import numpy as np
+import tcod  # type: ignore
 from tcod.console import Console
 from components.consumable import HealingConsumable
 
@@ -136,6 +137,21 @@ class GameMap:
     def reveal_map(self) -> None:
         """Reveals the entire map."""
         self.explored = np.full((self.width, self.height), fill_value=True, order="F")
+
+    def is_line_of_sight_clear(
+        self, start_x: int, start_y: int, end_x: int, end_y: int
+    ) -> bool:
+        """Check if a straight line path is clear of obstacles."""
+        tiles = self.tiles  # Assumes you have a tiles structure similar to get_path_to
+        walkable = tiles["walkable"]
+
+        # Bresenham's Line Algorithm
+        points = tcod.los.bresenham(start=(start_x, start_y), end=(end_x, end_y))
+        for x, y in points:
+            # If the tile is not walkable, there is an obstacle in the way.
+            if not walkable[x, y]:
+                return False
+        return True
 
 
 def bloodify_tile(x: int, y: int, console: Console) -> None:
