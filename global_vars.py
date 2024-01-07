@@ -1,5 +1,5 @@
 DEBUG_MODE = False
-VERSION = "0.1"
+VERSION = "0.2.0"
 
 # Combat
 
