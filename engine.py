@@ -26,8 +26,6 @@ class Engine:
     game_world: GameWorld
     turn_manager: TurnManager
 
-    retry_turn = False
-
     def __init__(self, player: Actor, debug_mode=False):
         self.debug_mode = debug_mode
         self.message_log = MessageLog()
@@ -47,20 +45,19 @@ class Engine:
         player = self.player
 
         try:
-            action = player.fighter.next_action
+            # If the player is under a special AI behaviour ignore the user action
+            action = player.ai.get_action() if player.ai else player.fighter.next_action
             action.perform()
             action.exhaust_energy()
-            self.retry_turn = False
         except exceptions.Impossible as exc:
             # If the action results in an impossible error, we want to retry the turn.
             self.message_log.add_message(exc.args[0], color.impossible)
-            self.retry_turn = True
             return
 
         player.status.process_active_effects()
 
-        # Since the player gets the act first, when he comsumes more energy than the the otehr actors,
-        # we should give a bonus to the other actos, to simulate having more energy.
+        # Since the player gets the act first, when he comsumes more energy than the the other actors
+        # we should give a bonus to the other actos, to simulate having more time to act.
         # We could substract the entity.speed from the energy used by the player to get the excess energy and add it to the entity.
         # E.g. player uses an action of 150 energy. The entity has speed of 100: 150 - 100 = 50 extra energy to add to it.
         # All actions cost 100 for now so theres no difference at the moment.
@@ -95,8 +92,8 @@ class Engine:
                 except exceptions.Impossible:
                     pass  # Ignore impossible status exceptions from AI.
 
-            self.process_scheduled_effects()
-            self.tick()
+        self.process_scheduled_effects()
+        self.tick()
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""
