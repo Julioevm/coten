@@ -34,11 +34,10 @@ def main() -> None:
     debug_mode = "-debug" in sys.argv
 
     global_vars.DEBUG_MODE = debug_mode
-    title = (
-        "Castle of the eternal Night - DEBUG MODE"
-        if debug_mode
-        else "Castle of the eternal Night"
-    )
+    
+    title = "Castle of the eternal Night"
+    if debug_mode:
+        title += " - DEBUG MODE"
 
     with tcod.context.new_terminal(
         screen_width,
