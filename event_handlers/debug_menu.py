@@ -1,5 +1,7 @@
 from typing import Optional
 import tcod
+from actions import SpawnEnemiesAction
+import actor_factories
 from event_handlers.ask_user_event_handler import AskUserEventHandler
 
 from event_handlers.base_event_handler import ActionOrHandler
@@ -10,6 +12,7 @@ class DebugMenuEventHandler(AskUserEventHandler):
     debug_options = [
         "Reveal Map",
         "Heal Player",
+        "Spawn bats",
         # Add more debug options here
     ]
 
@@ -48,6 +51,8 @@ class DebugMenuEventHandler(AskUserEventHandler):
                 return self.reveal_map()
             if index == 1:  # Heal Player option
                 self.heal()
+            if index == 2:
+                self.spawn_bats()
             # Add more index checks here if you add more debug options
         return super().ev_keydown(event)
 
@@ -59,3 +64,7 @@ class DebugMenuEventHandler(AskUserEventHandler):
     def heal(self) -> None:
         """Heals the player to full health."""
         self.engine.player.fighter.heal(self.engine.player.fighter.max_hp)
+
+    def spawn_bats(self) -> None:
+        player = self.engine.player
+        SpawnEnemiesAction(player, actor_factories.bat, 3, 3).perform()

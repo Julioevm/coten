@@ -4,6 +4,7 @@ import random
 from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
+from entity import Actor
 from exceptions import Impossible
 from global_vars import HIT_CHANCE_BASE
 from map_gen.map_utils import set_bloody_tiles
@@ -366,3 +367,36 @@ class QuickHealAction(Action):
             raise Impossible("You don't have any healing items.")
 
 
+class SpawnEnemiesAction(Action):
+    def __init__(
+        self,
+        entity: Actor,
+        enemy: Actor,
+        area: int = 4,
+        number: int = 1,
+        cost: int = 100,
+    ) -> None:
+        self.enemy = enemy
+        self.area = area
+        self.number = number
+        super().__init__(entity, cost)
+
+    def perform(self) -> None:
+        # pick random number of empty walkable tiles within 'area' tiles
+        game_map = self.entity.gamemap
+        max_retries = 10
+        for _ in range(self.number):
+            valid = False
+            tries = 0  # Limit number of tries before giving up in case the are cant fit the enemies
+            while not valid and max_retries > tries:
+                tries += 1
+                x = random.randint(self.entity.x - self.area, self.entity.x + self.area)
+                y = random.randint(self.entity.y - self.area, self.entity.y + self.area)
+
+                if (
+                    self.engine.game_map.in_bounds(x, y)
+                    and self.engine.game_map.tiles["walkable"][x, y]
+                    and not self.engine.game_map.get_blocking_entity_at_location(x, y)
+                ):
+                    valid = True
+                    self.enemy.spawn(game_map, x, y)
