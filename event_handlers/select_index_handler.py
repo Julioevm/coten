@@ -13,11 +13,17 @@ import color
 class SelectIndexHandler(AskUserEventHandler):
     """Handles asking the user for an index on the map."""
 
-    def __init__(self, engine: Engine):
+    def __init__(self, engine: Engine, auto_target_enemies: bool = False):
         """Sets the cursor to the player when this handler is constructed."""
         super().__init__(engine)
         player = self.engine.player
-        engine.mouse_location = player.x, player.y
+
+        # get the closest enemy to the player
+        actor = engine.game_map.get_closest_actor(player.x, player.y)
+        if auto_target_enemies and actor:
+            engine.mouse_location = actor.x, actor.y
+        else:
+            engine.mouse_location = player.x, player.y
 
     def on_render(self, console: tcod.console.Console) -> None:
         """Highlight the tile under the cursor."""
@@ -81,7 +87,7 @@ class SingleRangedAttackHandler(SelectIndexHandler):
     def __init__(
         self, engine: Engine, callback: Callable[[Tuple[int, int]], Optional[Action]]
     ):
-        super().__init__(engine)
+        super().__init__(engine, auto_target_enemies=True)
 
         self.callback = callback
 

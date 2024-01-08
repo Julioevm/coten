@@ -97,6 +97,30 @@ class GameMap:
 
         return None
 
+    def is_in_fov(self, x: int, y: int):
+        return self.visible[x, y]
+
+    def get_actors_in_fov(self):
+        actors = set([])
+        for actor in self.actors:
+            if self.is_in_fov(actor.x, actor.y):
+                actors.add(actor)
+        return actors
+
+    def get_closest_actor(self, x: int, y: int) -> Optional[Actor]:
+        closest_distance = 100
+        closest_actor = None
+        for actor in self.get_actors_in_fov() - {self.engine.player}:
+            if actor.x == x and actor.y == y:
+                return actor
+            dx = actor.x - x
+            dy = actor.y - y
+            distance = distance = max(abs(dx), abs(dy))
+            if distance < closest_distance:
+                closest_distance = distance
+                closest_actor = actor
+        return closest_actor
+
     def get_item_at_location(self, x: int, y: int) -> Optional[Item]:
         return next((item for item in self.items if item.x == x and item.y == y), None)
 

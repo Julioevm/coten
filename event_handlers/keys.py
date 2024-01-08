@@ -47,4 +47,5 @@ CURSOR_Y_KEYS = {
 CONFIRM_KEYS = {
     tcod.event.KeySym.RETURN,
     tcod.event.KeySym.KP_ENTER,
+    tcod.event.KeySym.f,
 }
