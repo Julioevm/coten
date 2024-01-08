@@ -184,13 +184,13 @@ class ActionWithRangedTarget(Action):
         self.target_xy = target_xy
 
     @property
-    def target_actor(self) -> Optional[Actor]:
+    def target_actor(self) -> Actor:
         """Return the actor at this actions destination."""
         target = self.engine.game_map.get_actor_at_location(*self.target_xy)
 
         if target is None:
             raise Impossible("Nothing to target.")
-        return self.engine.game_map.get_actor_at_location(*self.target_xy)
+        return target
 
     @property
     def is_target_clear(self) -> bool:
@@ -260,12 +260,16 @@ class RangedAttackAction(ActionWithRangedTarget):
         if not self.is_target_clear:
             raise Impossible("You have no clear shot!")
 
+        if target is self.entity:
+            raise Impossible("You cannot attack yourself!")
+
         if self.entity is self.engine.player:
             attack_color = color.player_atk
             # only the player gets ranged attack from an item, monsters use the power value.
             attacker_power = self.entity.equipment.ranged_bonus
             ammo = self.entity.equipment.get_ammo_equippable
-            ammo.consume()
+            if ammo:
+                ammo.consume()
         else:
             attack_color = color.enemy_atk
             attacker_power = self.entity.fighter.power
