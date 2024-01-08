@@ -2,6 +2,7 @@
 from __future__ import annotations
 from typing import List, TYPE_CHECKING
 import random
+import entity_factories
 
 from map_gen.procgen import (
     place_entities,
@@ -54,7 +55,15 @@ def generate_dungeon(
             player.place(*new_room.center, dungeon)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
+            has_placed_door = False
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
+                tile = dungeon.tiles[x, y]
+
+                if not tile["walkable"] and not has_placed_door:
+                    print("Placing door at:", x, y)
+                    door = entity_factories.door
+                    door.place(x, y, dungeon)
+                    has_placed_door = True
                 dungeon.tiles[x, y] = tile_types.floor
 
         place_entities(new_room, dungeon, engine.game_world.current_floor)
