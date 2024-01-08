@@ -202,3 +202,24 @@ class Item(Entity):
 
         if self.equippable:
             self.equippable.parent = self
+
+
+class Door(Entity):
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        char: str = "+",
+        color: Tuple[int, int, int] = (255, 255, 255),
+        name: str = "Door",
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            char=char,
+            color=color,
+            name=name,
+            blocks_movement=False,
+            render_order=RenderOrder.DOOR,
+        )
