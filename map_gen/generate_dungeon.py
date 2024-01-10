@@ -54,14 +54,28 @@ def generate_dungeon(
             player.place(*new_room.center, dungeon)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
-            has_placed_door = False
+            has_placed_first_door = False
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 tile = dungeon.tiles[x, y]
 
-                if not tile["walkable"] and not has_placed_door:
-                    dungeon.tiles[x, y] = tile_types.closed_door
-                    has_placed_door = True
+                if tile == tile_types.closed_door:
                     continue
+
+                # From the start of the tunnel, the first non walkable tile is the wall we want
+                # to place the door on. But we have to check if there already
+                # are empty spaces around it.
+                if not tile["walkable"] and not has_placed_first_door:
+                    # check if the tile is surrounded by no more than 3 walking tiles
+                    walkable_count = len(
+                        list(dungeon.get_walkable_adjacent_tiles(x, y))
+                    )
+
+                    if walkable_count <= 3:
+                        dungeon.tiles[x, y] = tile_types.closed_door
+                        has_placed_first_door = True
+                        continue
+
+                # Todo: Add a door when reaching destination room
 
                 dungeon.tiles[x, y] = tile_types.floor
 

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import itertools
 
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
@@ -127,6 +128,28 @@ class GameMap:
     def in_bounds(self, x: int, y: int) -> bool:
         """Return True if x and y are inside of the bounds of this map."""
         return 0 <= x < self.width and 0 <= y < self.height
+
+    def get_walkable_adjacent_tiles(self, x: int, y: int) -> Iterator[tuple[int, int]]:
+        """Get all walkable adjacent tiles to the given (x, y) coordinate."""
+        for x_offset, y_offset in itertools.product((-1, 0, 1), (-1, 0, 1)):
+            if x_offset == 0 and y_offset == 0:
+                continue
+            if not self.in_bounds(x + x_offset, y + y_offset):
+                continue
+            if not self.tiles[x + x_offset, y + y_offset]["walkable"]:
+                continue
+            yield x + x_offset, y + y_offset
+
+    def has_adjacent_door_tiles(self, x: int, y: int) -> bool:
+        for x_offset, y_offset in itertools.product((-1, 0, 1), (-1, 0, 1)):
+            if x_offset == 0 and y_offset == 0:
+                continue
+            if not self.in_bounds(x + x_offset, y + y_offset):
+                continue
+            if not self.tiles[x + x_offset, y + y_offset] == tile_types.closed_door:
+                continue
+            return True
+        return False
 
     def render(self, console: Console) -> None:
         """
