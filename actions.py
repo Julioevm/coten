@@ -333,9 +333,7 @@ class MovementAction(ActionWithDirection):
             # check if the tile is of type door
 
             if self.engine.game_map.tiles[dest_x, dest_y] == tile_types.closed_door:
-                # Destination is a door.
-                # use a open door action
-                raise Impossible("The door is locked!")
+                return OpenDoorAction(self.entity, dest_x, dest_y).perform()
             # Destination is blocked by a tile.
             raise Impossible("That way is blocked.")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
@@ -358,6 +356,19 @@ class BumpAction(ActionWithDirection):
             return MeleeAction(self.entity, self.dx, self.dy).perform()
 
         return MovementAction(self.entity, self.dx, self.dy).perform()
+
+
+class OpenDoorAction(ActionWithDirection):
+    """This class opens a door."""
+
+    def perform(self) -> None:
+        if self.engine.game_map.tiles["walkable"][self.dx, self.dy]:
+            raise Impossible("The door is already open!")
+        if self.engine.game_map.tiles[self.dx, self.dy] == tile_types.closed_door:
+            self.engine.game_map.tiles[self.dx, self.dy] = tile_types.open_door
+            self.engine.message_log.add_message("You opened the door.")
+        else:
+            raise Impossible("The door is already open!")
 
 
 class QuickHealAction(Action):
