@@ -4,6 +4,7 @@ import random
 from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
+import tile_types
 from entity import Actor
 from exceptions import Impossible
 from global_vars import HIT_CHANCE_BASE
@@ -329,6 +330,12 @@ class MovementAction(ActionWithDirection):
             # Destination is out of bounds.
             raise Impossible("That way is blocked.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
+            # check if the tile is of type door
+
+            if self.engine.game_map.tiles[dest_x, dest_y] == tile_types.closed_door:
+                # Destination is a door.
+                # use a open door action
+                raise Impossible("The door is locked!")
             # Destination is blocked by a tile.
             raise Impossible("That way is blocked.")
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
