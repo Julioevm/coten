@@ -55,9 +55,9 @@ def generate_dungeon(
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             has_placed_first_door = False
+            has_placed_second_door = False
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 tile = dungeon.tiles[x, y]
-
                 if tile == tile_types.closed_door:
                     continue
 
@@ -75,7 +75,16 @@ def generate_dungeon(
                         has_placed_first_door = True
                         continue
 
-                # Todo: Add a door when reaching destination room
+                # when reaching the boundaries of the new_room add a door
+                if (new_room.is_within_bounds(x, y)) and not has_placed_second_door:
+                    walkable_count = len(
+                        list(dungeon.get_walkable_adjacent_tiles(x, y))
+                    )
+
+                    if walkable_count <= 4:
+                        dungeon.tiles[x, y] = tile_types.closed_door
+                        has_placed_second_door = True
+                        continue
 
                 dungeon.tiles[x, y] = tile_types.floor
 
