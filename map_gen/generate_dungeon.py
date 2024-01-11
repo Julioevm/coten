@@ -64,7 +64,13 @@ def generate_dungeon(
                 # From the start of the tunnel, the first non walkable tile is the wall we want
                 # to place the door on. But we have to check if there already
                 # are empty spaces around it.
-                if not tile["walkable"] and not has_placed_first_door:
+                inner_area = rooms[-1].inner
+                is_within_x_bounds = inner_area[0].start < x < inner_area[0].stop
+                is_within_y_bounds = inner_area[1].start < y < inner_area[1].stop
+
+                is_within_bounds = is_within_x_bounds and is_within_y_bounds
+
+                if not is_within_bounds and not has_placed_first_door:
                     # check if the tile is surrounded by no more than 3 walking tiles
                     walkable_count = len(
                         list(dungeon.get_walkable_adjacent_tiles(x, y))
