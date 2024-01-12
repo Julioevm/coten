@@ -45,7 +45,7 @@ class Engine:
         player = self.player
 
         try:
-            # If the player is under a special AI behaviour ignore the user action
+            # If the player is under a special AI behavior ignore the user action
             action = player.ai.get_action() if player.ai else player.fighter.next_action
             action.perform()
             action.exhaust_energy()
@@ -56,9 +56,9 @@ class Engine:
 
         player.status.process_active_effects()
 
-        # Since the player gets the act first, when he comsumes more energy than the the other actors
-        # we should give a bonus to the other actos, to simulate having more time to act.
-        # We could substract the entity.speed from the energy used by the player to get the excess energy and add it to the entity.
+        # Since the player gets the act first, when he consumes more energy than the the other actors
+        # we should give a bonus to the other actors, to simulate having more time to act.
+        # We could subtract the entity.speed from the energy used by the player to get the excess energy and add it to the entity.
         # E.g. player uses an action of 150 energy. The entity has speed of 100: 150 - 100 = 50 extra energy to add to it.
         # All actions cost 100 for now so theres no difference at the moment.
         for entity in set(self.game_map.actors):
