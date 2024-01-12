@@ -31,6 +31,7 @@ class MainGameEventHandler(EventHandler):
             InventoryDropHandler,
         )
         from event_handlers.select_index_handler import LookHandler
+        from event_handlers.help_menu import HelpMenu
 
         action: Optional[Action] = None
         key = event.sym
@@ -94,6 +95,9 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.KeySym.QUOTE and is_debug_mode:
             return DebugMenuEventHandler(self.engine)
+
+        elif key == tcod.event.KeySym.F1:
+            return HelpMenu(self.engine)
 
         # No valid key was pressed
         return action

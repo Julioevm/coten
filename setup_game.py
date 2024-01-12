@@ -61,6 +61,11 @@ def new_game() -> Engine:
         color.welcome_text,
     )
 
+    engine.message_log.add_message(
+        "Press F1 for help",
+        color.white,
+    )
+
     dagger = copy.deepcopy(item_factories.dagger)
     dagger.parent = player.inventory
 
