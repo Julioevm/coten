@@ -44,6 +44,13 @@ confusion_scroll = Item(
     consumable=consumable.ConfusionConsumable(number_of_turns=10),
 )
 
+map_scroll = Item(
+    char="~",
+    color=(255, 255, 255),
+    name="Magic Map",
+    consumable=consumable.MapRevealingConsumable(),
+)
+
 holy_water_vial = Item(
     char="!",
     color=(220, 220, 255),

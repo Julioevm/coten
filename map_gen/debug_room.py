@@ -23,6 +23,9 @@ def create_debug_room(map_width: int, map_height: int, engine: Engine) -> GameMa
     confusion_scroll = deepcopy(item_factories.confusion_scroll)
     confusion_scroll.place(new_room.x1 + 3, new_room.y1 + 1, dungeon)
 
+    map_item = deepcopy(item_factories.map_scroll)
+    map_item.place(new_room.x1 + 4, new_room.y1 + 1, dungeon)
+
     holy_water = deepcopy(item_factories.holy_water_vial)
     holy_water.place(new_room.x1 + 1, new_room.y1 + 2, dungeon)
 

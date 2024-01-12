@@ -229,3 +229,10 @@ class ConfusionConsumable(Consumable):
         )
         Confused(self.number_of_turns).apply(consumer, target)
         self.consume()
+
+
+class MapRevealingConsumable(Consumable):
+    def activate(self, action: ItemAction) -> None:
+        self.engine.message_log.add_message("The map reveals the layout of this floor!")
+        self.engine.game_map.reveal_map()
+        self.consume()
