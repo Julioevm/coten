@@ -47,13 +47,16 @@ class Confused(StatusEffect):
 
         if target is engine.player and not target.status.confused:
             engine.message_log.add_message("You are feeling confused!", color.yellow)
-        engine.player.ai = ConfusedEnemy(target)
+        target.ai = ConfusedEnemy(target)
         target.status.set_active_status_effect(deepcopy(self))
 
     def remove(self, entity: Actor):
         engine = entity.parent.engine
-        engine.message_log.add_message("You are regaining your senses!", color.white)
-        engine.player.ai = None
+        if entity == engine.player:
+            engine.message_log.add_message(
+                "You are regaining your senses!", color.white
+            )
+        entity.restore_ai()
 
 
 class BloodDrain(StatusEffect):

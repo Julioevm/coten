@@ -123,6 +123,7 @@ class Actor(Entity):
         )
 
         if ai_cls is not None:
+            self.original_ai = ai_cls
             self.ai = ai_cls(self)
         else:
             self.ai = None
@@ -170,6 +171,10 @@ class Actor(Entity):
         Actor._id_counter += 1
 
         return new_actor
+
+    def restore_ai(self):
+        """Restore the original AI."""
+        self.ai = self.original_ai(self)
 
 
 class Item(Entity):
