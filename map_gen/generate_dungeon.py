@@ -58,8 +58,6 @@ def generate_dungeon(
             has_placed_second_door = False
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 tile = dungeon.tiles[x, y]
-                if tile == tile_types.closed_door:
-                    continue
 
                 # From the start of the tunnel, the first non walkable tile is the wall we want
                 # to place the door on. But we have to check if there already
@@ -69,29 +67,24 @@ def generate_dungeon(
                 is_within_y_bounds = inner_area[1].start < y < inner_area[1].stop
 
                 is_within_bounds = is_within_x_bounds and is_within_y_bounds
+                walkable_count = len(list(dungeon.get_walkable_adjacent_tiles(x, y)))
 
                 if not is_within_bounds and not has_placed_first_door:
                     # check if the tile is surrounded by no more than 3 walking tiles
-                    walkable_count = len(
-                        list(dungeon.get_walkable_adjacent_tiles(x, y))
-                    )
-
-                    if walkable_count <= 3:
+                    if walkable_count <= 4:
                         dungeon.tiles[x, y] = tile_types.closed_door
                         has_placed_first_door = True
                         continue
 
                 # when reaching the boundaries of the new_room add a door
                 if (new_room.is_within_bounds(x, y)) and not has_placed_second_door:
-                    walkable_count = len(
-                        list(dungeon.get_walkable_adjacent_tiles(x, y))
-                    )
-
                     if walkable_count <= 4:
                         dungeon.tiles[x, y] = tile_types.closed_door
                         has_placed_second_door = True
                         continue
 
+                if tile == tile_types.closed_door and not walkable_count <= 5:
+                    continue
                 dungeon.tiles[x, y] = tile_types.floor
 
         place_entities(new_room, dungeon, engine.game_world.current_floor)
