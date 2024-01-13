@@ -2,6 +2,7 @@
 from __future__ import annotations
 from typing import List, TYPE_CHECKING
 import random
+from map_gen.ellipsis_room import EllipsisRoom
 
 from map_gen.procgen import (
     place_entities,
@@ -15,6 +16,7 @@ import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
+    from base_room import Room
 
 
 def generate_dungeon(
@@ -29,7 +31,7 @@ def generate_dungeon(
     player = engine.player
     dungeon = GameMap(engine, map_width, map_height, entities=[player], name="Crypt")
 
-    rooms: List[RectangularRoom] = []
+    rooms: List[Room] = []
 
     for _r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
@@ -38,8 +40,11 @@ def generate_dungeon(
         x = random.randint(0, dungeon.width - room_width - 1)
         y = random.randint(0, dungeon.height - room_height - 1)
 
-        # "RectangularRoom" class makes rectangles easier to work with
-        new_room = RectangularRoom(x, y, room_width, room_height)
+        if random.random() > 0.8:
+            # Theres a chance of the room being an ellipsis, use only with to keep them as circles.
+            new_room = EllipsisRoom(x, y, room_width, room_width)
+        else:
+            new_room = RectangularRoom(x, y, room_width, room_height)
 
         # Run through the other rooms and see if they intersect with this one.
         if any(new_room.intersects(other_room) for other_room in rooms):
@@ -47,7 +52,8 @@ def generate_dungeon(
         # If there are no intersections then the room is valid.
 
         # Dig out this rooms inner area.
-        dungeon.tiles[new_room.inner] = tile_types.floor
+        for x, y in new_room.get_inner_points():
+            dungeon.tiles[x, y] = tile_types.floor
 
         if len(rooms) == 0:
             # The first room, where the player starts.

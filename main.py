@@ -34,7 +34,7 @@ def main() -> None:
     debug_mode = "-debug" in sys.argv
 
     global_vars.DEBUG_MODE = debug_mode
-    
+
     title = "Castle of the eternal Night"
     if debug_mode:
         title += " - DEBUG MODE"

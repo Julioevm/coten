@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple
+from typing import Iterator, Tuple
 
 from map_gen.base_room import Room
 
@@ -15,3 +15,9 @@ class RectangularRoom(Room):
     def is_within_bounds(self, x: int, y: int) -> bool:
         """Return True if the x and y coordinates are inside this room."""
         return self.x1 <= x <= self.x2 and self.y1 <= y <= self.y2
+
+    def get_inner_points(self) -> Iterator[Tuple[int, int]]:
+        """Yield points (x, y) that are inside the room."""
+        for x in range(self.x1 + 1, self.x2):
+            for y in range(self.y1 + 1, self.y2):
+                yield (x, y)

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Tuple
+from typing import Iterator, Tuple
 
 
 class Room:
@@ -22,8 +22,12 @@ class Room:
     def inner(self) -> Tuple[slice, slice]:
         raise NotImplementedError("Inner property needs to be implemented.")
 
+    def get_inner_points(self) -> Iterator[Tuple[int, int]]:
+        """Yield points (x, y) that are inside the room."""
+        raise NotImplementedError("get_inner_points function needs to be implemented.")
+    
     def intersects(self, other: Room) -> bool:
-        """Return True if this room overlaps with another RectangularRoom."""
+        """Return True if this room overlaps with another Rectangular Room."""
         return (
             self.x1 <= other.x2
             and self.x2 >= other.x1
