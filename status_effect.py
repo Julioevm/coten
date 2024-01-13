@@ -73,4 +73,4 @@ class BloodDrain(StatusEffect):
             )
 
     def remove(self, entity: Actor):
-        entity.status.grappled = 0
+        pass
