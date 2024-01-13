@@ -1,8 +1,8 @@
 """Library of different types of entities."""
 import components.ai
-from components.inventory import Inventory
 from components.equipment import Equipment
 from components.fighter import Fighter
+from components.inventory import Inventory
 from components.level import Level
 from components.status import Status
 from entity import Actor
@@ -18,6 +18,20 @@ player = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     status=Status(),
+)
+
+bat = Actor(
+    char="b",
+    color=(110, 110, 110),
+    name="Bat",
+    ai_cls=components.ai.BatAI,
+    equipment=Equipment(),
+    fighter=Fighter(
+        hp=5, base_defense=0, base_power=2, base_accuracy=80, base_speed=110
+    ),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=30),
+    status=Status(status_effects=[(BloodDrain(heal_amount=1), 90)]),
 )
 
 zombie = Actor(
@@ -71,20 +85,6 @@ wolf = Actor(
     inventory=Inventory(capacity=0),
     level=Level(xp_given=50),
     status=Status(),
-)
-
-bat = Actor(
-    char="b",
-    color=(110, 110, 110),
-    name="Bat",
-    ai_cls=components.ai.BatAI,
-    equipment=Equipment(),
-    fighter=Fighter(
-        hp=5, base_defense=0, base_power=2, base_accuracy=80, base_speed=110
-    ),
-    inventory=Inventory(capacity=0),
-    level=Level(xp_given=30),
-    status=Status(status_effects=[(BloodDrain(heal_amount=1), 90)]),
 )
 
 ghoul = Actor(

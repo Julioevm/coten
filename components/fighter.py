@@ -7,8 +7,8 @@ from components.base_component import BaseComponent
 from render_order import RenderOrder
 
 if TYPE_CHECKING:
-    from entity import Actor
     from actions import Action
+    from entity import Actor
 
 
 class Fighter(BaseComponent):
@@ -24,6 +24,7 @@ class Fighter(BaseComponent):
         base_accuracy: int = 100,
         base_speed=100,
         bleeds=True,
+        on_death: Action | None = None,
     ):
         self.max_hp = hp
         self._hp = hp
@@ -37,6 +38,7 @@ class Fighter(BaseComponent):
         self.bleeds = bleeds
 
         self.next_action: Action | None = None
+        self.on_death = on_death
 
     @property
     def hp(self) -> int:
@@ -121,3 +123,6 @@ class Fighter(BaseComponent):
         self.engine.message_log.add_message(death_message, death_message_color)
 
         self.engine.player.level.add_xp(self.parent.level.xp_given)
+
+        if self.on_death:
+            self.on_death.perform()
