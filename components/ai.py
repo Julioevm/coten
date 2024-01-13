@@ -11,10 +11,13 @@ from actions import (
     BumpAction,
     MeleeAction,
     MovementAction,
+    PounceAction,
     RangedAttackAction,
     SpawnEnemiesAction,
     WaitAction,
 )
+
+from exceptions import Impossible
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -28,12 +31,19 @@ class BaseAI(Action):
         self.get_action().perform()
 
     def get_path_to(self, dest_x: int, dest_y: int) -> List[Tuple[int, int]]:
+        from game_map import GameMap
+
         """Compute and return a path to the target position.
 
         If there is no valid path then returns an empty list.
         """
+
+        if isinstance(self.entity.parent, GameMap):
+            game_map = self.entity.parent
+        else:
+            raise Impossible("Can't get path to entity without a parent GameMap.")
         # Copy the walkable array.
-        cost = np.array(self.entity.parent.tiles["walkable"], dtype=np.int8)
+        cost = np.array(game_map.tiles["walkable"], dtype=np.int8)
 
         for entity in self.entity.parent.entities:
             # Check that an enitiy blocks movement and the cost isn't zero (blocking.)
@@ -206,6 +216,39 @@ class VampireAI(BaseAI):
 
             if distance <= 1:
                 return MeleeAction(self.entity, dx, dy)
+
+            self.path = self.get_path_to(target.x, target.y)
+
+        if self.path:
+            dest_x, dest_y = self.path.pop(0)
+            return MovementAction(
+                self.entity,
+                dest_x - self.entity.x,
+                dest_y - self.entity.y,
+            )
+
+        return WaitAction(self.entity)
+
+
+class WerewolfAI(BaseAI):
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
+        self.path: List[Tuple[int, int]] = []
+
+    def get_action(self) -> Action:
+        target = self.engine.player
+        dx = target.x - self.entity.x
+        dy = target.y - self.entity.y
+        distance = max(abs(dx), abs(dy))  # Chebyshev distance.
+
+        if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+            if distance <= 1:
+                return MeleeAction(self.entity, dx, dy)
+            elif distance <= 3:
+                # When close to the player, the werewolf will Pounce at the player
+                # check the closest tile to the player in self.path and if its empty
+                # then Pounce.
+                return PounceAction(self.entity, (target.x, target.y))
 
             self.path = self.get_path_to(target.x, target.y)
 

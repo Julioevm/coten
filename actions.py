@@ -315,6 +315,49 @@ class RangedAttackAction(ActionWithRangedTarget):
             )
 
 
+class PounceAction(ActionWithRangedTarget):
+    """Pounce towards a ranged target."""
+
+    def perform(self) -> None:
+        target = self.target_actor
+        if not target:
+            raise Impossible("Nothing to attack.")
+
+        damage = self.entity.fighter.power
+
+        hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
+            target.fighter.defense
+        )
+
+        attack_desc = (
+            f"{self.entity.name.capitalize()} fiercely pounds at {target.name}!"
+        )
+
+        if self.entity is self.engine.player:
+            attack_color = color.player_atk
+        else:
+            attack_color = color.enemy_atk
+
+        if hit_probability < random.random() * 100:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but misses.", attack_color
+            )
+            return
+
+        if damage > 0:
+            self.engine.message_log.add_message(
+                f"{attack_desc} for {damage} hit points.", attack_color
+            )
+            target.fighter.hp -= damage
+
+            if target.fighter.bleeds:
+                set_bloody_tiles(self.engine, target)
+        else:
+            self.engine.message_log.add_message(
+                f"{attack_desc} but does no damage.", attack_color
+            )
+
+
 class MovementAction(ActionWithDirection):
     """Action for moving an entity."""
 
@@ -342,10 +385,9 @@ class MovementAction(ActionWithDirection):
 
         self.entity.move(self.dx, self.dy)
 
-        if self.engine.game_map.get_item_at_location(dest_x, dest_y):
-            self.engine.message_log.add_message(
-                f"There is a {self.engine.game_map.get_item_at_location(dest_x, dest_y).name} here."
-            )
+        item = self.engine.game_map.get_item_at_location(dest_x, dest_y)
+        if item is not None:
+            self.engine.message_log.add_message(f"There is a {item.name} here.")
 
 
 class BumpAction(ActionWithDirection):
