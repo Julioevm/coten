@@ -3,7 +3,7 @@ name: Build Windows Executable
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
         uses: Nuitka/Nuitka-Action@main
         with:
           nuitka-version: main
-          script-name: main
+          script-name: main.py
           onefile: true
           standalone: true
           include-data-dir: assets=assets
