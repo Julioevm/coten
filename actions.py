@@ -318,6 +318,12 @@ class RangedAttackAction(ActionWithRangedTarget):
 class PounceAction(ActionWithRangedTarget):
     """Pounce towards a ranged target."""
 
+    def __init__(
+        self, entity: Actor, target_xy: Tuple[int, int], next_to_target: Tuple[int, int]
+    ):
+        super().__init__(entity, target_xy)
+        self.next_to_target = next_to_target
+
     def perform(self) -> None:
         target = self.target_actor
         if not target:
@@ -337,6 +343,10 @@ class PounceAction(ActionWithRangedTarget):
             attack_color = color.player_atk
         else:
             attack_color = color.enemy_atk
+
+        # Move the attacker next to the player
+        self.entity.x = self.next_to_target[0]
+        self.entity.y = self.next_to_target[1]
 
         if hit_probability < random.random() * 100:
             self.engine.message_log.add_message(

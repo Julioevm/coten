@@ -116,7 +116,7 @@ werewolf = Actor(
     char="W",
     color=(230, 230, 230),
     name="Werewolf",
-    ai_cls=components.ai.BasicMeleeEnemyAI,
+    ai_cls=components.ai.WerewolfAI,
     equipment=Equipment(),
     fighter=Fighter(hp=18, base_defense=30, base_power=6, base_speed=150),
     inventory=Inventory(capacity=0),

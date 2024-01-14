@@ -245,10 +245,13 @@ class WerewolfAI(BaseAI):
             if distance <= 1:
                 return MeleeAction(self.entity, dx, dy)
             elif distance <= 3:
-                # When close to the player, the werewolf will Pounce at the player
-                # check the closest tile to the player in self.path and if its empty
-                # then Pounce.
-                return PounceAction(self.entity, (target.x, target.y))
+                # Check if the tile next to the target is empty
+                next_to_target = self.get_next_tile_to_target(target.x, target.y)
+                if self.is_tile_empty(next_to_target):
+                    # When close to the player, the werewolf will Pounce at the player
+                    return PounceAction(
+                        self.entity, (target.x, target.y), next_to_target
+                    )
 
             self.path = self.get_path_to(target.x, target.y)
 
@@ -261,3 +264,23 @@ class WerewolfAI(BaseAI):
             )
 
         return WaitAction(self.entity)
+
+    def get_next_tile_to_target(self, target_x: int, target_y: int) -> Tuple[int, int]:
+        # Calculate the direction vector from the entity to the target
+        dir_x, dir_y = target_x - self.entity.x, target_y - self.entity.y
+        # Normalize the direction vector to length 1 (if it's not 0,0)
+        if dir_x != 0:
+            dir_x //= abs(dir_x)
+        if dir_y != 0:
+            dir_y //= abs(dir_y)
+        # Get the next tile to the target based on the direction vector
+        return target_x - dir_x, target_y - dir_y
+
+    def is_tile_empty(self, tile: Tuple[int, int]) -> bool:
+        x, y = tile
+        # Check if the tile is walkable and there are no blocking entities on it
+        return self.engine.game_map.tiles["walkable"][x, y] and not any(
+            entity
+            for entity in self.engine.game_map.entities
+            if entity.blocks_movement and entity.x == x and entity.y == y
+        )
