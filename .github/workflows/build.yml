@@ -41,8 +41,6 @@ jobs:
           include-data-dir: assets=assets
           output-file: coten
           disable-console: true
-          # Conditionally add --macos-create-app-bundle for macOS
-          if: matrix.os == 'macos-latest'
           macos-create-app-bundle: true
 
       - name: Upload Artifacts
