@@ -38,7 +38,7 @@ jobs:
           script-name: main
           onefile: true
           standalone: true
-          include-data-dir: assets
+          include-data-dir: assets=assets
           output-file: coten
           disable-console: true
 
