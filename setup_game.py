@@ -3,7 +3,9 @@ from __future__ import annotations
 
 import copy
 import lzma
+import os
 import pickle
+import sys
 import traceback
 from typing import Optional
 
@@ -25,7 +27,16 @@ from turn_manager import TurnManager
 
 
 # Load the background image and remove the alpha channel.
-background_image = tcod.image.load("menu_background.png")[:, :, :3]
+# This tries to open the file bundled in the executable or the current directory
+try:
+    background_image = tcod.image.load(
+        os.path.join(os.path.dirname(__file__), "assets/menu_background.png"),
+    )[:, :, :3]
+
+except NameError:
+    background_image = tcod.image.load(
+        os.path.join(os.path.dirname(sys.argv[0]), "assets/menu_background.png")
+    )[:, :, :3]
 
 
 def new_game() -> Engine:

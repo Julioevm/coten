@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 import traceback
 import tcod
@@ -24,9 +25,21 @@ def main() -> None:
     screen_width = 80
     screen_height = 50
 
-    tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
-    )
+    # This tries to open the file bundled in the executable or the current directory
+    try:
+        tileset = tcod.tileset.load_tilesheet(
+            os.path.join(os.path.dirname(__file__), "assets/dejavu10x10_gs_tc.png"),
+            32,
+            8,
+            tcod.tileset.CHARMAP_TCOD,
+        )
+    except NameError:
+        tileset = tcod.tileset.load_tilesheet(
+            os.path.join(os.path.dirname(sys.argv[0]), "assets/dejavu10x10_gs_tc.png"),
+            32,
+            8,
+            tcod.tileset.CHARMAP_TCOD,
+        )
 
     handler: BaseEventHandler = setup_game.MainMenu()
 
