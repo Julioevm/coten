@@ -42,6 +42,7 @@ jobs:
           output-file: coten
           disable-console: true
           macos-create-app-bundle: true
+          assume-yes-for-downloads: true
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
