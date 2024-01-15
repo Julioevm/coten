@@ -1,18 +1,17 @@
 from __future__ import annotations
 
+import lzma
+import pickle
 from typing import TYPE_CHECKING, Callable
 
+from tcod import libtcodpy
 from tcod.console import Console
 from tcod.map import compute_fov
 
-import exceptions
-from message_log import MessageLog
-import render_functions
 import color
-
-import lzma
-import pickle
-
+import exceptions
+import render_functions
+from message_log import MessageLog
 from turn_manager import TurnManager
 
 if TYPE_CHECKING:
@@ -98,9 +97,10 @@ class Engine:
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""
         self.game_map.visible[:] = compute_fov(
-            self.game_map.tiles["transparent"],
-            (self.player.x, self.player.y),
+            transparency=self.game_map.tiles["transparent"],
+            pov=(self.player.x, self.player.y),
             radius=8,
+            algorithm=libtcodpy.FOV_SYMMETRIC_SHADOWCAST,
         )
         # If a tile is "visible" it should be added to "explored".
         self.game_map.explored |= self.game_map.visible
