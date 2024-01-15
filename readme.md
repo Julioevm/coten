@@ -14,6 +14,8 @@ Run `python main.py`
 
 Arrows, VIM keys and numpad for movement.
 
+F1 show help menu
+
 . Wait turn
 
 i Inventory
@@ -31,3 +33,12 @@ f shot ranged weapon
 q quick heal (uses a potion from the inventory)
 
 < and > go downstairs or upstairs
+
+
+## Develop
+
+You can build a local executable with the following command:
+
+`nuitka --standalone --onefile --disable-console --include-data-dir=assets=assets --output-filename=coten  main.py`
+
+Note: You cant use python > 3.11 for the build, as it is not yet supported.
