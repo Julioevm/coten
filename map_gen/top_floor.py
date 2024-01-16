@@ -2,6 +2,7 @@ from copy import deepcopy
 from game_map import GameMap
 from map_gen.ellipsis_room import EllipsisRoom
 import tile_types
+import actor_factories
 
 from engine import Engine
 
@@ -24,6 +25,9 @@ def create_top_floor(map_width: int, map_height: int, engine: Engine) -> GameMap
         game_map.tiles[x, y] = tile_types.floor
 
     player.place(*new_room.center, game_map)
+
+    vampire_lord = deepcopy(actor_factories.vampire_lord)
+    vampire_lord.place(map_width // 2, 10, game_map)
 
     game_map.tiles[new_room.center] = tile_types.down_stairs
     game_map.downstairs_location = new_room.center

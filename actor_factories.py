@@ -136,6 +136,18 @@ vampire = Actor(
     status=Status(status_effects=[(BloodDrain(heal_amount=3), 90)]),
 )
 
+vampire_lord = Actor(
+    char="V",
+    color=(63, 127, 63),
+    name="Vampire Lord",
+    ai_cls=components.ai.VampireAI,
+    equipment=Equipment(),
+    fighter=Fighter(hp=30, base_defense=25, base_power=8, base_speed=130),
+    inventory=Inventory(capacity=0),
+    level=Level(xp_given=180),
+    status=Status(status_effects=[(BloodDrain(heal_amount=5), 90)]),
+)
+
 seducer = Actor(
     char="S",
     color=(220, 20, 60),
