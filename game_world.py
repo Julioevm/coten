@@ -1,15 +1,26 @@
-import utils
 from typing import TYPE_CHECKING, List
+
+import utils
+from engine import Engine
 from exceptions import Impossible
+import color
 from map_gen import procgen
 from map_gen.debug_room import create_debug_room
 from map_gen.generate_cave import generate_cave
 from map_gen.generate_dungeon import generate_dungeon
-
-from engine import Engine
+from map_gen.top_floor import create_top_floor
 
 if TYPE_CHECKING:
     from game_map import GameMap
+
+prefab_maps = {
+    "debug_room": create_debug_room,
+    "top_floor": create_top_floor,
+}
+
+world_prefabs = {
+    10: "top_floor",
+}
 
 floor_map_generator = {
     0: lambda **kwargs: generate_cave(
@@ -86,12 +97,20 @@ class GameWorld:
         self.engine.game_map = game_map
 
     def load_prefab_map(self, map_name: str) -> None:
-        game_map = create_debug_room(
-            map_width=self.map_width, map_height=self.map_height, engine=self.engine
-        )
+        params = {
+            "map_width": self.map_width,
+            "map_height": self.map_height,
+            "engine": self.engine,
+        }
+
+        map_generator = prefab_maps[map_name]
+
+        if map_generator is None:
+            raise Impossible(f"Prefab map {map_name} not found!")
+
+        game_map = map_generator(**params)
         self.floors.append(game_map)
         self.engine.game_map = game_map
-        self.engine.game_map.reveal_map()
 
     def load_floor(self, floor: int) -> None:
         """
@@ -121,3 +140,36 @@ class GameWorld:
             stairs[1],
             self.engine.game_map,
         )
+
+    def descend(self) -> None:
+        self.engine.game_world.load_floor(self.engine.game_world.current_floor - 1)
+
+        self.engine.message_log.add_message("You descend the staircase.", color.ascend)
+
+    def ascend(self) -> None:
+        next_floor = self.engine.game_world.current_floor + 1
+        if len(self.engine.game_world.floors) < next_floor:
+            # Load a prefab map if there is one
+            if world_prefabs.get(next_floor):
+                if self.engine.debug_mode:
+                    print(f"Loading prefab map {world_prefabs[next_floor]}")
+
+                self.engine.game_world.load_prefab_map(world_prefabs[next_floor])
+                self.engine.game_world.current_floor += 1
+
+                # Get the downstairs location to place the player
+                stairs = self.engine.game_map.downstairs_location
+
+                self.engine.player.place(
+                    stairs[0],
+                    stairs[1],
+                    self.engine.game_map,
+                )
+            else:
+                # If we're on the last existing floor, and there's no prefab map, we generate a new one.
+                self.engine.game_world.current_floor += 1
+                self.engine.game_world.generate_floor()
+        else:
+            self.engine.game_world.load_floor(next_floor)
+
+        self.engine.message_log.add_message("You ascend the staircase.", color.ascend)
