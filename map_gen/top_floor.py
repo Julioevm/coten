@@ -1,9 +1,7 @@
 from copy import deepcopy
 from game_map import GameMap
 from map_gen.ellipsis_room import EllipsisRoom
-from map_gen.rectangular_room import RectangularRoom
 import tile_types
-import item_factories
 
 from engine import Engine
 
