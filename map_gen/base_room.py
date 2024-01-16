@@ -18,14 +18,16 @@ class Room:
 
         return center_x, center_y
 
-    @property
-    def inner(self) -> Tuple[slice, slice]:
-        raise NotImplementedError("Inner property needs to be implemented.")
+    def is_within_inner_bounds(self, x: int, y: int) -> bool:
+        """Return True if the x and y coordinates are inside this room."""
+        raise NotImplementedError(
+            "is_within_inner_bounds function needs to be implemented."
+        )
 
     def get_inner_points(self) -> Iterator[Tuple[int, int]]:
         """Yield points (x, y) that are inside the room."""
         raise NotImplementedError("get_inner_points function needs to be implemented.")
-    
+
     def intersects(self, other: Room) -> bool:
         """Return True if this room overlaps with another Rectangular Room."""
         return (
