@@ -21,6 +21,7 @@ class Level(BaseComponent):
     ):
         self.current_level = current_level
         self.current_xp = current_xp
+        self.total_xp = 0
         self.level_up_base = level_up_base
         self.level_up_factor = level_up_factor
         self.xp_given = xp_given
@@ -38,6 +39,7 @@ class Level(BaseComponent):
             return
 
         self.current_xp += xp
+        self.total_xp += xp
 
         self.engine.message_log.add_message(f"You gain {xp} experience points.")
 
