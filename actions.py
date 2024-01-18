@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 class Action:
     def __init__(self, entity: Actor) -> None:
-        super().__init__()
         self.entity = entity
 
     @property
@@ -41,8 +40,7 @@ class EnergyAction(Action):
     """An action with an energy cost. Most actor actions will inherit from this."""
 
     def __init__(self, entity: Actor, cost: int = 100) -> None:
-        super().__init__()
-        self.entity = entity
+        super().__init__(entity=entity)
         self.cost = cost
 
     @property
