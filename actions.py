@@ -16,6 +16,30 @@ if TYPE_CHECKING:
 
 
 class Action:
+    def __init__(self, entity: Actor) -> None:
+        super().__init__()
+        self.entity = entity
+
+    @property
+    def engine(self) -> Engine:
+        """Return the engine this action belongs to."""
+        return self.entity.parent.engine
+
+    def perform(self) -> None:
+        """Perform this action with the objects needed to determine its scope.
+
+        `self.engine` is the scope this action is being performed in.
+
+        `self.entity` is the object performing the action.
+
+        This method must be overridden by Action subclasses.
+        """
+        raise NotImplementedError()
+
+
+class EnergyAction(Action):
+    """An action with an energy cost. Most actor actions will inherit from this."""
+
     def __init__(self, entity: Actor, cost: int = 100) -> None:
         super().__init__()
         self.entity = entity
@@ -45,7 +69,12 @@ class Action:
         self.entity.fighter.energy -= self.cost
 
 
-class PickupAction(Action):
+class VictoryAction(Action):
+    def perform(self) -> None:
+        self.engine.victory = True
+
+
+class PickupAction(EnergyAction):
     """Pickup an item and add it to the inventory, if there is room for it."""
 
     def __init__(self, entity: Actor):
@@ -71,7 +100,7 @@ class PickupAction(Action):
         raise Impossible("There is nothing here to pick up.")
 
 
-class ItemAction(Action):
+class ItemAction(EnergyAction):
     def __init__(
         self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
     ):
@@ -100,7 +129,7 @@ class DropItem(ItemAction):
         self.entity.inventory.drop(self.item)
 
 
-class EquipAction(Action):
+class EquipAction(EnergyAction):
     def __init__(self, entity: Actor, item: Item):
         super().__init__(entity)
 
@@ -110,12 +139,12 @@ class EquipAction(Action):
         self.entity.equipment.toggle_equip(self.item)
 
 
-class WaitAction(Action):
+class WaitAction(EnergyAction):
     def perform(self) -> None:
         pass
 
 
-class TakeStairsAction(Action):
+class TakeStairsAction(EnergyAction):
     def perform(self) -> None:
         """
         Take the stairs, if any exist at the entity's location.
@@ -128,7 +157,7 @@ class TakeStairsAction(Action):
             raise Impossible("There are no stairs here.")
 
 
-class ActionWithDirection(Action):
+class ActionWithDirection(EnergyAction):
     """An action with a direction."""
 
     def __init__(self, entity: Actor, dx: int, dy: int):
@@ -156,7 +185,7 @@ class ActionWithDirection(Action):
         raise NotImplementedError()
 
 
-class ActionWithRangedTarget(Action):
+class ActionWithRangedTarget(EnergyAction):
     """An action with a ranged targeted entity."""
 
     def __init__(self, entity: Actor, target_xy: Tuple[int, int]):
@@ -403,7 +432,7 @@ class OpenDoorAction(ActionWithDirection):
             raise Impossible("The door is already open!")
 
 
-class QuickHealAction(Action):
+class QuickHealAction(EnergyAction):
     """Use a healing item from your inventory."""
 
     def perform(self) -> None:
@@ -421,7 +450,7 @@ class QuickHealAction(Action):
             raise Impossible("You don't have any healing items.")
 
 
-class SpawnEnemiesAction(Action):
+class SpawnEnemiesAction(EnergyAction):
     def __init__(
         self,
         entity: Actor,
