@@ -1,5 +1,6 @@
 """Library of different types of entities."""
 import components.ai
+from actions import VictoryAction
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
@@ -147,6 +148,8 @@ vampire_lord = Actor(
     level=Level(xp_given=180),
     status=Status(status_effects=[(BloodDrain(heal_amount=5), 90)]),
 )
+
+vampire_lord.fighter.on_death = VictoryAction(vampire_lord)
 
 seducer = Actor(
     char="S",
