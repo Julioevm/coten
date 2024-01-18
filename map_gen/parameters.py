@@ -7,6 +7,9 @@ import item_factories
 if TYPE_CHECKING:
     from entity import Entity
 
+# These parameters are used up to the next floor in the lists.
+# Something in floor 1 will be used in floor 2, etc.
+# Unless you override the values in the lists.
 max_items_by_floor = [
     (1, 1),
     (4, 2),
@@ -19,6 +22,11 @@ max_monsters_by_floor = [
     (6, 5),
 ]
 
+
+# These parameters are used up to the next floor in the lists.
+# Something in floor 1 will be used in floor 2, etc.
+# Unless you override the weights in the lists.
+# To remove an item, set its weight to 0.
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [
         (item_factories.health_potion, 30),
@@ -85,7 +93,7 @@ enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     ],
 }
 
-
+# This is explicit per level, they don't carry over.
 fixed_item_by_floor: Dict[int, List[Tuple[Entity, int]]] = {
     1: [
         (item_factories.health_potion, 1),
