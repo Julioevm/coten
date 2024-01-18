@@ -32,6 +32,7 @@ class Engine:
         self.player = player
         self.current_turn = 0
         self.scheduled_effects = []
+        self.victory = False
 
     def tick(self) -> None:
         """Increase the turn counter"""
