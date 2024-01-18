@@ -17,7 +17,10 @@ class EventHandler(BaseEventHandler):
     def handle_events(self, event: tcod.event.Event) -> BaseEventHandler:
         """Handle events for input handlers with an engine."""
         from event_handlers.main_game_event_handler import MainGameEventHandler
-        from event_handlers.game_over_event_handler import GameOverEventHandler
+        from event_handlers.game_over_event_handler import (
+            GameOverEventHandler,
+            VictoryEventHandler,
+        )
         from event_handlers.level_up_event_handler import LevelUpEventHandler
 
         action_or_state = self.dispatch(event)
@@ -28,6 +31,10 @@ class EventHandler(BaseEventHandler):
             if not self.engine.player.is_alive:
                 # The player was killed sometime during or after the action.
                 return GameOverEventHandler(self.engine)
+
+            if self.engine.victory:
+                return VictoryEventHandler(self.engine)
+
             if self.engine.player.level.requires_level_up:
                 return LevelUpEventHandler(self.engine)
 
