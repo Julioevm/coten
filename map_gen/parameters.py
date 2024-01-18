@@ -3,9 +3,11 @@ from __future__ import annotations
 from typing import Dict, List, Tuple, TYPE_CHECKING
 import actor_factories
 import item_factories
+from map_gen import encounter_factories
 
 if TYPE_CHECKING:
     from entity import Entity
+    from map_gen.encounter import Encounter
 
 # These parameters are used up to the next floor in the lists.
 # Something in floor 1 will be used in floor 2, etc.
@@ -22,6 +24,13 @@ max_monsters_by_floor = [
     (6, 5),
 ]
 
+max_encounters_by_floor = [
+    (1, 1),
+    (3, 2),
+    (4, 2),
+    (5, 3),
+    (7, 4),
+]
 
 # These parameters are used up to the next floor in the lists.
 # Something in floor 1 will be used in floor 2, etc.
@@ -110,4 +119,9 @@ fixed_item_by_floor: Dict[int, List[Tuple[Entity, int]]] = {
     5: [
         (item_factories.great_health_potion, 1),
     ],
+}
+
+
+floor_encounters: Dict[int, List[Tuple[Encounter, int]]] = {
+    1: [(encounter_factories.hound_pack, 90)],
 }
