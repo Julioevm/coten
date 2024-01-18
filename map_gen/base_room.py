@@ -18,6 +18,10 @@ class Room:
 
         return center_x, center_y
 
+    @property
+    def size(self) -> int:
+        raise NotImplementedError("size function needs to be implemented.")
+
     def is_within_inner_bounds(self, x: int, y: int) -> bool:
         """Return True if the x and y coordinates are inside this room."""
         raise NotImplementedError(

@@ -2,8 +2,10 @@ from __future__ import annotations
 import random
 from typing import List, Tuple
 
+from map_gen.base_room import Room
 
-class CaveLikeRoom:
+
+class CaveLikeRoom(Room):
     """A cave-like room on the map using cellular automata."""
 
     def __init__(
@@ -76,6 +78,12 @@ class CaveLikeRoom:
                         if filled_neighbors > 5:
                             new_grid[y][x] = 1  # Become filled if surrounded
             self.grid = new_grid
+
+    @property
+    def size(self) -> int:
+        """Return the size of this cave-like room, which is the count of filled tiles."""
+        filled_tiles = sum(tile == 1 for row in self.grid for tile in row)
+        return filled_tiles
 
     @property
     def inner(self) -> List[List[int]]:

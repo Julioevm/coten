@@ -1,4 +1,5 @@
 from __future__ import annotations
+import math
 from typing import Iterator, Tuple
 
 from map_gen.base_room import Room
@@ -6,6 +7,16 @@ from map_gen.base_room import Room
 
 class EllipsisRoom(Room):
     """An ellipsis-shaped room on the map."""
+
+    @property
+    def size(self) -> int:
+        # Radii of the ellipse
+        a = (self.x2 - self.x1) / 2
+        b = (self.y2 - self.y1) / 2
+        # Calculate the area of the ellipse
+        area = math.pi * a * b
+        # Since we want the area in terms of the number of tiles, we round to the nearest integer
+        return int(round(area))
 
     def is_within_inner_bounds(self, x: int, y: int) -> bool:
         """Return True if the x and y coordinates are inside this room."""
