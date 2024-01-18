@@ -46,8 +46,8 @@ class GameMap:
             (width, height), fill_value=False, order="F"
         )  # Tiles the player has seen before
 
-        self.upstairs_location = (0, 0)
-        self.downstairs_location = (0, 0)
+        self.upstairs_location: tuple[int, int] = (0, 0)
+        self.downstairs_location: tuple[int, int] = (0, 0)
 
     @property
     def gamemap(self) -> GameMap:
