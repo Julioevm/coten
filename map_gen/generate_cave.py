@@ -2,8 +2,11 @@
 from __future__ import annotations
 from typing import List, TYPE_CHECKING
 import random
+from map_gen import parameters
 from map_gen.cave_room import CaveLikeRoom
 from map_gen.procgen import (
+    get_max_value_for_floor,
+    place_encounter,
     place_entities,
     tunnel_between,
 )
@@ -35,8 +38,11 @@ def generate_cave(
         fill_wall_tile=tile_types.cave_wall,
         name="Cave",
     )
-
+    DUNGEON_ENCOUNTER_CHANCE = 0.1
     rooms: List[CaveLikeRoom] = []
+    floor = engine.game_world.current_floor
+    max_encounters = get_max_value_for_floor(parameters.max_encounters_by_floor, floor)
+    current_encounters = 0
 
     for _r in range(max_rooms):
         room_width = random.randint(room_min_size, room_max_size)
@@ -76,7 +82,17 @@ def generate_cave(
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.dirt_floor
 
-        place_entities(new_room, dungeon, engine.game_world.current_floor)
+        if (
+            current_encounters < max_encounters
+            and len(rooms) > 0  # Skip first room
+            and random.random() < DUNGEON_ENCOUNTER_CHANCE
+        ):
+            print("Trying to place encounter...")
+            if place_encounter(new_room, dungeon, floor):
+                current_encounters += 1
+
+            else:
+                place_entities(new_room, dungeon, floor)
 
         rooms.append(new_room)
 
