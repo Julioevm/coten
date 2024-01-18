@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from entity import Entity
     from game_map import GameMap
     from map_gen.base_room import Room
+    from map_gen.encounter import Encounter
 
 
 def get_max_value_for_floor(
@@ -56,6 +57,32 @@ def get_entities_at_random(
     return chosen_entities
 
 
+def get_encounter_for_level(
+    floor: int,
+) -> Encounter:
+    """Get an encounter for a given floor."""
+    entity_weighted_chances = {}
+
+    for key, values in parameters.floor_encounters.items():
+        if key > floor:
+            break
+
+        for value in values:
+            entity = value[0]
+            weighted_chance = value[1]
+
+            entity_weighted_chances[entity] = weighted_chance
+
+    encounters = list(entity_weighted_chances.keys())
+    entity_weighted_chance_values = list(entity_weighted_chances.values())
+
+    chose_encounter = random.choices(encounters, weights=entity_weighted_chance_values)[
+        0
+    ]
+
+    return chose_encounter
+
+
 def tunnel_between(
     start: Tuple[int, int], end: Tuple[int, int]
 ) -> Iterator[Tuple[int, int]]:
@@ -95,7 +122,6 @@ def place_entities(room: Room, dungeon: GameMap, floor: int):
     monsters = get_entities_at_random(parameters.enemy_chances, num_monsters, floor)
     items = get_entities_at_random(parameters.item_chances, num_items, floor)
 
-
     for entity in monsters + items:
         placed = False
         while not placed:
@@ -107,3 +133,30 @@ def place_entities(room: Room, dungeon: GameMap, floor: int):
             ):
                 entity.spawn(dungeon, x, y)
                 placed = True
+
+
+def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
+    """
+    Place an encounter in a given room of a cave. Return true if the room is suitable.
+    """
+
+    encounter = get_encounter_for_level(floor)
+
+    if not encounter.is_room_suitable(room):
+        return False
+
+    encounter_entities = encounter.enemies + encounter.items
+
+    for entity in encounter_entities:
+        placed = False
+        while not placed:
+            x = random.randint(room.x1 + 1, room.x2 - 1)
+            y = random.randint(room.y1 + 1, room.y2 - 1)
+
+            if dungeon.tiles[x, y]["walkable"] and not any(
+                e.x == x and e.y == y for e in dungeon.entities
+            ):
+                entity.spawn(dungeon, x, y)
+                placed = True
+
+    return True
