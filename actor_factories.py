@@ -66,7 +66,7 @@ brute_zombie = Actor(
 
 hound = Actor(
     char="h",
-    color=(48, 44, 21),
+    color=(68, 64, 41),
     name="Hound",
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
