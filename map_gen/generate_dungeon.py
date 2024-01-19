@@ -97,16 +97,16 @@ def generate_dungeon(
                 dungeon.tiles[x, y] = tile_types.floor
 
         if (
-            current_encounters < max_encounters
+            current_encounters <= max_encounters
             and len(rooms) > 0  # Skip first room
             and random.random() < DUNGEON_ENCOUNTER_CHANCE
         ):
-            print("Trying to place encounter...")
             if place_encounter(new_room, dungeon, floor):
                 current_encounters += 1
-
             else:
                 place_entities(new_room, dungeon, floor)
+        else:
+            place_entities(new_room, dungeon, floor)
 
         rooms.append(new_room)
 
