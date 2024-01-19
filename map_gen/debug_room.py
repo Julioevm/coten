@@ -32,6 +32,9 @@ def create_debug_room(map_width: int, map_height: int, engine: Engine) -> GameMa
     bow = deepcopy(item_factories.bow)
     bow.place(new_room.x1 + 12, new_room.y1 + 12, dungeon)
 
+    crossbow = deepcopy(item_factories.crossbow)
+    crossbow.place(new_room.x1 + 13, new_room.y1 + 12, dungeon)
+
     arrows = deepcopy(item_factories.arrows)
     arrows.place(new_room.x1 + 14, new_room.y1 + 14, dungeon)
 

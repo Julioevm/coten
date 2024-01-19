@@ -65,21 +65,16 @@ class Sword(Equippable):
 
 
 class Bow(Ranged):
-    def __init__(self) -> None:
+    def __init__(self, ammo_type=AmmoType.ARROW, ranged_bonus=2) -> None:
         super().__init__(
-            ammo_type=AmmoType.ARROW,
-            ranged_bonus=3,
+            ammo_type=ammo_type,
+            ranged_bonus=ranged_bonus,
         )
 
 
 class Arrows(Ammo):
-    def __init__(self) -> None:
-        super().__init__(ammo_type=AmmoType.ARROW, amount=20)
-
-
-class Bolts(Ammo):
-    def __init__(self) -> None:
-        super().__init__(ammo_type=AmmoType.BOLT, amount=15)
+    def __init__(self, ammo_type=AmmoType.ARROW, amount=15) -> None:
+        super().__init__(ammo_type=ammo_type, amount=amount)
 
 
 class LeatherArmor(Equippable):

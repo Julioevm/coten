@@ -1,6 +1,7 @@
 """Factory functions to create item instances."""
 from components import consumable, equippable
 from entity import Item
+from equipment_types import AmmoType
 
 health_potion = Item(
     char="!",
@@ -84,12 +85,22 @@ axe = Item(char="/", color=(0, 191, 255), name="Axe", equippable=equippable.Axe(
 
 bow = Item(char=")", color=(80, 191, 255), name="Bow", equippable=equippable.Bow())
 
+crossbow = Item(
+    char=")",
+    color=(80, 191, 175),
+    name="Crossbow",
+    equippable=equippable.Bow(ammo_type=AmmoType.BOLT, ranged_bonus=3),
+)
+
 arrows = Item(
     char="=", color=(80, 191, 255), name="Arrows", equippable=equippable.Arrows()
 )
 
 bolts = Item(
-    char="=", color=(80, 191, 175), name="Bolts", equippable=equippable.Bolts()
+    char="=",
+    color=(80, 191, 175),
+    name="Bolts",
+    equippable=equippable.Arrows(ammo_type=AmmoType.BOLT, amount=15),
 )
 
 leather_armor = Item(

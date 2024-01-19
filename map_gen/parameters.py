@@ -57,6 +57,8 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (item_factories.holy_water_vial, 15),
     ],
     4: [
+        (item_factories.crossbow, 5),
+        (item_factories.bolts, 10),
         (item_factories.lightning_scroll, 10),
         (item_factories.sword, 5),
         (item_factories.great_health_potion, 15),
