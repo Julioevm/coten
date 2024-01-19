@@ -131,7 +131,7 @@ def place_entities(room: Room, dungeon: GameMap, floor: int):
             if dungeon.tiles[x, y]["walkable"] and not any(
                 e.x == x and e.y == y for e in dungeon.entities
             ):
-                entity.spawn(dungeon, x, y)
+                entity.spawn(x, y, dungeon)
                 placed = True
 
 
@@ -156,7 +156,7 @@ def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
             if dungeon.tiles[x, y]["walkable"] and not any(
                 e.x == x and e.y == y for e in dungeon.entities
             ):
-                entity.spawn(dungeon, x, y)
+                entity.spawn(x, y, dungeon)
                 placed = True
 
     return True

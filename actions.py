@@ -480,4 +480,4 @@ class SpawnEnemiesAction(EnergyAction):
                     and not self.engine.game_map.get_blocking_entity_at_location(x, y)
                 ):
                     valid = True
-                    self.enemy.spawn(game_map, x, y)
+                    self.enemy.spawn(x, y, game_map)
