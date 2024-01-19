@@ -28,17 +28,17 @@ def main() -> None:
     # This tries to open the file bundled in the executable or the current directory
     try:
         tileset = tcod.tileset.load_tilesheet(
-            os.path.join(os.path.dirname(__file__), "assets/dejavu10x10_gs_tc.png"),
-            32,
-            8,
-            tcod.tileset.CHARMAP_TCOD,
+            os.path.join(os.path.dirname(sys.argv[0]), "assets/Alloy_curses_12x12.png"),
+            16,
+            16,
+            tcod.tileset.CHARMAP_CP437,
         )
     except NameError:
         tileset = tcod.tileset.load_tilesheet(
-            os.path.join(os.path.dirname(sys.argv[0]), "assets/dejavu10x10_gs_tc.png"),
-            32,
-            8,
-            tcod.tileset.CHARMAP_TCOD,
+            os.path.join(os.path.dirname(sys.argv[0]), "assets/Alloy_curses_12x12.png"),
+            16,
+            16,
+            tcod.tileset.CHARMAP_CP437,
         )
 
     handler: BaseEventHandler = setup_game.MainMenu()
