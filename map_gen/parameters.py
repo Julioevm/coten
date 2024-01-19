@@ -123,5 +123,5 @@ fixed_item_by_floor: Dict[int, List[Tuple[Entity, int]]] = {
 
 
 floor_encounters: Dict[int, List[Tuple[Encounter, int]]] = {
-    1: [(encounter_factories.hound_pack, 90)],
+    1: [(encounter_factories.hound_pack, 30), (encounter_factories.zombie_mob, 90)],
 }
