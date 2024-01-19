@@ -145,7 +145,7 @@ def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
     if not encounter.is_room_suitable(room):
         return False
 
-    encounter_entities = encounter.enemies + encounter.items
+    encounter_entities = encounter.enemies + encounter.items + encounter.decorations
 
     for entity in encounter_entities:
         placed = False
