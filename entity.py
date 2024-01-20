@@ -175,7 +175,10 @@ class Actor(Entity):
 
     def restore_ai(self):
         """Restore the original AI."""
-        self.ai = self.original_ai(self)
+        if self.original_ai:
+            self.ai = self.original_ai(self)
+        else:
+            self.ai = None
 
 
 class Item(Entity):
