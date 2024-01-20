@@ -126,6 +126,7 @@ class Actor(Entity):
             self.original_ai = ai_cls
             self.ai = ai_cls(self)
         else:
+            self.original_ai = None
             self.ai = None
 
         self.equipment: Equipment = equipment
