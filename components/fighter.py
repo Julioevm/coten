@@ -59,8 +59,9 @@ class Fighter(BaseComponent):
 
     @property
     def melee_damage(self) -> int:
-        if self.parent.equipment:
+        if self.parent.equipment and self.parent.equipment.weapon is not None:
             return self.parent.equipment.melee_damage + self.power
+        print(triangular_dist(*self.base_damage), self.power)
         return triangular_dist(*self.base_damage) + self.power
 
     @property
