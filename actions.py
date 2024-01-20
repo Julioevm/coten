@@ -219,7 +219,7 @@ class MeleeAction(ActionWithDirection):
         if not target:
             raise Impossible("Nothing to attack.")
 
-        damage = self.entity.fighter.power
+        damage = self.entity.fighter.damage
         # accuracy = accuracy = 100 * 1.065 ** (weapon net enchant)
 
         hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
@@ -280,7 +280,7 @@ class RangedAttackAction(ActionWithRangedTarget):
                 ammo.consume()
         else:
             attack_color = color.enemy_atk
-            attacker_power = self.entity.fighter.power
+            attacker_power = self.entity.fighter.damage
 
         damage = attacker_power
 

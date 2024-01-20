@@ -28,7 +28,7 @@ bat = Actor(
     ai_cls=components.ai.BatAI,
     equipment=Equipment(),
     fighter=Fighter(
-        hp=5, base_defense=0, base_power=2, base_accuracy=80, base_speed=110
+        hp=5, base_defense=0, base_power=1, base_accuracy=80, base_speed=110
     ),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=30),
@@ -42,7 +42,7 @@ zombie = Actor(
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
     fighter=Fighter(
-        hp=8, base_defense=0, base_power=2, base_accuracy=80, base_speed=70
+        hp=8, base_defense=0, base_power=1, base_accuracy=80, base_speed=70
     ),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
@@ -57,7 +57,7 @@ brute_zombie = Actor(
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
     fighter=Fighter(
-        hp=16, base_defense=0, base_power=3, base_accuracy=90, base_speed=60
+        hp=16, base_defense=0, base_power=2, base_damage=(1, 3), base_accuracy=90, base_speed=60
     ),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=60),
@@ -70,7 +70,7 @@ hound = Actor(
     name="Hound",
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=6, base_defense=15, base_power=2, base_speed=150),
+    fighter=Fighter(hp=6, base_defense=15, base_power=1, base_speed=150),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=40),
     status=Status(),
@@ -82,7 +82,7 @@ wolf = Actor(
     name="Wolf",
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=6, base_defense=20, base_power=3, base_speed=180),
+    fighter=Fighter(hp=6, base_defense=20, base_power=1, base_damage=(1, 3), base_speed=180),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=50),
     status=Status(),
@@ -94,7 +94,7 @@ ghoul = Actor(
     name="Ghoul",
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=14, base_defense=10, base_power=4),
+    fighter=Fighter(hp=14, base_defense=10, base_power=2, base_damage=(1, 3)),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=80),
     status=Status(),
@@ -119,7 +119,7 @@ werewolf = Actor(
     name="Werewolf",
     ai_cls=components.ai.WerewolfAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=18, base_defense=30, base_power=6, base_speed=150),
+    fighter=Fighter(hp=18, base_defense=30, base_power=4, base_damage=(0, 4), base_speed=150),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=90),
     status=Status(),
@@ -131,7 +131,7 @@ vampire = Actor(
     name="Vampire",
     ai_cls=components.ai.VampireAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=16, base_defense=20, base_power=5, base_speed=120),
+    fighter=Fighter(hp=16, base_defense=20, base_power=4, base_damage=(1, 3), base_speed=120),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=90),
     status=Status(status_effects=[(BloodDrain(heal_amount=3), 90)]),
@@ -143,7 +143,7 @@ vampire_lord = Actor(
     name="Vampire Lord",
     ai_cls=components.ai.VampireAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=30, base_defense=25, base_power=8, base_speed=130),
+    fighter=Fighter(hp=30, base_defense=25, base_power=6, base_damage=(1, 4), base_speed=130),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=180),
     status=Status(status_effects=[(BloodDrain(heal_amount=5), 90)]),
@@ -157,7 +157,7 @@ seducer = Actor(
     name="Seducer",
     ai_cls=components.ai.BasicMeleeEnemyAI,
     equipment=Equipment(),
-    fighter=Fighter(hp=10, base_defense=10, base_power=3, base_speed=120),
+    fighter=Fighter(hp=10, base_defense=10, base_power=2, base_damage=(1, 2), base_speed=120),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=70),
     status=Status(status_effects=[(Confused(duration=3), 30)]),

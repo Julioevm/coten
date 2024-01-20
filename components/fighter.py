@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 import color
 from components.base_component import BaseComponent
 from render_order import RenderOrder
+from utils import triangular_dist
 
 if TYPE_CHECKING:
     from actions import Action
@@ -21,6 +22,7 @@ class Fighter(BaseComponent):
         hp: int,
         base_defense: int,
         base_power: int,
+        base_damage: tuple[int, int] = (0, 2),
         base_accuracy: int = 100,
         base_speed=100,
         bleeds=True,
@@ -30,6 +32,7 @@ class Fighter(BaseComponent):
         self._hp = hp
         self.base_defense = base_defense
         self.base_power = base_power
+        self.base_damage = base_damage
         self.base_accuracy = base_accuracy
         self.energy = 0
         self.power_boost = 0
@@ -53,6 +56,10 @@ class Fighter(BaseComponent):
     @property
     def defense(self) -> int:
         return self.base_defense + self.defense_bonus + self.defense_boost
+
+    @property
+    def damage(self) -> int:
+        return triangular_dist(*self.base_damage) + self.power
 
     @property
     def power(self) -> int:
