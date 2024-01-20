@@ -79,7 +79,18 @@ dagger = Item(
     char="/", color=(0, 191, 255), name="Dagger", equippable=equippable.Dagger()
 )
 
+spear = Item(
+    char="/", color=(90, 191, 255), name="Spear", equippable=equippable.Spear()
+)
+
 sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
+
+broad_sword = Item(
+    char="/",
+    color=(10, 200, 255),
+    name="Broad Sword",
+    equippable=equippable.Sword(damage=(4, 8)),
+)
 
 axe = Item(char="/", color=(0, 191, 255), name="Axe", equippable=equippable.Axe())
 

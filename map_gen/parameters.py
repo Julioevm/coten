@@ -48,6 +48,7 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (item_factories.bow, 15),
         (item_factories.arrows, 20),
         (item_factories.confusion_scroll, 10),
+        (item_factories.spear, 5),
         (item_factories.leather_armor, 15),
     ],
     3: [
@@ -68,7 +69,11 @@ item_chances: Dict[int, List[Tuple[Entity, int]]] = {
         (item_factories.plate_armor, 5),
         (item_factories.leather_armor, 5),
     ],
-    6: [(item_factories.fireball_scroll, 25), (item_factories.chain_mail, 15)],
+    6: [
+        (item_factories.fireball_scroll, 25),
+        (item_factories.chain_mail, 15),
+        (item_factories.broad_sword, 5),
+    ],
 }
 
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
