@@ -79,12 +79,12 @@ class Arrows(Ammo):
 
 class LeatherArmor(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=5)
+        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=10)
 
 
 class ChainMail(Equippable):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=10)
+        super().__init__(equipment_type=EquipmentType.ARMOR, defense_bonus=20)
 
 
 class PlateArmor(Equippable):
