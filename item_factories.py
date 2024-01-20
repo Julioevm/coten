@@ -76,14 +76,25 @@ fireball_scroll = Item(
 )
 
 dagger = Item(
-    char="/", color=(0, 191, 255), name="Dagger", equippable=equippable.Dagger()
+    char="/",
+    color=(0, 191, 255),
+    name="Dagger",
+    equippable=equippable.Dagger(damage=(1, 3)),
 )
 
 spear = Item(
-    char="/", color=(90, 191, 255), name="Spear", equippable=equippable.Spear()
+    char="/",
+    color=(90, 191, 255),
+    name="Spear",
+    equippable=equippable.Spear(damage=(2, 4)),
 )
 
-sword = Item(char="/", color=(0, 191, 255), name="Sword", equippable=equippable.Sword())
+sword = Item(
+    char="/",
+    color=(0, 191, 255),
+    name="Sword",
+    equippable=equippable.Sword(damage=(3, 6)),
+)
 
 broad_sword = Item(
     char="/",
@@ -92,9 +103,13 @@ broad_sword = Item(
     equippable=equippable.Sword(damage=(4, 8)),
 )
 
-axe = Item(char="/", color=(0, 191, 255), name="Axe", equippable=equippable.Axe())
+axe = Item(
+    char="/", color=(0, 191, 255), name="Axe", equippable=equippable.Axe(damage=(3, 6))
+)
 
-bow = Item(char=")", color=(80, 191, 255), name="Bow", equippable=equippable.Bow())
+bow = Item(
+    char=")", color=(80, 191, 255), name="Bow", equippable=equippable.Bow(damage=(1, 3))
+)
 
 crossbow = Item(
     char=")",

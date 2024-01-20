@@ -33,14 +33,20 @@ class Equippable(BaseComponent):
 
 class Melee(Equippable):
     def __init__(self, damage: tuple[int, int], power_bonus: int = 0) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=power_bonus, damage=damage)
+        super().__init__(
+            equipment_type=EquipmentType.WEAPON, power_bonus=power_bonus, damage=damage
+        )
 
 
 class Ranged(Equippable):
     def __init__(
         self, ammo_type: AmmoType, damage: tuple[int, int], ranged_bonus: int = 0
     ) -> None:
-        super().__init__(equipment_type=EquipmentType.RANGED, ranged_bonus=ranged_bonus, damage=damage)
+        super().__init__(
+            equipment_type=EquipmentType.RANGED,
+            ranged_bonus=ranged_bonus,
+            damage=damage,
+        )
         self.ammo_type = ammo_type
 
 
@@ -59,23 +65,23 @@ class Ammo(Equippable):
 
 
 class Dagger(Melee):
-    def __init__(self) -> None:
-        super().__init__(damage=(1, 3))
+    def __init__(self, damage: tuple[int, int]) -> None:
+        super().__init__(damage=damage)
 
 
 class Axe(Melee):
-    def __init__(self) -> None:
-        super().__init__(damage=(1, 5))
+    def __init__(self, damage: tuple[int, int]) -> None:
+        super().__init__(damage=damage)
 
 
 class Sword(Melee):
-    def __init__(self) -> None:
-        super().__init__(damage=(3, 6))
+    def __init__(self, damage: tuple[int, int]) -> None:
+        super().__init__(damage=damage)
 
 
 class Spear(Melee):
-    def __init__(self) -> None:
-        super().__init__(damage=(2, 4))
+    def __init__(self, damage: tuple[int, int]) -> None:
+        super().__init__(damage=damage)
 
 
 class Bow(Ranged):
