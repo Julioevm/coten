@@ -39,9 +39,9 @@ max_encounters_by_floor = [
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [
         (item_factories.health_potion, 30),
-        (item_factories.defense_boost_potion, 10),
+        (item_factories.defense_boost_potion, 15),
         (item_factories.power_boost_potion, 10),
-        (item_factories.holy_water_vial, 5),
+        (item_factories.holy_water_vial, 10),
         (item_factories.map_scroll, 4),
     ],
     2: [
