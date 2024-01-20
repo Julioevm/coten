@@ -58,7 +58,9 @@ class Fighter(BaseComponent):
         return self.base_defense + self.defense_bonus + self.defense_boost
 
     @property
-    def damage(self) -> int:
+    def melee_damage(self) -> int:
+        if self.parent.equipment:
+            return self.parent.equipment.melee_damage + self.power
         return triangular_dist(*self.base_damage) + self.power
 
     @property

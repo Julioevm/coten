@@ -9,6 +9,7 @@ from entity import Actor
 from exceptions import Impossible
 from global_vars import HIT_CHANCE_BASE
 from map_gen.map_utils import set_bloody_tiles
+from utils import triangular_dist
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -219,7 +220,7 @@ class MeleeAction(ActionWithDirection):
         if not target:
             raise Impossible("Nothing to attack.")
 
-        damage = self.entity.fighter.damage
+        damage = self.entity.fighter.melee_damage
         # accuracy = accuracy = 100 * 1.065 ** (weapon net enchant)
 
         hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
@@ -274,13 +275,15 @@ class RangedAttackAction(ActionWithRangedTarget):
         if self.entity is self.engine.player:
             attack_color = color.player_atk
             # only the player gets ranged attack from an item, monsters use the power value.
-            attacker_power = self.entity.equipment.ranged_bonus
+            attacker_power = (
+                self.entity.equipment.ranged_damage + self.entity.equipment.ranged_bonus
+            )
             ammo = self.entity.equipment.get_ammo_equippable
             if ammo:
                 ammo.consume()
         else:
             attack_color = color.enemy_atk
-            attacker_power = self.entity.fighter.damage
+            attacker_power = self.entity.fighter.melee_damage
 
         damage = attacker_power
 
@@ -336,7 +339,7 @@ class PounceAction(ActionWithRangedTarget):
         if not target:
             raise Impossible("Nothing to attack.")
 
-        damage = self.entity.fighter.power
+        damage = self.entity.fighter.melee_damage
 
         hit_probability = self.entity.fighter.accuracy * HIT_CHANCE_BASE ** (
             target.fighter.defense

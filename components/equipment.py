@@ -4,6 +4,7 @@ from typing import Optional, TYPE_CHECKING
 
 from components.base_component import BaseComponent
 from equipment_types import EquipmentType
+from utils import triangular_dist
 
 if TYPE_CHECKING:
     from entity import Actor, Item
@@ -51,6 +52,24 @@ class Equipment(BaseComponent):
         return bonus
 
     @property
+    def melee_damage(self) -> int:
+        damage = 0
+
+        if self.weapon is not None and self.weapon.equippable is not None:
+            damage += triangular_dist(*self.weapon.equippable.damage)
+
+        return damage
+
+    @property
+    def ranged_damage(self) -> int:
+        damage = 0
+
+        if self.ranged is not None and self.ranged.equippable is not None:
+            damage += triangular_dist(*self.ranged.equippable.damage)
+
+        return damage
+
+    @property
     def power_bonus(self) -> int:
         bonus = 0
 
@@ -79,7 +98,7 @@ class Equipment(BaseComponent):
             bonus += self.armor.equippable.ranged_bonus
 
         return bonus
-    
+
     @property
     def accuracy_bonus(self) -> int:
         bonus = 0

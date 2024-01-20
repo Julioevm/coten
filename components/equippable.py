@@ -16,6 +16,7 @@ class Equippable(BaseComponent):
     def __init__(
         self,
         equipment_type: EquipmentType,
+        damage: tuple[int, int] = (0, 0),
         power_bonus: int = 0,
         ranged_bonus: int = 0,
         defense_bonus: int = 0,
@@ -24,15 +25,23 @@ class Equippable(BaseComponent):
         self.equipment_type = equipment_type
 
         self.power_bonus = power_bonus
+        self.damage = damage
         self.ranged_bonus = ranged_bonus
         self.defense_bonus = defense_bonus
         self.accuracy_bonus = accuracy_bonus
 
 
+class Melee(Equippable):
+    def __init__(self, damage: tuple[int, int], power_bonus: int = 0) -> None:
+        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=power_bonus, damage=damage)
+
+
 class Ranged(Equippable):
-    def __init__(self, ammo_type: AmmoType, ranged_bonus: int) -> None:
+    def __init__(
+        self, ammo_type: AmmoType, damage: tuple[int, int], ranged_bonus: int = 0
+    ) -> None:
+        super().__init__(equipment_type=EquipmentType.RANGED, ranged_bonus=ranged_bonus, damage=damage)
         self.ammo_type = ammo_type
-        super().__init__(equipment_type=EquipmentType.RANGED, ranged_bonus=ranged_bonus)
 
 
 class Ammo(Equippable):
@@ -49,27 +58,29 @@ class Ammo(Equippable):
         self.amount -= 1
 
 
-class Dagger(Equippable):
+class Dagger(Melee):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=2)
+        super().__init__(damage=(1, 3))
 
 
-class Axe(Equippable):
+class Axe(Melee):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=3)
+        super().__init__(damage=(1, 5))
 
 
-class Sword(Equippable):
+class Sword(Melee):
     def __init__(self) -> None:
-        super().__init__(equipment_type=EquipmentType.WEAPON, power_bonus=4)
+        super().__init__(damage=(3, 6))
+
+
+class Spear(Melee):
+    def __init__(self) -> None:
+        super().__init__(damage=(2, 4))
 
 
 class Bow(Ranged):
-    def __init__(self, ammo_type=AmmoType.ARROW, ranged_bonus=2) -> None:
-        super().__init__(
-            ammo_type=ammo_type,
-            ranged_bonus=ranged_bonus,
-        )
+    def __init__(self, ammo_type=AmmoType.ARROW, damage=(1, 3), ranged_bonus=0) -> None:
+        super().__init__(ammo_type=ammo_type, ranged_bonus=ranged_bonus, damage=damage)
 
 
 class Arrows(Ammo):

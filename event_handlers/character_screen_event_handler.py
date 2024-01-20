@@ -49,6 +49,8 @@ class CharacterScreenEventHandler(AskUserEventHandler):
             string=power_string,
             fg=color.power_boost if player.fighter.power_boost > 0 else None,
         )
+        
+        # Add weapon damage
 
         console.print(
             x=x + 1,

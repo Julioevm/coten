@@ -89,7 +89,7 @@ crossbow = Item(
     char=")",
     color=(80, 191, 175),
     name="Crossbow",
-    equippable=equippable.Bow(ammo_type=AmmoType.BOLT, ranged_bonus=3),
+    equippable=equippable.Bow(ammo_type=AmmoType.BOLT, damage=(2, 4)),
 )
 
 arrows = Item(
