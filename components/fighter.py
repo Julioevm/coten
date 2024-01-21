@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from actions import EnergyAction
 
 import color
 from components.base_component import BaseComponent
@@ -40,7 +41,7 @@ class Fighter(BaseComponent):
         self.base_speed = base_speed
         self.bleeds = bleeds
 
-        self.next_action: Action | None = None
+        self.next_action: EnergyAction | None = None
         self.on_death = on_death
 
     @property

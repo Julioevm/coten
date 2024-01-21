@@ -9,6 +9,7 @@ import tcod
 from actions import (
     Action,
     BumpAction,
+    EnergyAction,
     MeleeAction,
     MovementAction,
     PounceAction,
@@ -23,8 +24,8 @@ if TYPE_CHECKING:
     from entity import Actor
 
 
-class BaseAI(Action):
-    def get_action(self) -> Action:
+class BaseAI(EnergyAction):
+    def get_action(self) -> EnergyAction:
         raise NotImplementedError()
 
     def perform(self) -> None:
