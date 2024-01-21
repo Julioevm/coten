@@ -4,3 +4,7 @@ VERSION = "0.3.3"
 # Combat
 
 HIT_CHANCE_BASE = 0.987
+
+# Others
+
+ACTION_DELAY = 1
