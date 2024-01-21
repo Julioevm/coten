@@ -5,6 +5,7 @@ import traceback
 import tcod
 
 import color
+import console
 from event_handlers.base_event_handler import BaseEventHandler
 from event_handlers.event_handler import EventHandler
 import exceptions
@@ -59,12 +60,16 @@ def main() -> None:
         title=title,
         vsync=True,
     ) as context:
-        root_console = tcod.console.Console(screen_width, screen_height, order="F")
+        console.set_root_console(
+            tcod.console.Console(screen_width, screen_height, order="F")
+        )
+        root_console = console.get_root_console()
+        console.set_context(context)
         try:
             while True:
                 root_console.clear()
                 handler.on_render(console=root_console)
-                context.present(root_console)
+                console.get_context().present(root_console)
 
                 try:
                     for event in tcod.event.wait():
