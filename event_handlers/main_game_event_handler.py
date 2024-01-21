@@ -23,6 +23,14 @@ if TYPE_CHECKING:
 
 
 class MainGameEventHandler(EventHandler):
+    def ev_mousebuttondown(
+        self, event: tcod.event.MouseButtonDown
+    ) -> Optional[ActionOrHandler]:
+        action: Optional[Action] = None
+        """Handle the player clicking on the map."""
+        # Call the travel to tile action with the event coordinates
+        return action
+
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         from event_handlers.select_index_handler import SingleRangedAttackHandler
         from event_handlers.history_viewer import HistoryViewer
