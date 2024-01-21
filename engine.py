@@ -10,7 +10,10 @@ from tcod.map import compute_fov
 
 import color
 import exceptions
+from global_vars import ACTION_DELAY
 import render_functions
+import time
+import console
 from message_log import MessageLog
 from turn_manager import TurnManager
 
@@ -39,7 +42,6 @@ class Engine:
         self.current_turn += 1
 
     def handle_entity_turns(self) -> None:
-        print("handled enemy turns")
         """Iterate over the entities and handle their actions."""
 
         # Since the player gets the act first, when he consumes more energy than the the other actors
@@ -51,17 +53,15 @@ class Engine:
         # for entity in set(self.game_map.actors):
         #     self.turn_manager.add_actor(entity)
 
-        # Handle other actors
-        # print(self.turn_manager.queue)
-        for _, _, entity in self.turn_manager.queue:
-            print(entity.name)
-
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
-            print(entity.name)
+
             can_act = True
             while entity and entity.fighter.energy > 0 and can_act:
                 can_act = False
+
+                if entity is self.player and not self.player.ai:
+                    return
 
                 if entity.ai:
                     action = entity.ai.get_action()
@@ -70,10 +70,16 @@ class Engine:
                             can_act = True
                             action.exhaust_energy()
                             action.perform()
+                            if entity is self.player:
+                                # If the player is under a special AI behavior add a small pause
+                                # to see the player's action.
+                                time.sleep(ACTION_DELAY)
+                                root_console = console.get_root_console()
+                                root_console.clear()
+                                self.render(console=root_console)
+                                console.get_context().present(root_console)
                         except exceptions.Impossible:
                             can_act = False
-                else:
-                    return
 
             entity.fighter.regain_energy()
 
@@ -82,11 +88,6 @@ class Engine:
                     entity.status.process_active_effects()
                 except exceptions.Impossible:
                     pass  # Ignore impossible status exceptions from AI.
-
-            return
-
-        self.process_scheduled_effects()
-        self.tick()
 
     def update_fov(self) -> None:
         """Recompute the visible area based on the players point of view."""

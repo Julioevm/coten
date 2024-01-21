@@ -58,7 +58,7 @@ class EventHandler(BaseEventHandler):
 
         try:
             # If the player is under a special AI behavior ignore the user action
-            action = player.ai.get_action() if player.ai else player.fighter.next_action
+            action = player.fighter.next_action
             action.perform()
             action.exhaust_energy()
         except exceptions.Impossible as exc:
@@ -66,9 +66,15 @@ class EventHandler(BaseEventHandler):
             self.engine.message_log.add_message(exc.args[0], color.impossible)
             return
 
+        player.fighter.regain_energy()
+
         player.status.process_active_effects()
 
         self.engine.handle_entity_turns()
+
+        self.engine.process_scheduled_effects()
+
+        self.engine.tick()
 
         self.engine.update_fov()
 
