@@ -62,6 +62,9 @@ class Entity:
         clone.y = y
         clone.parent = gamemap
         gamemap.entities.add(clone)
+
+        if isinstance(self, Actor):
+            gamemap.engine.turn_manager.add_actor(clone)
         return clone
 
     def move(self, dx: int, dy: int) -> None:

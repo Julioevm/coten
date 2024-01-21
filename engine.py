@@ -39,39 +39,26 @@ class Engine:
         self.current_turn += 1
 
     def handle_entity_turns(self) -> None:
+        print("handled enemy turns")
         """Iterate over the entities and handle their actions."""
-
-        # Handle player turn first
-        player = self.player
-
-        try:
-            # If the player is under a special AI behavior ignore the user action
-            action = player.ai.get_action() if player.ai else player.fighter.next_action
-            action.perform()
-            action.exhaust_energy()
-        except exceptions.Impossible as exc:
-            # If the action results in an impossible error, we want to retry the turn.
-            self.message_log.add_message(exc.args[0], color.impossible)
-            return
-
-        player.status.process_active_effects()
 
         # Since the player gets the act first, when he consumes more energy than the the other actors
         # we should give a bonus to the other actors, to simulate having more time to act.
         # We could subtract the entity.speed from the energy used by the player to get the excess energy and add it to the entity.
         # E.g. player uses an action of 150 energy. The entity has speed of 100: 150 - 100 = 50 extra energy to add to it.
         # All actions cost 100 for now so theres no difference at the moment.
-        for entity in set(self.game_map.actors):
-            entity.fighter.regain_energy()
 
-        for entity in set(self.game_map.actors) - {player}:
-            self.turn_manager.add_actor(entity)
+        # for entity in set(self.game_map.actors):
+        #     self.turn_manager.add_actor(entity)
 
         # Handle other actors
+        # print(self.turn_manager.queue)
+        for _, _, entity in self.turn_manager.queue:
+            print(entity.name)
 
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
-
+            print(entity.name)
             can_act = True
             while entity and entity.fighter.energy > 0 and can_act:
                 can_act = False
@@ -85,12 +72,18 @@ class Engine:
                             action.perform()
                         except exceptions.Impossible:
                             can_act = False
+                else:
+                    return
+
+            entity.fighter.regain_energy()
 
             if entity.status:
                 try:
                     entity.status.process_active_effects()
                 except exceptions.Impossible:
                     pass  # Ignore impossible status exceptions from AI.
+
+            return
 
         self.process_scheduled_effects()
         self.tick()

@@ -18,7 +18,6 @@ class TurnManager:
         heapq.heappush(self.queue, (-actor.fighter.energy, actor.id, actor))
 
     def get_next_actor(self) -> Actor | None:
-        if self.queue:
-            _, _, actor = heapq.heappop(self.queue)
-            return actor
-        return None
+        _, _, actor = heapq.heappop(self.queue)
+        self.add_actor(actor)
+        return actor

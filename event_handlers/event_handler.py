@@ -5,6 +5,8 @@ from typing import Optional
 
 import tcod.event
 from actions import Action
+import exceptions
+import color
 
 from engine import Engine
 from event_handlers.base_event_handler import BaseEventHandler
@@ -50,6 +52,21 @@ class EventHandler(BaseEventHandler):
             return False
 
         self.engine.player.fighter.next_action = action
+
+        # Handle player turn first
+        player = self.engine.player
+
+        try:
+            # If the player is under a special AI behavior ignore the user action
+            action = player.ai.get_action() if player.ai else player.fighter.next_action
+            action.perform()
+            action.exhaust_energy()
+        except exceptions.Impossible as exc:
+            # If the action results in an impossible error, we want to retry the turn.
+            self.engine.message_log.add_message(exc.args[0], color.impossible)
+            return
+
+        player.status.process_active_effects()
 
         self.engine.handle_entity_turns()
 

@@ -55,6 +55,7 @@ def new_game() -> Engine:
     )
 
     engine.turn_manager = TurnManager()
+    engine.turn_manager.add_actor(player)
 
     if global_vars.DEBUG_MODE:
         engine.game_world.load_prefab_map("debug_room")
