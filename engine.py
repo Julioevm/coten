@@ -55,7 +55,6 @@ class Engine:
 
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
-
             can_act = True
             while entity and entity.fighter.energy > 0 and can_act:
                 can_act = False
@@ -74,6 +73,13 @@ class Engine:
                                 # If the player is under a special AI behavior add a small pause
                                 # to see the player's action.
                                 time.sleep(ACTION_DELAY)
+                                # When the player AI action is handled we consider a turn complete.
+                                self.process_scheduled_effects()
+
+                                self.tick()
+
+                                self.update_fov()
+                                # Render the console
                                 root_console = console.get_root_console()
                                 root_console.clear()
                                 self.render(console=root_console)
