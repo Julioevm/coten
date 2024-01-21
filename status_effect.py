@@ -45,6 +45,10 @@ class Confused(StatusEffect):
     def apply(self, entity: Actor, target: Actor):
         engine = entity.parent.engine
 
+        # Avoid stacking confusion
+        if target.status.confused:
+            return
+
         if target is engine.player and not target.status.confused:
             engine.message_log.add_message("You are feeling confused!", color.yellow)
         target.ai = ConfusedEnemy(target)
