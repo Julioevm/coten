@@ -1,6 +1,5 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
-import heapq
 
 if TYPE_CHECKING:
     from entity import Actor
@@ -45,7 +44,6 @@ class TurnManager:
         return self.head is not None
 
     def remove_actor(self, actor: Actor):
-        # If the list is empty
         if self.head is None:
             return
 
@@ -86,8 +84,9 @@ class TurnManager:
     def get_actor_count(self) -> int:
         count = 0
         current_node = self.head
+
         if current_node is None:
-            return count  # The list is empty
+            return count
 
         # Loop through the circular linked list and count the nodes
         while True:
