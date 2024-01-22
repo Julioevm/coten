@@ -129,6 +129,31 @@ class BasicMeleeEnemyAI(BaseAI):
         return WaitAction(self.entity)
 
 
+class MoveToTile(BaseAI):
+    def __init__(self, entity: Actor, dest_x: int, dest_y: int):
+        super().__init__(entity)
+        self.path: List[Tuple[int, int]] = []
+        self.dest_x = dest_x
+        self.dest_y = dest_y
+
+    def get_action(self) -> Action:
+        self.path = self.get_path_to(self.dest_x, self.dest_y)
+
+        # TODO: Check if an enemy is on sight to stop the automatic movement
+
+        if self.path:
+            dest_x, dest_y = self.path.pop(0)
+            return MovementAction(
+                self.entity,
+                dest_x - self.entity.x,
+                dest_y - self.entity.y,
+            )
+
+        # If theres no path, restore AI.
+        self.entity.restore_ai()
+        return WaitAction(self.entity)
+
+
 class StaticRangedEnemy(BaseAI):
     def __init__(self, entity: Actor):
         super().__init__(entity)

@@ -9,7 +9,6 @@ from entity import Actor
 from exceptions import Impossible
 from global_vars import HIT_CHANCE_BASE
 from map_gen.map_utils import set_bloody_tiles
-from utils import triangular_dist
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -141,6 +140,18 @@ class EquipAction(EnergyAction):
 class WaitAction(EnergyAction):
     def perform(self) -> None:
         pass
+
+
+class MoveToTileAction(EnergyAction):
+    def __init__(self, entity: Actor, tile_x: int, tile_y: int):
+        super().__init__(entity)
+        self.tile_x = tile_x
+        self.tile_y = tile_y
+
+    def perform(self) -> None:
+        from components.ai import MoveToTile
+
+        self.entity.ai = MoveToTile(self.entity, self.tile_x, self.tile_y)
 
 
 class TakeStairsAction(EnergyAction):
