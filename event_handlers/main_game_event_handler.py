@@ -7,6 +7,7 @@ import actions
 from actions import (
     Action,
     BumpAction,
+    MoveToTileAction,
     PickupAction,
     QuickHealAction,
     WaitAction,
@@ -28,7 +29,15 @@ class MainGameEventHandler(EventHandler):
     ) -> Optional[ActionOrHandler]:
         action: Optional[Action] = None
         """Handle the player clicking on the map."""
-        # Call the travel to tile action with the event coordinates
+        game_map = self.engine.game_map
+
+        if (
+            self.engine.game_map.in_bounds(event.tile.x, event.tile.y)
+            and game_map.visible[event.tile.x, event.tile.y]
+        ):
+            if game_map.tiles["walkable"][event.tile.x, event.tile.y]:
+                return MoveToTileAction(self.engine.player, event.tile.x, event.tile.y)
+
         return action
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
