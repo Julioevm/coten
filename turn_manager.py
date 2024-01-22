@@ -13,6 +13,8 @@ class Node:
 
 
 class TurnManager:
+    """Turn Manager is a circular linked list that keeps track of the actors."""
+
     def __init__(self):
         self.head = None
         self.current = None
