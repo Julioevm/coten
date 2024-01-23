@@ -33,7 +33,7 @@ class MainGameEventHandler(EventHandler):
 
         if (
             self.engine.game_map.in_bounds(event.tile.x, event.tile.y)
-            and game_map.visible[event.tile.x, event.tile.y]
+            and game_map.explored[event.tile.x, event.tile.y]
         ):
             if game_map.tiles["walkable"][event.tile.x, event.tile.y]:
                 return MoveToTileAction(self.engine.player, event.tile.x, event.tile.y)
