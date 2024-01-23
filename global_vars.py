@@ -1,5 +1,5 @@
 DEBUG_MODE = False
-VERSION = "0.3.3"
+VERSION = "0.4.0"
 
 # Combat
 
@@ -7,4 +7,4 @@ HIT_CHANCE_BASE = 0.987
 
 # Others
 
-ACTION_DELAY = 0.5
+ACTION_DELAY = 0.3
