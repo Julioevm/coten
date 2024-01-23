@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import random
-from typing import List, Tuple, TYPE_CHECKING
+from typing import List, Optional, Tuple, TYPE_CHECKING
 import actor_factories
 import color
 import numpy as np  # type: ignore
@@ -136,7 +136,7 @@ class MoveToTile(BaseAI):
         self.dest_x = dest_x
         self.dest_y = dest_y
 
-    def get_action(self) -> Action:
+    def get_action(self) -> Optional(Action):
         self.path = self.get_path_to(self.dest_x, self.dest_y)
 
         # TODO: Check if an enemy is on sight to stop the automatic movement
@@ -151,7 +151,6 @@ class MoveToTile(BaseAI):
 
         # If theres no path, restore AI.
         self.entity.restore_ai()
-        return WaitAction(self.entity)
 
 
 class StaticRangedEnemy(BaseAI):
