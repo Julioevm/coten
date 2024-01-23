@@ -12,6 +12,7 @@ from actions import (
     EnergyAction,
     MeleeAction,
     MovementAction,
+    PickupAction,
     PounceAction,
     RangedAttackAction,
     SpawnEnemiesAction,
@@ -151,6 +152,11 @@ class MoveToTile(BaseAI):
 
         # If theres no path, restore AI.
         self.entity.restore_ai()
+
+        # if theres an item on the tile, pick it up
+        item = self.engine.game_map.get_item_at_location(self.dest_x, self.dest_y)
+        if item:
+            return PickupAction(self.entity)
 
 
 class StaticRangedEnemy(BaseAI):
