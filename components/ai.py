@@ -131,6 +131,8 @@ class BasicMeleeEnemyAI(BaseAI):
 
 
 class MoveToTile(BaseAI):
+    """AI that moves to a specific tile."""
+
     def __init__(self, entity: Actor, dest_x: int, dest_y: int):
         super().__init__(entity)
         self.path: List[Tuple[int, int]] = []
@@ -140,7 +142,9 @@ class MoveToTile(BaseAI):
     def get_action(self) -> Optional(Action):
         self.path = self.get_path_to(self.dest_x, self.dest_y)
 
-        # TODO: Check if an enemy is on sight to stop the automatic movement
+        if len(self.engine.game_map.get_actors_in_fov() - {self.entity}) > 0:
+            # Restore the AI if we see an enemy to avoid dying.
+            self.entity.restore_ai()
 
         if self.path:
             dest_x, dest_y = self.path.pop(0)
