@@ -141,10 +141,17 @@ class MoveToTile(BaseAI):
 
     def get_action(self) -> Optional(Action):
         self.path = self.get_path_to(self.dest_x, self.dest_y)
+        dx = self.dest_x - self.entity.x
+        dy = self.dest_y - self.entity.y
+        distance = max(abs(dx), abs(dy))
 
         if len(self.engine.game_map.get_actors_in_fov() - {self.entity}) > 0:
             # Restore the AI if we see an enemy to avoid dying.
             self.entity.restore_ai()
+
+        actor = self.engine.game_map.get_actor_at_location(self.dest_x, self.dest_y)
+        if distance <= 1 and actor and actor is not self.entity:
+            return MeleeAction(self.entity, dx, dy)
 
         if self.path:
             dest_x, dest_y = self.path.pop(0)
@@ -161,6 +168,8 @@ class MoveToTile(BaseAI):
         item = self.engine.game_map.get_item_at_location(self.dest_x, self.dest_y)
         if item:
             return PickupAction(self.entity)
+
+        return None
 
 
 class StaticRangedEnemy(BaseAI):
