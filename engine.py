@@ -50,9 +50,6 @@ class Engine:
         # E.g. player uses an action of 150 energy. The entity has speed of 100: 150 - 100 = 50 extra energy to add to it.
         # All actions cost 100 for now so theres no difference at the moment.
 
-        # for entity in set(self.game_map.actors):
-        #     self.turn_manager.add_actor(entity)
-
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
             can_act = True
@@ -65,6 +62,7 @@ class Engine:
                 if entity.ai:
                     action = entity.ai.get_action()
                     if action and action.can_perform:
+                        # print(action)
                         try:
                             can_act = True
                             action.exhaust_energy()
