@@ -139,7 +139,7 @@ class MoveToTile(BaseAI):
         self.dest_x = dest_x
         self.dest_y = dest_y
 
-    def get_action(self) -> Optional(Action):
+    def get_action(self) -> Optional[Action]:
         self.path = self.get_path_to(self.dest_x, self.dest_y)
         dx = self.dest_x - self.entity.x
         dy = self.dest_y - self.entity.y
