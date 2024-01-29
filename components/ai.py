@@ -48,7 +48,7 @@ class BaseAI(EnergyAction):
         cost = np.array(game_map.tiles["walkable"], dtype=np.int8)
 
         for entity in self.entity.parent.entities:
-            # Check that an enitiy blocks movement and the cost isn't zero (blocking.)
+            # Check that an entity blocks movement and the cost isn't zero (blocking.)
             if entity.blocks_movement and cost[entity.x, entity.y]:
                 # Add to the cost of a blocked position.
                 # A lower number means more enemies will crowd behind each other in
@@ -169,7 +169,7 @@ class MoveToTile(BaseAI):
         if item:
             return PickupAction(self.entity)
 
-        return None
+        return WaitAction(self.entity)
 
 
 class StaticRangedEnemy(BaseAI):
