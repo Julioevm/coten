@@ -62,7 +62,6 @@ class Engine:
                 if entity.ai:
                     action = entity.ai.get_action()
                     if action and action.can_perform:
-                        # print(action)
                         try:
                             can_act = True
                             action.exhaust_energy()
