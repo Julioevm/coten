@@ -1,4 +1,4 @@
-# Castle of the Eternal Night 
+# Castle of the Eternal Night
 
 COTEN for short, is a classic roguelike built with python and the libtcod library. It has a castlevania-esque setting, a dark castle filled with creatures of the night, that you have to climb to defeat the evil vampire lord.
 
@@ -11,6 +11,8 @@ Run `pip install -r requirements.txt` to install the necessary dependencies.
 Run `python main.py`
 
 ### Controls
+
+Mouse: Click anywhere you've explored to move there. Click on items / enemies to interact or attack. Auto-movement will stop when you see an enemy.
 
 Arrows, VIM keys and numpad for movement.
 
@@ -33,7 +35,6 @@ f shot ranged weapon
 q quick heal (uses a potion from the inventory)
 
 < and > go downstairs or upstairs
-
 
 ## Develop
 
