@@ -24,6 +24,9 @@ class Action:
         """Return the engine this action belongs to."""
         return self.entity.parent.engine
 
+    def __repr__(self) -> str:
+        return f"{self.__class__} by {self.entity.name}"
+
     def perform(self) -> None:
         """Perform this action with the objects needed to determine its scope.
 
@@ -152,6 +155,9 @@ class MoveToTileAction(EnergyAction):
         from components.ai import MoveToTile
 
         self.entity.ai = MoveToTile(self.entity, self.tile_x, self.tile_y)
+        # Get the action and perform it in the same turn we set the AI for subsequent turns
+        # otherwise the turn will be 'lost' just setting the AI.
+        self.entity.ai.get_action().perform()
 
 
 class TakeStairsAction(EnergyAction):
