@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 
+
+import tile_types
 import tcod.event
 import color
 import actions
@@ -35,7 +37,10 @@ class MainGameEventHandler(EventHandler):
             self.engine.game_map.in_bounds(event.tile.x, event.tile.y)
             and game_map.explored[event.tile.x, event.tile.y]
         ):
-            if game_map.tiles["walkable"][event.tile.x, event.tile.y]:
+            if (
+                game_map.tiles["walkable"][event.tile.x, event.tile.y]
+                or game_map.tiles[event.tile.x, event.tile.y] in tile_types.door_tiles
+            ):
                 return MoveToTileAction(self.engine.player, event.tile.x, event.tile.y)
 
         return action

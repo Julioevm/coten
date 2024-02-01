@@ -4,6 +4,7 @@ import random
 from typing import List, Optional, Tuple, TYPE_CHECKING
 import actor_factories
 import color
+import tile_types
 import numpy as np  # type: ignore
 import tcod
 from actions import (
@@ -12,6 +13,7 @@ from actions import (
     EnergyAction,
     MeleeAction,
     MovementAction,
+    OpenDoorAction,
     PickupAction,
     PounceAction,
     RangedAttackAction,
@@ -148,6 +150,17 @@ class MoveToTile(BaseAI):
         if len(self.engine.game_map.get_actors_in_fov() - {self.entity}) > 0:
             # Restore the AI if we see an enemy to avoid dying.
             self.entity.restore_ai()
+
+        # Open the door action if the tile you have to move to is a door
+
+        if (
+            self.engine.game_map.tiles[self.dest_x, self.dest_y]
+            in tile_types.door_tiles
+            and distance <= 1
+        ):
+            print(f"Opening door at {self.dest_x}, {self.dest_y}.")
+            self.entity.restore_ai()
+            return OpenDoorAction(self.entity, self.dest_x, self.dest_y)
 
         actor = self.engine.game_map.get_actor_at_location(self.dest_x, self.dest_y)
         if distance <= 1 and actor and actor is not self.entity:
