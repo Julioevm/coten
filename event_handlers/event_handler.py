@@ -56,6 +56,8 @@ class EventHandler(BaseEventHandler):
         # Handle player turn first
         player = self.engine.player
 
+        player.fighter.regain_energy()
+
         try:
             # If the player is under a special AI behavior ignore the user action
             action = player.fighter.next_action
@@ -65,8 +67,6 @@ class EventHandler(BaseEventHandler):
             # If the action results in an impossible error, we want to retry the turn.
             self.engine.message_log.add_message(exc.args[0], color.impossible)
             return
-
-        player.fighter.regain_energy()
 
         player.status.process_active_effects()
 

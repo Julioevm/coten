@@ -53,6 +53,8 @@ class Engine:
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
             can_act = True
+            entity.fighter.regain_energy()
+
             while entity and entity.fighter.energy > 0 and can_act:
                 can_act = False
 
@@ -83,8 +85,6 @@ class Engine:
                                 console.get_context().present(root_console)
                         except exceptions.Impossible:
                             can_act = False
-
-            entity.fighter.regain_energy()
 
             if entity.status:
                 try:
