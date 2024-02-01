@@ -216,9 +216,11 @@ class BatAI(BaseAI):
                     self.engage_timer = 0
                     self.attacking = False
             else:
-                # set path to a random direction
-                x = random.randint(-1, 1)
-                y = random.randint(-1, 1)
+                # set path to a random direction, never 0, 0
+                x, y = 0, 0
+                while x == 0 and y == 0:
+                    x = random.randint(-1, 1)
+                    y = random.randint(-1, 1)
 
                 self.engage_timer += 1
                 if self.engage_timer >= self.engage_period:
