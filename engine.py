@@ -65,9 +65,6 @@ class Engine:
                     action = entity.ai.get_action()
                     if action and action.can_perform:
                         try:
-                            can_act = True
-                            action.exhaust_energy()
-                            action.perform()
                             if entity is self.player:
                                 # If the player is under a special AI behavior add a small pause
                                 # to see the player's action.
@@ -83,6 +80,9 @@ class Engine:
                                 root_console.clear()
                                 self.render(console=root_console)
                                 console.get_context().present(root_console)
+                            can_act = True
+                            action.exhaust_energy()
+                            action.perform()
                         except exceptions.Impossible:
                             can_act = False
 
