@@ -1,4 +1,5 @@
 """Library of different types of entities."""
+
 import components.ai
 from actions import VictoryAction
 from components.equipment import Equipment
@@ -114,7 +115,14 @@ skeleton_archer = Actor(
     name="Skeleton Archer",
     ai_cls=components.ai.StaticRangedEnemy,
     equipment=Equipment(),
-    fighter=Fighter(hp=6, base_defense=0, base_power=1, base_accuracy=60, bleeds=False),
+    fighter=Fighter(
+        hp=6,
+        base_defense=0,
+        base_power=1,
+        base_accuracy=60,
+        bleeds=False,
+        base_damage=(0, 1),
+    ),
     inventory=Inventory(capacity=0),
     level=Level(xp_given=35),
     status=Status(),
