@@ -39,37 +39,37 @@ SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 floor = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(" "), (255, 255, 255), (40, 40, 80)),
+    dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
     light=(ord(" "), (255, 255, 255), (50, 50, 100)),
 )
 wall = new_tile(
     walkable=False,
     transparent=False,
-    dark=(ord(" "), (255, 255, 255), (50, 50, 80)),
+    dark=(ord(" "), (255, 255, 255), (31, 32, 45)),
     light=(ord(" "), (255, 255, 255), (70, 70, 100)),
 )
 closed_door = new_tile(
     walkable=False,
     transparent=False,
-    dark=(ord("+"), (255, 255, 255), (50, 50, 80)),
+    dark=(ord("+"), (255, 255, 255), (31, 32, 45)),
     light=(ord("+"), (255, 255, 255), (70, 70, 100)),
 )
 open_door = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord("-"), (255, 255, 255), (40, 40, 80)),
+    dark=(ord("-"), (255, 255, 255), (22, 24, 43)),
     light=(ord("-"), (255, 255, 255), (50, 50, 100)),
 )
 down_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(">"), (0, 0, 100), (40, 40, 80)),
+    dark=(ord(">"), (0, 0, 100), (22, 24, 43)),
     light=(ord(">"), (255, 255, 255), (50, 50, 100)),
 )
 up_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord("<"), (0, 0, 100), (40, 40, 80)),
+    dark=(ord("<"), (0, 0, 100), (22, 24, 43)),
     light=(ord("<"), (255, 255, 255), (50, 50, 100)),
 )
 dirt_floor = new_tile(
