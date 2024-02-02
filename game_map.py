@@ -170,7 +170,7 @@ class GameMap:
         # Apply the dimming factor to the light colors
         light_colors = self.tiles["light"]
         dimmed_light_colors = np.empty_like(light_colors)
-
+        dimmed_light_colors["ch"] = light_colors["ch"]
         for color in ["fg", "bg"]:  # Assuming 'ch' does not need to be dimmed
             # Reshape dim_factor to be broadcastable with the color arrays
             dim_factor_reshaped = dim_factor.reshape(self.width, self.height, 1)
