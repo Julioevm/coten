@@ -75,25 +75,25 @@ up_stairs = new_tile(
 dirt_floor = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
+    dark=(ord(" "), (255, 255, 255), (93, 82, 32)),
     light=(ord(" "), (255, 255, 255), (200, 180, 50)),
 )
 cave_wall = new_tile(
     walkable=False,
     transparent=False,
-    dark=(ord(" "), (255, 255, 255), (0, 0, 100)),
+    dark=(ord(" "), (255, 255, 255), (58, 49, 26)),
     light=(ord(" "), (255, 255, 255), (130, 110, 50)),
 )
 cave_down_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
+    dark=(ord(">"), (0, 0, 100), (93, 82, 32)),
     light=(ord(">"), (255, 255, 255), (200, 180, 50)),
 )
 cave_up_stairs = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord("<"), (0, 0, 100), (50, 50, 150)),
+    dark=(ord("<"), (0, 0, 100), (93, 82, 32)),
     light=(ord("<"), (255, 255, 255), (200, 180, 50)),
 )
 
