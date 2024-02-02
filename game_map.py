@@ -153,15 +153,37 @@ class GameMap:
 
     def render(self, console: Console) -> None:
         """
-        Renders the map.
-
-        If a tile is in the "visible" array, then draw it with the "light" colors.
-        If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
-        Otherwise, the default is "SHROUD".
+        Renders the map with dimming light effect based on distance from the player position.
         """
+
+        # Calculate the distance from the player position for each tile
+        distance_from_player = np.sqrt(
+            (np.arange(self.width)[:, None] - self.engine.player.x) ** 2
+            + (np.arange(self.height) - self.engine.player.y) ** 2
+        )
+
+        # Apply dimming effect based on the distance from the player position
+        dim_factor = 1 / (distance_from_player + 1)
+        dim_factor += 0.4
+        dim_factor = np.clip(dim_factor, 0, 1)  # Clamp the factor between 0 and 1
+
+        # Apply the dimming factor to the light colors
+        light_colors = self.tiles["light"]
+        dimmed_light_colors = np.empty_like(light_colors)
+
+        for color in ["fg", "bg"]:  # Assuming 'ch' does not need to be dimmed
+            # Reshape dim_factor to be broadcastable with the color arrays
+            dim_factor_reshaped = dim_factor.reshape(self.width, self.height, 1)
+            dimmed_light_colors[color] = (
+                light_colors[color].astype(np.float32) * dim_factor_reshaped
+            ).astype(
+                np.uint8
+            )  # Assuming colors are 8-bit
+
+        # Render the dimmed tiles
         console.rgb[0 : self.width, 0 : self.height] = np.select(
             condlist=[self.visible, self.explored],
-            choicelist=[self.tiles["light"], self.tiles["dark"]],
+            choicelist=[dimmed_light_colors, self.tiles["dark"]],
             default=tile_types.SHROUD,
         )
 
@@ -175,11 +197,33 @@ class GameMap:
         )
 
         for entity in entities_sorted_for_rendering:
+            # Calculate the distance from the entity to the player
+            distance = entity.distance(self.engine.player.x, self.engine.player.y)
+
+            # Calculate the dim factor based on the distance (you'll need to define the logic for this)
+            entity_dim_factor = self.calculate_dim_factor(distance)
+
+            # Apply the dim factor to the entity's color
+            dimmed_color = tuple(
+                (np.array(entity.color, dtype=np.float32) * entity_dim_factor).astype(
+                    np.uint8
+                )
+            )
+
             # Only print entities that are in the FOV
             if self.visible[entity.x, entity.y]:
-                console.print(
-                    x=entity.x, y=entity.y, string=entity.char, fg=entity.color
-                )
+                # Render the entity with the dimmed color
+                console.print(entity.x, entity.y, entity.char, fg=dimmed_color)
+
+    # You would also need to add the calculate_dim_factor method to the GameMap class
+
+    def calculate_dim_factor(self, distance: float) -> float:
+        # Define logic to calculate dimming based on distance
+        # This is a placeholder example, you'll need to adjust it based on your game's needs
+        max_distance = 10  # Define the max distance for dimming
+        if distance > max_distance:
+            return 0.0  # No dimming beyond max distance
+        return 1 - (distance / max_distance)  # Linear dimming
 
     def reveal_map(self) -> None:
         """Reveals the entire map."""
