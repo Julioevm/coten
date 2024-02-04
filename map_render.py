@@ -57,12 +57,8 @@ def main():
             while True:
                 render_required = False
 
-                map_generator = floor_map_generator[generator_index]
-                engine.game_map = map_generator(
-                    map_width=map_width, map_height=map_height, engine=engine
-                )
-
                 for event in tcod.event.wait():
+                    
                     if isinstance(event, tcod.event.Quit):
                         raise SystemExit(0)
                     if isinstance(event, tcod.event.KeyDown):
@@ -80,12 +76,17 @@ def main():
                             raise SystemExit(0)
 
                         time.sleep(0.2)
-
-                if render_required or first_render:
-                    root_console.clear()
-                    engine.game_map.render(console=root_console)
-                    context.present(root_console)
-                    first_render = False
+                        
+                    map_generator = floor_map_generator[generator_index]
+                    engine.game_map = map_generator(
+                        map_width=map_width, map_height=map_height, engine=engine
+                    )
+                
+                    if render_required or first_render:
+                        root_console.clear()
+                        engine.game_map.render(console=root_console)
+                        context.present(root_console)
+                        first_render = False
 
         except Exception:
             raise
