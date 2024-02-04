@@ -5,3 +5,4 @@ savegame.sav
 *build
 .venv
 *.exe
+*.zip
