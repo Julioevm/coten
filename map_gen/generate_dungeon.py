@@ -1,4 +1,5 @@
 """Generator of dungeon type maps."""
+
 from __future__ import annotations
 
 import random
@@ -65,7 +66,8 @@ def generate_dungeon(
 
         if len(rooms) == 0:
             # The first room, where the player starts.
-            player.place(*new_room.center, dungeon)
+            if player is not None:
+                player.place(*new_room.center, dungeon)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             has_placed_first_door = False
@@ -95,18 +97,18 @@ def generate_dungeon(
                 if tile == tile_types.closed_door and not walkable_count <= 5:
                     continue
                 dungeon.tiles[x, y] = tile_types.floor
-
-        if (
-            current_encounters <= max_encounters
-            and len(rooms) > 0  # Skip first room
-            and random.random() < DUNGEON_ENCOUNTER_CHANCE
-        ):
-            if place_encounter(new_room, dungeon, floor):
-                current_encounters += 1
+        if player is not None:
+            if (
+                current_encounters <= max_encounters
+                and len(rooms) > 0  # Skip first room
+                and random.random() < DUNGEON_ENCOUNTER_CHANCE
+            ):
+                if place_encounter(new_room, dungeon, floor):
+                    current_encounters += 1
+                else:
+                    place_entities(new_room, dungeon, floor)
             else:
                 place_entities(new_room, dungeon, floor)
-        else:
-            place_entities(new_room, dungeon, floor)
 
         rooms.append(new_room)
 

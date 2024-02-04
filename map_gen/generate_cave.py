@@ -1,4 +1,5 @@
 """Generator of cave type maps."""
+
 from __future__ import annotations
 from typing import List, TYPE_CHECKING
 import random
@@ -76,23 +77,26 @@ def generate_cave(
 
         if len(rooms) == 0:
             # The first room, where the player starts.
-            player.place(*new_room.center, dungeon)
+            if player is not None:
+                player.place(*new_room.center, dungeon)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
                 dungeon.tiles[x, y] = tile_types.dirt_floor
 
-        if (
-            current_encounters <= max_encounters
-            and len(rooms) > 0  # Skip first room
-            and random.random() < DUNGEON_ENCOUNTER_CHANCE
-        ):
-            if place_encounter(new_room, dungeon, floor):
-                current_encounters += 1
+        # Only place encounters and entities if we have a player
+        if player is not None:
+            if (
+                current_encounters <= max_encounters
+                and len(rooms) > 0  # Skip first room
+                and random.random() < DUNGEON_ENCOUNTER_CHANCE
+            ):
+                if place_encounter(new_room, dungeon, floor):
+                    current_encounters += 1
+                else:
+                    place_entities(new_room, dungeon, floor)
             else:
                 place_entities(new_room, dungeon, floor)
-        else:
-            place_entities(new_room, dungeon, floor)
 
         rooms.append(new_room)
 
