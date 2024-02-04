@@ -75,7 +75,7 @@ def main():
                         if event.sym == tcod.event.KeySym.ESCAPE:
                             raise SystemExit(0)
 
-                        time.sleep(0.2)
+                        time.sleep(0.3)
                         
                     map_generator = floor_map_generator[generator_index]
                     engine.game_map = map_generator(
