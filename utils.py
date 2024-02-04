@@ -32,3 +32,10 @@ def bell_curve_dist(min_value: int, max_value: int) -> int:
         # Check if it's within the desired range
         if min_value <= value <= max_value:
             return int(round(value))
+
+
+def generate_random_rgb():
+    while True:
+        r, g, b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+        if (r > 30 or g > 30 or b > 30) and (r < 225 or g < 225 or b < 225):
+            return (r, g, b)
