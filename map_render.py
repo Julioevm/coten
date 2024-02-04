@@ -17,6 +17,16 @@ floor_map_generator = [
 ]
 
 
+def render_ruler(console, map_width, map_height):
+    gray = (191, 191, 191)
+    for x in range(0, map_width + 1):
+        console.print(x, 0, str(x)[0], fg=gray)
+        if x > 10:
+            console.print(x, 1, str(x)[1], fg=gray)
+    for y in range(0, map_height + 1):
+        console.print(0, y, str(y), fg=gray)
+
+
 def main():
     screen_width = 80
     screen_height = 50
@@ -54,6 +64,7 @@ def main():
         try:
             root_console = tcod.console.Console(screen_width, screen_height, order="F")
             first_render = True
+            show_ruler = False
             while True:
                 render_required = False
 
@@ -70,6 +81,9 @@ def main():
                             generator_index = max(0, generator_index - 1)
                             render_required = True
                         if event.sym == tcod.event.KeySym.r:
+                            show_ruler = not show_ruler
+                            render_required = True
+                        if event.sym == tcod.event.KeySym.SPACE:
                             render_required = True
                         if event.sym == tcod.event.KeySym.ESCAPE:
                             raise SystemExit(0)
@@ -83,6 +97,8 @@ def main():
                         )
                         root_console.clear()
                         engine.game_map.render(console=root_console)
+                        if show_ruler:
+                            render_ruler(root_console, map_width, map_height)
                         context.present(root_console)
                         first_render = False
 
