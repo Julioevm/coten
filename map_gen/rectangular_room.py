@@ -26,3 +26,9 @@ class RectangularRoom(Room):
         for x in range(self.x1 + 1, self.x2):
             for y in range(self.y1 + 1, self.y2):
                 yield (x, y)
+
+    def get_outer_points(self) -> Iterator[Tuple[int, int]]:
+        """Yield points (x, y) that are outside the room."""
+        for x in range(self.x1, self.x2 + 1):
+            for y in range(self.y1, self.y2 + 1):
+                yield (x, y)
