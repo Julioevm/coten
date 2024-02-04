@@ -10,8 +10,30 @@ class Room:
         self.y1 = y
         self.width = width
         self.height = height
-        self.x2 = x + width
-        self.y2 = y + height
+
+    @property
+    def x(self) -> int:
+        return self.x1
+    
+    @x.setter
+    def x(self, value):
+        self.x1 = value
+
+    @property
+    def x2(self) -> int:
+        return self.x1 + self.width
+
+    @property
+    def y(self) -> int:
+        return self.y1
+
+    @y.setter
+    def y(self, value):
+        self.y1 = value
+
+    @property
+    def y2(self) -> int:
+        return self.y1 + self.height
 
     @property
     def center(self) -> Tuple[int, int]:

@@ -30,8 +30,6 @@ class CaveLikeRoom(Room):
         """
         self.x1 = x
         self.y1 = y
-        self.x2 = x + width
-        self.y2 = y + height
         self.width = width
         self.height = height
         self.fill_probability = fill_probability
