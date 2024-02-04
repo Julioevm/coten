@@ -58,10 +58,9 @@ def main():
                 render_required = False
 
                 for event in tcod.event.wait():
-                    
                     if isinstance(event, tcod.event.Quit):
                         raise SystemExit(0)
-                    if isinstance(event, tcod.event.KeyDown):
+                    if isinstance(event, tcod.event.KeyUp):
                         if event.sym == tcod.event.KeySym.UP:
                             generator_index = min(
                                 len(floor_map_generator) - 1, generator_index + 1
@@ -76,13 +75,12 @@ def main():
                             raise SystemExit(0)
 
                         time.sleep(0.3)
-                        
-                    map_generator = floor_map_generator[generator_index]
-                    engine.game_map = map_generator(
-                        map_width=map_width, map_height=map_height, engine=engine
-                    )
-                
+
                     if render_required or first_render:
+                        map_generator = floor_map_generator[generator_index]
+                        engine.game_map = map_generator(
+                            map_width=map_width, map_height=map_height, engine=engine
+                        )
                         root_console.clear()
                         engine.game_map.render(console=root_console)
                         context.present(root_console)
