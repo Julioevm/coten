@@ -152,7 +152,6 @@ class GameMap:
         return False
 
     def render_basic(self, console: Console) -> None:
-        print("Rendering basic")
         console.rgb[0 : self.width, 0 : self.height] = self.tiles["light"]
 
     def render_with_light(self, console: Console) -> None:
