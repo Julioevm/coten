@@ -48,7 +48,10 @@ def generate_dungeon(
 def map_room(room: RectangularRoom, dungeon: GameMap):
     global rooms
     rooms.append(room)
+
     for x, y in room.get_inner_points():
+        if x > dungeon.width - 1 or y > dungeon.height - 1:
+            continue
         dungeon.tiles[x, y] = tile_types.floor
 
 
@@ -69,6 +72,7 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, verticalLayout: bool)
     print(f"Generate room x{area.x1} y{area.y1} w{area.width} h{area.height}")
     place_room1 = False
 
+    room1 = RectangularRoom(0, 0, 0, 0)
     for _ in range(20):
         x1 = area.x1
         y1 = area.y1
@@ -129,6 +133,7 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, verticalLayout: bool)
 
 def first_room(dungeon: GameMap):
     print("First room")
+    vertical_layout = flip_coin()
     has_chamber1 = not flip_coin()
     has_chamber2 = not flip_coin()
     has_chamber3 = not flip_coin()
@@ -149,6 +154,12 @@ def first_room(dungeon: GameMap):
 
     hallway = RectangularRoom(hallway_x1, 17, hallway_width, 6)
 
+    if vertical_layout:
+        chamber1.x, chamber1.y = chamber1.y, chamber1.x
+        chamber3.x, chamber3.y = chamber3.y, chamber3.x
+        hallway.x, hallway.y = hallway.y, hallway.x
+        hallway.width, hallway.height = hallway.height, hallway.width
+
     if has_chamber1:
         map_room(chamber1, dungeon)
     if has_chamber2:
@@ -159,8 +170,8 @@ def first_room(dungeon: GameMap):
     map_room(hallway, dungeon)
 
     if has_chamber1:
-        generate_room(chamber1, dungeon, True)
+        generate_room(chamber1, dungeon, vertical_layout)
     if has_chamber2:
-        generate_room(chamber2, dungeon, True)
+        generate_room(chamber2, dungeon, vertical_layout)
     if has_chamber3:
-        generate_room(chamber3, dungeon, True)
+        generate_room(chamber3, dungeon, vertical_layout)
