@@ -1,6 +1,7 @@
 """Generator of cathedral type maps."""
 
 from __future__ import annotations
+import copy
 
 import random
 from typing import TYPE_CHECKING, List
@@ -13,18 +14,21 @@ from map_gen.procgen import (
     get_max_value_for_floor,
 )
 from map_gen.rectangular_room import RectangularRoom
+from utils import generate_random_rgb
 
 if TYPE_CHECKING:
-    from base_room import Room
     from engine import Engine
 
-rooms: List[Room] = []
+rooms: List[RectangularRoom] = []
 max_encounters = 0
 current_encounters = 0
 
 
-def flip_coin():
-    return random.choice([True, False])
+def flip_coin(times=1):
+    flip = False
+    for _ in range(times):
+        flip = random.choice([True, False])
+    return flip
 
 
 def generate_dungeon(
@@ -42,57 +46,73 @@ def generate_dungeon(
 
     first_room(dungeon)
 
+    print(find_area())
     return dungeon
 
 
 def map_room(room: RectangularRoom, dungeon: GameMap):
     global rooms
     rooms.append(room)
+    room_color = generate_random_rgb()
 
-    for x, y in room.get_inner_points():
+    for x, y in room.get_outer_points():
         if x > dungeon.width - 1 or y > dungeon.height - 1:
             continue
         dungeon.tiles[x, y] = tile_types.floor
 
+        # dungeon.tiles[x, y] = tile_types.new_tile(
+        #     walkable=True,
+        #     transparent=True,
+        #     dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
+        #     light=(ord(" "), (255, 255, 255), room_color),
+        # )
+
 
 def check_room(room: RectangularRoom, dungeon: GameMap):
-    print(f"Check room x{room.x1} y{room.y1} w{room.width} h{room.height}")
     global rooms
-    if room.x2 > dungeon.width or room.y2 > dungeon.height:
-        print("Room out of bounds")
+    if room.x < 0 or room.y < 0 or room.x2 > dungeon.width or room.y2 > dungeon.height:
         return False
+
     if any(room.intersects(other_room) for other_room in rooms):
-        print("Room intersects another room")
         return False
 
     return True
 
 
-def generate_room(area: RectangularRoom, dungeon: GameMap, verticalLayout: bool):
-    print(f"Generate room x{area.x1} y{area.y1} w{area.width} h{area.height}")
+def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool):
     place_room1 = False
 
+    rotate = flip_coin(4)
+    vertical_layout = (not vertical_layout and rotate) or (
+        vertical_layout and not rotate
+    )
+
     room1 = RectangularRoom(0, 0, 0, 0)
+
     for _ in range(20):
-        x1 = area.x1
-        y1 = area.y1
         random_width = (random.randint(0, 4) + 2) & ~1
         random_height = (random.randint(0, 4) + 2) & ~1
+        room1.x = area.x
+        room1.y = area.y
+        room1.width = random_width
+        room1.height = random_height
 
-        if verticalLayout:
-            x1 += -random_width
-            y1 += int(area.height / 2 - random_height / 2)
-            room1 = RectangularRoom(x1, y1, random_width, random_height)
+        if vertical_layout:
+            room1.x += -room1.width
+            room1.y += int(area.height / 2 - room1.height / 2)
             place_room1 = check_room(
-                RectangularRoom(x1 - 1, y1 - 1, random_width + 1, random_height + 2),
+                RectangularRoom(
+                    room1.x - 1, room1.y - 1, room1.width, room1.height + 1
+                ),
                 dungeon,
             )
         else:
-            x1 += int(area.width / 2 - random_width / 2)
-            y1 += -random_height
-            room1 = RectangularRoom(x1, y1, random_width, random_height)
+            room1.x += int(area.width / 2 - random_width / 2)
+            room1.y += -room1.height
             place_room1 = check_room(
-                RectangularRoom(x1 - 1, y1 - 1, random_width + 2, random_height + 1),
+                RectangularRoom(
+                    room1.x - 1, room1.y - 1, room1.width + 1, room1.height
+                ),
                 dungeon,
             )
 
@@ -103,36 +123,34 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, verticalLayout: bool)
         map_room(room1, dungeon)
 
     place_room2 = False
-    room2 = room1
-    if verticalLayout:
-        room2 = RectangularRoom(
-            area.x1 + area.width, room1.y1, room1.width, room1.height
-        )
+    room2 = copy.deepcopy(room1)
+
+    if vertical_layout:
+        room2.x = area.x + area.width
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1, room2.y1 - 1, room2.width + 1, room2.height + 2),
+            RectangularRoom(room2.x1 + 1, room2.y1, room2.width, room2.height + 1),
             dungeon,
         )
     else:
-        room2 = RectangularRoom(
-            room1.x1, area.y1 + area.height, room1.width, room1.height
-        )
+        room2.y = area.y + area.height
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1 - 1, room2.y1, room2.width + 2, room2.height + 1),
+            RectangularRoom(room2.x1, room2.y1 + 1, room2.width + 1, room2.height),
             dungeon,
         )
 
     if place_room2:
         map_room(room2, dungeon)
     if place_room1:
-        generate_room(room1, dungeon, not verticalLayout)
+        generate_room(room1, dungeon, not vertical_layout)
     if place_room2:
-        generate_room(room2, dungeon, not verticalLayout)
+        generate_room(room2, dungeon, not vertical_layout)
 
 
 def first_room(dungeon: GameMap):
-    print("First room")
+    global rooms
+    rooms = []
     vertical_layout = flip_coin()
     has_chamber1 = not flip_coin()
     has_chamber2 = not flip_coin()
@@ -175,3 +193,12 @@ def first_room(dungeon: GameMap):
         generate_room(chamber2, dungeon, vertical_layout)
     if has_chamber3:
         generate_room(chamber3, dungeon, vertical_layout)
+
+
+def find_area():
+    global rooms
+    total_count = 0
+    for room in rooms:
+        total_count += room.outer_size
+
+    return total_count

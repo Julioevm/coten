@@ -16,6 +16,10 @@ class RectangularRoom(Room):
     def size(self) -> int:
         """Return the area of this room."""
         return (self.x2 - self.x1 - 1) * (self.y2 - self.y1 - 1)
+    
+    @property
+    def outer_size(self) -> int:
+        return self.width * self.height
 
     def is_within_inner_bounds(self, x: int, y: int) -> bool:
         """Return True if the x and y coordinates are inside this room."""
