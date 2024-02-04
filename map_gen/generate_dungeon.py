@@ -61,8 +61,7 @@ def generate_dungeon(
         # If there are no intersections then the room is valid.
 
         # Dig out this rooms inner area.
-        for x, y in new_room.get_inner_points():
-            dungeon.tiles[x, y] = tile_types.floor
+        map_room(dungeon, new_room)
 
         if len(rooms) == 0:
             # The first room, where the player starts.
@@ -122,3 +121,10 @@ def generate_dungeon(
     dungeon.upstairs_location = rooms[-1].center
 
     return dungeon
+
+
+def map_room(dungeon: GameMap, new_room: Room):
+    for x, y in new_room.get_inner_points():
+        if x > dungeon.width - 1 or y > dungeon.height - 1:
+            continue
+        dungeon.tiles[x, y] = tile_types.floor
