@@ -8,6 +8,8 @@ class Room:
     def __init__(self, x: int, y: int, width: int, height: int):
         self.x1 = x
         self.y1 = y
+        self.width = width
+        self.height = height
         self.x2 = x + width
         self.y2 = y + height
 
