@@ -151,7 +151,11 @@ class GameMap:
             return True
         return False
 
-    def render(self, console: Console) -> None:
+    def render_basic(self, console: Console) -> None:
+        print("Rendering basic")
+        console.rgb[0 : self.width, 0 : self.height] = self.tiles["light"]
+
+    def render_with_light(self, console: Console) -> None:
         """
         Renders the map with dimming light effect based on distance from the player position.
         """
@@ -234,6 +238,12 @@ class GameMap:
             if not walkable[x, y]:
                 return False
         return True
+
+    def render(self, console: Console) -> None:
+        if self.engine.player is None:
+            self.render_basic(console)
+        else:
+            self.render_with_light(console)
 
 
 def bloodify_tile(x: int, y: int, console: Console) -> None:
