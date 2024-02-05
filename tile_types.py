@@ -48,6 +48,30 @@ wall = new_tile(
     dark=(ord(" "), (255, 255, 255), (31, 32, 45)),
     light=(ord(" "), (255, 255, 255), (70, 70, 100)),
 )
+arch = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord("^"), (31, 32, 45), (22, 24, 43)),
+    light=(ord("^"), (70, 70, 100), (50, 50, 100)),
+)
+pillar = new_tile(
+    walkable=False,
+    transparent=False,
+    dark=(ord("o"), (31, 32, 45), (22, 24, 43)),
+    light=(ord("o"), (70, 70, 100), (50, 50, 100)),
+)
+fence = new_tile(
+    walkable=False,
+    transparent=True,
+    dark=(ord("#"), (31, 32, 45), (22, 24, 43)),
+    light=(ord("#"), (70, 70, 100), (50, 50, 100)),
+)
+unknown = new_tile(
+    walkable=False,
+    transparent=True,
+    dark=(ord("?"), (31, 32, 45), (22, 24, 43)),
+    light=(ord("?"), (70, 70, 100), (50, 50, 100)),
+)
 closed_door = new_tile(
     walkable=False,
     transparent=False,
