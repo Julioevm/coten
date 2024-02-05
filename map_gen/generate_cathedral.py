@@ -4,7 +4,9 @@ from __future__ import annotations
 import copy
 
 import random
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Tuple
+
+import numpy as np
 
 from map_gen import parameters
 
@@ -19,7 +21,56 @@ from utils import generate_random_rgb
 if TYPE_CHECKING:
     from engine import Engine
 
+Tile = {
+    "Dirt": 0,
+    "Floor": 1,
+    "Corner": 2,
+    "Wall": 3,
+    "Arch": 4,
+    "VWall": 5,
+    "VWallEnd": 6,
+    "HWall": 7,
+    "HWallEnd": 8,
+    "VCorner": 9,
+    "HCorner": 10,
+    "DirtHwall": 11,
+    "DirtVwall": 12,
+    "VDirtCorner": 13,
+    "HDirtCorner": 14,
+    "DirtHwallEnd": 15,
+    "DirtVwallEnd": 16,
+    "Pillar": 17,
+    "HArch": 18,
+    "VArch": 19,
+    "HArchEnd": 20,
+    "VArchEnd": 21,
+    "HArchVWall": 22,
+    "VArchHWall": 23,
+    "HFence": 24,
+    "HFenceVWall": 25,
+    "HDoor": 26,
+    "HDoorEnd": 27,
+    "HWallVArch": 28,
+    "Door": 29,
+    "VFence": 30,
+    "DWall": 31,
+    "VDoor": 32,
+    "DArch": 33,
+}
+
 rooms: List[RectangularRoom] = []
+
+dungeon_mask = np.array([])
+protected = np.array([])
+dungeon = np.array([])
+chamber = np.array([])
+
+vertical_layout = False
+
+has_chamber1 = False
+has_chamber2 = False
+has_chamber3 = False
+
 max_encounters = 0
 current_encounters = 0
 color_rooms = False
@@ -32,6 +83,53 @@ def flip_coin(times=1):
     return flip
 
 
+def generate_rnd(upper_bound):
+    return random.randint(0, upper_bound - 1)
+
+
+def init_dungeon_flags(map: GameMap):
+    global dungeon
+    global protected
+    global chamber
+    DMAXX = map.width
+    DMAXY = map.height
+    dungeon = np.full((DMAXX, DMAXY), fill_value=Tile["Dirt"], order="F")
+    protected = np.full((DMAXX, DMAXY), fill_value=False, order="F")
+    chamber = np.full((DMAXX, DMAXY), fill_value=False, order="F")
+
+
+def make_dmt(map: GameMap):
+    DMAXX = map.width
+    DMAXY = map.height
+    global dungeon
+    global dungeon_mask
+
+    for j in range(DMAXY - 1):
+        for i in range(DMAXX - 1):
+            if dungeon_mask[i][j]:
+                dungeon[i][j] = Tile["Floor"]
+            elif (
+                not dungeon_mask[i + 1][j + 1]
+                and dungeon_mask[i][j + 1]
+                and dungeon_mask[i + 1, j]
+            ):
+                dungeon[i][j] = Tile["Floor"]  # Remove diagonal corners
+            elif (
+                dungeon_mask[i + 1][j + 1]
+                and dungeon_mask[i][j + 1]
+                and dungeon_mask[i + 1][j]
+            ):
+                dungeon[i][j] = Tile["VCorner"]
+            elif dungeon_mask[i][j + 1]:
+                dungeon[i][j] = Tile["HWall"]
+            elif dungeon_mask[i + 1][j]:
+                dungeon[i][j] = Tile["VWall"]
+            elif dungeon_mask[i + 1][j + 1]:
+                dungeon[i][j] = Tile["DWall"]
+            else:
+                dungeon[i][j] = Tile["Dirt"]
+
+
 def generate_dungeon(
     map_width: int,
     map_height: int,
@@ -40,53 +138,55 @@ def generate_dungeon(
     global max_encounters
     player = engine.player
     min_area = 530
-    dungeon = GameMap(
-        engine, map_width, map_height, entities=[player], name="Cathedral"
-    )
+    map = GameMap(engine, map_width, map_height, entities=[player], name="Cathedral")
     floor = engine.game_world.current_floor
     max_encounters = get_max_value_for_floor(parameters.max_encounters_by_floor, floor)
 
+    print("## Generating Dungeon ##")
     while True:
-        # DRLG_InitTrans()
-
         while True:
-            first_room(dungeon)
+            first_room(map)
             if find_area() > min_area:
                 break
 
-        # InitDungeonFlags();
-        # MakeDmt();
-        # FillChambers();
+        init_dungeon_flags(map)
+        make_dmt(map)
+        fill_chambers()
         # FixTilesPatterns();
-        # AddWall();
+        add_wall(map)
         # FloodTransparencyValues(13);
         # if (PlaceStairs(entry))
         break
 
-    return dungeon
+    map_dungeon(map)
+
+    return map
 
 
-def map_room(room: RectangularRoom, dungeon: GameMap):
+def map_room(room: RectangularRoom, map: GameMap):
     global rooms
+    global dungeon_mask
     rooms.append(room)
     room_color = generate_random_rgb()
 
     for x, y in room.get_outer_points():
-        if x > dungeon.width - 1 or y > dungeon.height - 1:
+        if x > map.width - 1 or y > map.height - 1:
             continue
-        if color_rooms:
-            dungeon.tiles[x, y] = tile_types.new_tile(
-                walkable=True,
-                transparent=True,
-                dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
-                light=(ord(" "), (255, 255, 255), room_color),
-            )
-        else:
-            dungeon.tiles[x, y] = tile_types.floor
+        # if color_rooms:
+        #     map.tiles[x, y] = tile_types.new_tile(
+        #         walkable=True,
+        #         transparent=True,
+        #         dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
+        #         light=(ord(" "), (255, 255, 255), room_color),
+        #     )
+        # else:
+        #     map.tiles[x, y] = tile_types.floor
+        dungeon_mask[x, y] = True
 
 
 def check_room(room: RectangularRoom, dungeon: GameMap):
     global rooms
+    global dungeon_mask
     if (
         room.x < 0
         or room.y < 0
@@ -95,9 +195,8 @@ def check_room(room: RectangularRoom, dungeon: GameMap):
     ):
         return False
 
-    # if any(room.intersects(other_room) for other_room in rooms):
     for x, y in room.get_outer_points():
-        if dungeon.tiles[x, y]["walkable"]:
+        if dungeon_mask[x][y]:
             return False
 
     return True
@@ -172,8 +271,11 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
         generate_room(room2, dungeon, not vertical_layout)
 
 
-def first_room(dungeon: GameMap):
-    global rooms
+def first_room(map: GameMap):
+    global rooms, dungeon_mask
+    global vertical_layout, has_chamber1, has_chamber2, has_chamber3
+
+    dungeon_mask = np.full((map.width, map.height), fill_value=False, order="F")
     rooms = []
     vertical_layout = flip_coin()
     has_chamber1 = not flip_coin()
@@ -203,20 +305,20 @@ def first_room(dungeon: GameMap):
         hallway.width, hallway.height = hallway.height, hallway.width
 
     if has_chamber1:
-        map_room(chamber1, dungeon)
+        map_room(chamber1, map)
     if has_chamber2:
-        map_room(chamber2, dungeon)
+        map_room(chamber2, map)
     if has_chamber3:
-        map_room(chamber3, dungeon)
+        map_room(chamber3, map)
 
-    map_room(hallway, dungeon)
+    map_room(hallway, map)
 
     if has_chamber1:
-        generate_room(chamber1, dungeon, vertical_layout)
+        generate_room(chamber1, map, vertical_layout)
     if has_chamber2:
-        generate_room(chamber2, dungeon, vertical_layout)
+        generate_room(chamber2, map, vertical_layout)
     if has_chamber3:
-        generate_room(chamber3, dungeon, vertical_layout)
+        generate_room(chamber3, map, vertical_layout)
 
 
 def find_area():
@@ -226,3 +328,349 @@ def find_area():
         total_count += room.outer_size
 
     return total_count
+
+
+def fill_chambers():
+    global vertical_layout, has_chamber1, has_chamber2, has_chamber3
+    chamber1 = (0, 14)
+    chamber3 = (28, 14)
+    hall1 = (12, 18)
+    hall2 = (26, 18)
+
+    if vertical_layout:
+        chamber1 = (chamber1[1], chamber1[0])
+        chamber3 = (chamber3[1], chamber3[0])
+        hall1 = (hall1[1], hall1[0])
+        hall2 = (hall2[1], hall2[0])
+
+    if has_chamber1:
+        generate_chamber(chamber1, False, True, vertical_layout)
+    if has_chamber2:
+        generate_chamber((14, 14), has_chamber1, has_chamber3, vertical_layout)
+    if has_chamber3:
+        generate_chamber(chamber3, True, False, vertical_layout)
+
+    if has_chamber2:
+        if has_chamber1:
+            generate_hall(hall1, 2, vertical_layout)
+        if has_chamber3:
+            generate_hall(hall2, 2, vertical_layout)
+    else:
+        generate_hall(hall1, 16, vertical_layout)
+
+        # InitSetPiece()
+        # Set a set piece in one of the chambers
+
+
+def generate_hall(start, length, verticalLayout):
+    if verticalLayout:
+        for i in range(start[1], start[1] + length):
+            dungeon[start[0]][i] = Tile["Arch"]
+            dungeon[start[0] + 3][i] = Tile["Arch"]
+    else:
+        for i in range(start[0], start[0] + length):
+            dungeon[i][start[1]] = Tile["Arch"]
+            dungeon[i][start[1] + 3] = Tile["Arch"]
+
+
+def generate_chamber(
+    position: Tuple[int, int], connectPrevious, connectNext, verticalLayout
+):
+    global dungeon, chamber
+    x, y = position
+    if connectPrevious:
+        if verticalLayout:
+            dungeon[x + 2][y] = Tile["HArch"]
+            dungeon[x + 3][y] = Tile["HArch"]
+            dungeon[x + 4][y] = Tile["Corner"]
+            dungeon[x + 7][y] = Tile["VArchEnd"]
+            dungeon[x + 8][y] = Tile["HArch"]
+            dungeon[x + 9][y] = Tile["HWall"]
+        else:
+            dungeon[x][y + 2] = Tile["VWall"]
+            dungeon[x][y + 3] = Tile["VArch"]
+            dungeon[x][y + 4] = Tile["Corner"]
+            dungeon[x][y + 7] = Tile["HArchEnd"]
+            dungeon[x][y + 8] = Tile["VArch"]
+            dungeon[x][y + 9] = Tile["VWall"]
+
+    if connectNext:
+        if verticalLayout:
+            y += 11
+            dungeon[x + 2][y] = Tile["HArchVWall"]
+            dungeon[x + 3][y] = Tile["HArch"]
+            dungeon[x + 4][y] = Tile["HArchEnd"]
+            dungeon[x + 7][y] = Tile["DArch"]
+            dungeon[x + 8][y] = Tile["HArch"]
+
+            if dungeon[x + 9][y] != Tile["DWall"]:
+                dungeon[x + 9][y] = Tile["HDirtCorner"]
+            y -= 11
+        else:
+            x += 11
+            dungeon[x][y + 2] = Tile["HWallVArch"]
+            dungeon[x][y + 3] = Tile["VArch"]
+            dungeon[x][y + 4] = Tile["VArchEnd"]
+            dungeon[x][y + 7] = Tile["DArch"]
+            dungeon[x][y + 8] = Tile["VArch"]
+
+            if dungeon[x][y + 9] != Tile["DWall"]:
+                dungeon[x][y + 9] = Tile["HDirtCorner"]
+            x -= 11
+
+    for i in range(1, 11):
+        for j in range(1, 11):
+            dungeon[j + x][i + y] = Tile["Floor"]
+            chamber[j + x][i + y] = True
+
+    dungeon[x + 4][y + 4] = Tile["Pillar"]
+    dungeon[x + 7][y + 4] = Tile["Pillar"]
+    dungeon[x + 4][y + 7] = Tile["Pillar"]
+    dungeon[x + 7][y + 7] = Tile["Pillar"]
+
+
+def HorizontalWallOk(position: Tuple[int, int]):
+    global protected
+    global chamber
+    length = 1
+    x, y = position
+    while dungeon[x + length][y] == Tile["Floor"]:
+        if (
+            dungeon[x + length][y - 1] != Tile["Floor"]
+            or dungeon[x + length][y + 1] != Tile["Floor"]
+            or protected[x + length][y]
+            or chamber[x + length][y]
+        ):
+            break
+        length += 1
+
+    if length == 1:
+        return -1
+
+    tileId = dungeon[x + length][y]
+
+    if tileId not in (
+        Tile["Corner"],
+        Tile["Wall"],
+        Tile["Arch"],
+        Tile["VWallEnd"],
+        Tile["HWallEnd"],
+        Tile["VCorner"],
+        Tile["HCorner"],
+        Tile["DirtHwall"],
+        Tile["DirtVwall"],
+        Tile["VDirtCorner"],
+        Tile["HDirtCorner"],
+        Tile["DirtHwallEnd"],
+        Tile["DirtVwallEnd"],
+    ):
+        return -1
+
+    return length
+
+
+def VerticalWallOk(position):
+    global protected, chamber
+    x, y = position
+    length = 1
+    while dungeon[x][y + length] == Tile["Floor"]:
+        if (
+            dungeon[x - 1][y + length] != Tile["Floor"]
+            or dungeon[x + 1][y + length] != Tile["Floor"]
+            or protected[x][y + length]
+            or chamber[x][y + length]
+        ):
+            break
+        length += 1
+
+    if length == 1:
+        return -1
+
+    tile_id = dungeon[x][y + length]
+
+    if tile_id not in (
+        Tile["Corner"],
+        Tile["Wall"],
+        Tile["Arch"],
+        Tile["VWallEnd"],
+        Tile["HWallEnd"],
+        Tile["VCorner"],
+        Tile["HCorner"],
+        Tile["DirtHwall"],
+        Tile["DirtVwall"],
+        Tile["VDirtCorner"],
+        Tile["HDirtCorner"],
+        Tile["DirtHwallEnd"],
+        Tile["DirtVwallEnd"],
+    ):
+        return -1
+
+    return length
+
+
+def HorizontalWall(position: Tuple[int, int], start, maxX, map: GameMap):
+    global protected
+    x, y = position
+    wallTile = Tile["HWall"]
+    doorTile = Tile["HDoor"]
+
+    rnd = generate_rnd(4)
+    if rnd == 2:  # Add arch
+        wallTile = Tile["HArch"]
+        doorTile = Tile["HArch"]
+        if start == Tile["HWall"]:
+            start = Tile["HArch"]
+        elif start == Tile["DWall"]:
+            start = Tile["HArchVWall"]
+    elif rnd == 3:  # Add Fence
+        wallTile = Tile["HFence"]
+        if start == Tile["HWall"]:
+            start = Tile["HFence"]
+        elif start == Tile["DWall"]:
+            start = Tile["HFenceVWall"]
+
+    if generate_rnd(6) == 5:
+        doorTile = Tile["HArch"]
+
+    dungeon[x][y] = start
+
+    for x in range(1, maxX):
+        dungeon[x + x][y] = wallTile
+
+    x = generate_rnd(maxX - 1) + 1
+    print("Setting door at", x, y)
+    dungeon[x + x][y] = doorTile
+
+    if doorTile == Tile["HDoor"]:
+        protected[x + x][y] = True
+
+
+def VerticalWall(position, start, max_y):
+    x, y = position
+    wall_tile = Tile["VWall"]
+    door_tile = Tile["VDoor"]
+
+    rnd = generate_rnd(4)
+    if rnd == 2:  # Add arch
+        wall_tile = Tile["VArch"]
+        door_tile = Tile["VArch"]
+        if start == Tile["VWall"]:
+            start = Tile["VArch"]
+        elif start == Tile["DWall"]:
+            start = Tile["HWallVArch"]
+    elif rnd == 3:  # Add Fence
+        wall_tile = Tile["VFence"]
+        if start == Tile["VWall"]:
+            start = Tile["VFence"]
+        elif start == Tile["DWall"]:
+            start = Tile["HWallVFence"]
+
+    if generate_rnd(6) == 5:
+        door_tile = Tile["VArch"]
+
+    dungeon[x][y] = start
+
+    for y in range(1, max_y):
+        dungeon[x][y + y] = wall_tile
+
+    y = generate_rnd(max_y - 1) + 1
+
+    dungeon[x][y + y] = door_tile
+    if door_tile == Tile["VDoor"]:
+        protected[x][y + y] = True
+
+
+def add_wall(map: GameMap):
+    global protected
+    global chamber
+    global dungeon
+    DMAXX = map.width
+    DMAXY = map.height
+
+    print("add_wall")
+    for j in range(DMAXY):
+        for i in range(DMAXX):
+            if protected[i][j] or chamber[i][j]:
+                continue
+
+            if dungeon[i][j] == Tile["Corner"]:
+                # DiscardRandomValues(1)
+                max_x = HorizontalWallOk((i, j))
+                if max_x != -1:
+                    HorizontalWall((i, j), Tile["HWall"], max_x, map)
+
+            if dungeon[i][j] == Tile["Corner"]:
+                # DiscardRandomValues(1)
+                max_y = VerticalWallOk((i, j))
+                if max_y != -1:
+                    VerticalWall((i, j), Tile["VWall"], max_y)
+
+            if dungeon[i][j] == Tile["VWallEnd"]:
+                # DiscardRandomValues(1)
+                max_x = HorizontalWallOk((i, j))
+                if max_x != -1:
+                    HorizontalWall((i, j), Tile["DWall"], max_x, map)
+
+            if dungeon[i][j] == Tile["HWallEnd"]:
+                # DiscardRandomValues(1)
+                max_y = VerticalWallOk((i, j))
+                if max_y != -1:
+                    VerticalWall((i, j), Tile["DWall"], max_y)
+
+            if dungeon[i][j] == Tile["HWall"]:
+                # DiscardRandomValues(1)
+                max_x = HorizontalWallOk((i, j))
+                if max_x != -1:
+                    HorizontalWall((i, j), Tile["HWall"], max_x, map)
+
+            if dungeon[i][j] == Tile["VWall"]:
+                # DiscardRandomValues(1)
+                max_y = VerticalWallOk((i, j))
+                if max_y != -1:
+                    VerticalWall((i, j), Tile["VWall"], max_y)
+
+
+def map_dungeon(map: GameMap):
+    global dungeon
+    # iterate through the dungeon tiles
+    # map the dungeon tiles to the corresponding tile type
+    for j in range(map.height):
+        for i in range(map.width):
+            if dungeon[i][j] == Tile["Floor"]:
+                map.tiles[i][j] = tile_types.floor
+            elif dungeon[i][j] in (
+                Tile["Wall"],
+                Tile["DWall"],
+                Tile["VWall"],
+                Tile["HWall"],
+                Tile["VWallEnd"],
+                Tile["HWallEnd"],
+                Tile["VCorner"],
+                Tile["HCorner"],
+                Tile["VArchHWall"],
+                Tile["HWallVArch"],
+                Tile["HDirtCorner"],
+            ):
+                map.tiles[i][j] = tile_types.wall
+            elif dungeon[i][j] in (
+                Tile["HArchVWall"],
+                Tile["Arch"],
+                Tile["VArch"],
+                Tile["HArch"],
+                Tile["DArch"],
+                Tile["Corner"],
+                Tile["VArchEnd"],
+                Tile["HArchEnd"],
+            ):
+                map.tiles[i][j] = tile_types.arch
+            elif dungeon[i][j] in (Tile["HFence"], Tile["HFenceVWall"], Tile["VFence"]):
+                map.tiles[i][j] = tile_types.fence
+            elif dungeon[i][j] == Tile["Pillar"]:
+                map.tiles[i][j] = tile_types.pillar
+            elif dungeon[i][j] in (Tile["HDoor"], Tile["VDoor"]):
+                map.tiles[i][j] = tile_types.closed_door
+            elif dungeon[i][j] == Tile["Dirt"]:
+                map.tiles[i][j] = tile_types.wall
+            else:
+                print("unknown", dungeon[i][j])
+                map.tiles[i][j] = tile_types.unknown
