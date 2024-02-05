@@ -38,13 +38,29 @@ def generate_dungeon(
 ) -> GameMap:
     global max_encounters
     player = engine.player
+    min_area = 761
     dungeon = GameMap(
         engine, map_width, map_height, entities=[player], name="Cathedral"
     )
     floor = engine.game_world.current_floor
     max_encounters = get_max_value_for_floor(parameters.max_encounters_by_floor, floor)
 
-    first_room(dungeon)
+    while True:
+        # DRLG_InitTrans()
+
+        while True:
+            first_room(dungeon)
+            if find_area() > min_area:
+                break
+
+        # InitDungeonFlags();
+        # MakeDmt();
+        # FillChambers();
+        # FixTilesPatterns();
+        # AddWall();
+        # FloodTransparencyValues(13);
+        # if (PlaceStairs(entry))
+        break
 
     print(find_area())
     return dungeon
