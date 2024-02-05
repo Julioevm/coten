@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 rooms: List[RectangularRoom] = []
 max_encounters = 0
 current_encounters = 0
+color_rooms = False
 
 
 def flip_coin(times=1):
@@ -38,7 +39,7 @@ def generate_dungeon(
 ) -> GameMap:
     global max_encounters
     player = engine.player
-    min_area = 761
+    min_area = 530
     dungeon = GameMap(
         engine, map_width, map_height, entities=[player], name="Cathedral"
     )
@@ -74,23 +75,31 @@ def map_room(room: RectangularRoom, dungeon: GameMap):
     for x, y in room.get_outer_points():
         if x > dungeon.width - 1 or y > dungeon.height - 1:
             continue
-        dungeon.tiles[x, y] = tile_types.floor
-
-        # dungeon.tiles[x, y] = tile_types.new_tile(
-        #     walkable=True,
-        #     transparent=True,
-        #     dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
-        #     light=(ord(" "), (255, 255, 255), room_color),
-        # )
+        if color_rooms:
+            dungeon.tiles[x, y] = tile_types.new_tile(
+                walkable=True,
+                transparent=True,
+                dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
+                light=(ord(" "), (255, 255, 255), room_color),
+            )
+        else:
+            dungeon.tiles[x, y] = tile_types.floor
 
 
 def check_room(room: RectangularRoom, dungeon: GameMap):
     global rooms
-    if room.x < 0 or room.y < 0 or room.x2 > dungeon.width or room.y2 > dungeon.height:
+    if (
+        room.x < 0
+        or room.y < 0
+        or room.x2 >= dungeon.width
+        or room.y2 >= dungeon.height
+    ):
         return False
 
-    if any(room.intersects(other_room) for other_room in rooms):
-        return False
+    # if any(room.intersects(other_room) for other_room in rooms):
+    for x, y in room.get_outer_points():
+        if dungeon.tiles[x, y]["walkable"]:
+            return False
 
     return True
 
@@ -118,7 +127,7 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
             room1.y += int(area.height / 2 - room1.height / 2)
             place_room1 = check_room(
                 RectangularRoom(
-                    room1.x - 1, room1.y - 1, room1.width, room1.height + 1
+                    room1.x - 1, room1.y - 1, room1.width + 1, room1.height + 2
                 ),
                 dungeon,
             )
@@ -127,7 +136,7 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
             room1.y += -room1.height
             place_room1 = check_room(
                 RectangularRoom(
-                    room1.x - 1, room1.y - 1, room1.width + 1, room1.height
+                    room1.x - 1, room1.y - 1, room1.width + 2, room1.height + 1
                 ),
                 dungeon,
             )
@@ -145,14 +154,14 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
         room2.x = area.x + area.width
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1 + 1, room2.y1, room2.width, room2.height + 1),
+            RectangularRoom(room2.x1 + 1, room2.y1, room2.width + 1, room2.height + 2),
             dungeon,
         )
     else:
         room2.y = area.y + area.height
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1, room2.y1 + 1, room2.width + 1, room2.height),
+            RectangularRoom(room2.x1, room2.y1 + 1, room2.width + 2, room2.height + 1),
             dungeon,
         )
 
