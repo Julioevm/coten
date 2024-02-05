@@ -63,7 +63,6 @@ def generate_dungeon(
         # if (PlaceStairs(entry))
         break
 
-    print(find_area())
     return dungeon
 
 
