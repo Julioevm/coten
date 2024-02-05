@@ -6,3 +6,4 @@ savegame.sav
 .venv
 *.exe
 *.zip
+.tool-versions
