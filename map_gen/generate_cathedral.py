@@ -104,6 +104,17 @@ def init_dungeon_flags(map: GameMap):
     chamber = np.full((DMAXX, DMAXY), fill_value=False, order="F")
 
 
+def get_min_area(level: int):
+    if level < 5:
+        return 530
+    if level < 7:
+        return 600
+    if level < 9:
+        return 710
+
+    return 761
+
+
 def generate_cathedral(
     map_width: int,
     map_height: int,
@@ -111,7 +122,6 @@ def generate_cathedral(
 ) -> GameMap:
     global max_encounters, DMAXX, DMAXY
     player = engine.player
-    min_area = 530
     map = GameMap(engine, map_width, map_height, entities=[player], name="Cathedral")
     DMAXX = map.width
     DMAXY = map.height
@@ -121,7 +131,7 @@ def generate_cathedral(
     while True:
         while True:
             first_room(map)
-            if find_area() > min_area:
+            if find_area() > get_min_area(floor):
                 break
 
         init_dungeon_flags(map)
