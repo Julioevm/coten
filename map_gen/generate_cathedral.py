@@ -129,11 +129,10 @@ def generate_dungeon(
         fill_chambers()
         fix_tiles_patterns()
         add_wall()
-        # Todo: Place stairs!
-        # if (PlaceStairs(entry))
-        break
 
-    map_dungeon(map)
+        map_dungeon(map)
+        if place_stairs(map):
+            break
 
     return map
 
@@ -147,16 +146,43 @@ def map_room(room: RectangularRoom, map: GameMap):
     for x, y in room.get_outer_points():
         if x > map.width - 1 or y > map.height - 1:
             continue
-        # if color_rooms:
-        #     map.tiles[x, y] = tile_types.new_tile(
-        #         walkable=True,
-        #         transparent=True,
-        #         dark=(ord(" "), (255, 255, 255), (22, 24, 43)),
-        #         light=(ord(" "), (255, 255, 255), room_color),
-        #     )
-        # else:
-        #     map.tiles[x, y] = tile_types.floor
         dungeon_mask[x, y] = True
+
+
+def place_stairs(map: GameMap) -> bool:
+    stairs_down = False
+    stairs_up = False
+    x = generate_rnd(map.width)
+    y = generate_rnd(map.height)
+    j = y
+    for i in range(x, map.width):
+        if i == map.width - 1:
+            i = 0
+            j += 1
+            if j == map.height - 1:
+                j = 0
+        if dungeon[i][j] == Tile["Floor"]:
+            map.tiles[i][j] = tile_types.down_stairs
+            map.downstairs_location = (i, j)
+            stairs_down = True
+            break
+
+    x = generate_rnd(map.width)
+    y = generate_rnd(map.height)
+    j = y
+    for i in range(x, map.width):
+        if i == map.width - 1:
+            i = 0
+            j += 1
+            if j == map.height - 1:
+                j = 0
+        if dungeon[i][j] == Tile["Floor"]:
+            map.tiles[i][j] = tile_types.up_stairs
+            map.upstairs_location = (i, j)
+            stairs_up = True
+            break
+
+    return stairs_down and stairs_up
 
 
 def check_room(room: RectangularRoom, dungeon: GameMap):
