@@ -49,7 +49,7 @@ def main() -> None:
 
     global_vars.DEBUG_MODE = debug_mode
 
-    title = "Castle of the eternal Night"
+    title = "Castle of the Eternal Night"
     if debug_mode:
         title += " - DEBUG MODE"
 
