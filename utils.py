@@ -39,3 +39,13 @@ def generate_random_rgb():
         r, g, b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
         if (r > 30 or g > 30 or b > 30) and (r < 225 or g < 225 or b < 225):
             return (r, g, b)
+        
+def flip_coin(times=1):
+    flip = False
+    for _ in range(times):
+        flip = random.choice([True, False])
+    return flip
+
+
+def generate_rnd(upper_bound):
+    return random.randint(0, upper_bound - 1)

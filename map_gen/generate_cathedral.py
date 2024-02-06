@@ -16,6 +16,7 @@ from map_gen.procgen import (
     get_max_value_for_floor,
 )
 from map_gen.rectangular_room import RectangularRoom
+from utils import flip_coin, generate_rnd
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -79,18 +80,6 @@ color_rooms = False
 
 DMAXX = 0
 DMAXY = 0
-
-
-def flip_coin(times=1):
-    flip = False
-    for _ in range(times):
-        flip = random.choice([True, False])
-    return flip
-
-
-def generate_rnd(upper_bound):
-    return random.randint(0, upper_bound - 1)
-
 
 def init_dungeon_flags(map: GameMap):
     global dungeon
