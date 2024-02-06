@@ -56,6 +56,9 @@ Tile = {
     "DWall": 31,
     "VDoor": 32,
     "DArch": 33,
+    "HWallVFence": 34,
+    "DirtHWall": 35,
+    "DirtVWall": 36,
 }
 
 rooms: List[RectangularRoom] = []
@@ -74,6 +77,9 @@ has_chamber3 = False
 max_encounters = 0
 current_encounters = 0
 color_rooms = False
+
+DMAXX = 0
+DMAXY = 0
 
 
 def flip_coin(times=1):
@@ -98,47 +104,17 @@ def init_dungeon_flags(map: GameMap):
     chamber = np.full((DMAXX, DMAXY), fill_value=False, order="F")
 
 
-def make_dmt(map: GameMap):
-    DMAXX = map.width
-    DMAXY = map.height
-    global dungeon
-    global dungeon_mask
-
-    for j in range(DMAXY - 1):
-        for i in range(DMAXX - 1):
-            if dungeon_mask[i][j]:
-                dungeon[i][j] = Tile["Floor"]
-            elif (
-                not dungeon_mask[i + 1][j + 1]
-                and dungeon_mask[i][j + 1]
-                and dungeon_mask[i + 1, j]
-            ):
-                dungeon[i][j] = Tile["Floor"]  # Remove diagonal corners
-            elif (
-                dungeon_mask[i + 1][j + 1]
-                and dungeon_mask[i][j + 1]
-                and dungeon_mask[i + 1][j]
-            ):
-                dungeon[i][j] = Tile["VCorner"]
-            elif dungeon_mask[i][j + 1]:
-                dungeon[i][j] = Tile["HWall"]
-            elif dungeon_mask[i + 1][j]:
-                dungeon[i][j] = Tile["VWall"]
-            elif dungeon_mask[i + 1][j + 1]:
-                dungeon[i][j] = Tile["DWall"]
-            else:
-                dungeon[i][j] = Tile["Dirt"]
-
-
 def generate_dungeon(
     map_width: int,
     map_height: int,
     engine: Engine,
 ) -> GameMap:
-    global max_encounters
+    global max_encounters, DMAXX, DMAXY
     player = engine.player
     min_area = 530
     map = GameMap(engine, map_width, map_height, entities=[player], name="Cathedral")
+    DMAXX = map.width
+    DMAXY = map.height
     floor = engine.game_world.current_floor
     max_encounters = get_max_value_for_floor(parameters.max_encounters_by_floor, floor)
 
@@ -150,11 +126,10 @@ def generate_dungeon(
                 break
 
         init_dungeon_flags(map)
-        make_dmt(map)
+        make_dmt()
         fill_chambers()
-        # FixTilesPatterns();
-        add_wall(map)
-        # FloodTransparencyValues(13);
+        fix_tiles_patterns()
+        add_wall()
         # if (PlaceStairs(entry))
         break
 
@@ -167,7 +142,7 @@ def map_room(room: RectangularRoom, map: GameMap):
     global rooms
     global dungeon_mask
     rooms.append(room)
-    room_color = generate_random_rgb()
+    # room_color = generate_random_rgb()
 
     for x, y in room.get_outer_points():
         if x > map.width - 1 or y > map.height - 1:
@@ -362,6 +337,263 @@ def fill_chambers():
         # Set a set piece in one of the chambers
 
 
+def fix_tiles_patterns():
+    for j in range(DMAXY):
+        for i in range(DMAXX):
+            if i + 1 < DMAXX:
+                if dungeon[i][j] == Tile["HWall"] and dungeon[i + 1][j] == Tile["Dirt"]:
+                    dungeon[i + 1][j] = Tile["DirtHwallEnd"]
+                if dungeon[i][j] == Tile["Floor"] and dungeon[i + 1][j] == Tile["Dirt"]:
+                    dungeon[i + 1][j] = Tile["DirtHwall"]
+                if (
+                    dungeon[i][j] == Tile["Floor"]
+                    and dungeon[i + 1][j] == Tile["HWall"]
+                ):
+                    dungeon[i + 1][j] = Tile["HWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i + 1][j] == Tile["Dirt"]
+                ):
+                    dungeon[i + 1][j] = Tile["DirtVwallEnd"]
+
+            if j + 1 < DMAXY:
+                if dungeon[i][j] == Tile["VWall"] and dungeon[i][j + 1] == Tile["Dirt"]:
+                    dungeon[i][j + 1] = Tile["DirtVwallEnd"]
+                if (
+                    dungeon[i][j] == Tile["Floor"]
+                    and dungeon[i][j + 1] == Tile["VWall"]
+                ):
+                    dungeon[i][j + 1] = Tile["VWallEnd"]
+                if dungeon[i][j] == Tile["Floor"] and dungeon[i][j + 1] == Tile["Dirt"]:
+                    dungeon[i][j + 1] = Tile["DirtVwall"]
+            i += 1
+        j += 1
+
+    for j in range(DMAXY):
+        for i in range(DMAXX):
+            if i + 1 < DMAXX:
+                if (
+                    dungeon[i][j] == Tile["Floor"]
+                    and dungeon[i + 1][j] == Tile["DirtVwall"]
+                ):
+                    dungeon[i + 1][j] = Tile["HDirtCorner"]
+                if dungeon[i][j] == Tile["Floor"] and dungeon[i + 1][j] == Tile["Dirt"]:
+                    dungeon[i + 1][j] = Tile["VDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["HWallEnd"]
+                    and dungeon[i + 1][j] == Tile["Dirt"]
+                ):
+                    dungeon[i + 1][j] = Tile["DirtHwallEnd"]
+                if (
+                    dungeon[i][j] == Tile["Floor"]
+                    and dungeon[i + 1][j] == Tile["DirtVwallEnd"]
+                ):
+                    dungeon[i + 1][j] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["DirtVwall"]
+                    and dungeon[i + 1][j] == Tile["Dirt"]
+                ):
+                    dungeon[i + 1][j] = Tile["VDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["HWall"]
+                    and dungeon[i + 1][j] == Tile["DirtVwall"]
+                ):
+                    dungeon[i + 1][j] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["DirtVwall"]
+                    and dungeon[i + 1][j] == Tile["VWall"]
+                ):
+                    dungeon[i + 1][j] = Tile["VWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["HWallEnd"]
+                    and dungeon[i + 1][j] == Tile["DirtVwall"]
+                ):
+                    dungeon[i + 1][j] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["HWall"]
+                    and dungeon[i + 1][j] == Tile["VWall"]
+                ):
+                    dungeon[i + 1][j] = Tile["VWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["Corner"]
+                    and dungeon[i + 1][j] == Tile["Dirt"]
+                ):
+                    dungeon[i + 1][j] = Tile["DirtVwallEnd"]
+                if (
+                    dungeon[i][j] == Tile["HDirtCorner"]
+                    and dungeon[i + 1][j] == Tile["VWall"]
+                ):
+                    dungeon[i + 1][j] = Tile["VWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["HWallEnd"]
+                    and dungeon[i + 1][j] == Tile["VWall"]
+                ):
+                    dungeon[i + 1][j] = Tile["VWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["HWallEnd"]
+                    and dungeon[i + 1][j] == Tile["DirtVwallEnd"]
+                ):
+                    dungeon[i + 1][j] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["DWall"]
+                    and dungeon[i + 1][j] == Tile["VCorner"]
+                ):
+                    dungeon[i + 1][j] = Tile["HCorner"]
+                if (
+                    dungeon[i][j] == Tile["HWallEnd"]
+                    and dungeon[i + 1][j] == Tile["Floor"]
+                ):
+                    dungeon[i + 1][j] = Tile["HCorner"]
+                if (
+                    dungeon[i][j] == Tile["HWall"]
+                    and dungeon[i + 1][j] == Tile["DirtVwallEnd"]
+                ):
+                    dungeon[i + 1][j] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["HWall"]
+                    and dungeon[i + 1][j] == Tile["Floor"]
+                ):
+                    dungeon[i + 1][j] = Tile["HCorner"]
+            if i > 0:
+                if (
+                    dungeon[i][j] == Tile["DirtHwallEnd"]
+                    and dungeon[i - 1][j] == Tile["Dirt"]
+                ):
+                    dungeon[i - 1][j] = Tile["DirtVwall"]
+                if dungeon[i][j] == ["DirtVwall"] and dungeon[i - 1][j] == [
+                    "DirtHwallEnd"
+                ]:
+                    dungeon[i - 1][j] = ["HDirtCorner"]
+                if dungeon[i][j] == ["VWallEnd"] and dungeon[i - 1][j] == ["Dirt"]:
+                    dungeon[i - 1][j] = ["DirtVwallEnd"]
+                if dungeon[i][j] == ["VWallEnd"] and dungeon[i - 1][j] == [
+                    "DirtHwallEnd"
+                ]:
+                    dungeon[i - 1][j] = ["HDirtCorner"]
+            if j + 1 < DMAXY:
+                if (
+                    dungeon[i][j] == Tile["VWall"]
+                    and dungeon[i][j + 1] == Tile["HWall"]
+                ):
+                    dungeon[i][j + 1] = Tile["HWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i][j + 1] == Tile["DirtHwall"]
+                ):
+                    dungeon[i][j + 1] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["DirtHwall"]
+                    and dungeon[i][j + 1] == Tile["HWall"]
+                ):
+                    dungeon[i][j + 1] = Tile["HWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i][j + 1] == Tile["HWall"]
+                ):
+                    dungeon[i][j + 1] = Tile["HWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["HDirtCorner"]
+                    and dungeon[i][j + 1] == Tile["HWall"]
+                ):
+                    dungeon[i][j + 1] = Tile["HWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i][j + 1] == Tile["Dirt"]
+                ):
+                    dungeon[i][j + 1] = Tile["DirtVwallEnd"]
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i][j + 1] == Tile["Floor"]
+                ):
+                    dungeon[i][j + 1] = Tile["VCorner"]
+                if (
+                    dungeon[i][j] == Tile["VWall"]
+                    and dungeon[i][j + 1] == Tile["Floor"]
+                ):
+                    dungeon[i][j + 1] = Tile["VCorner"]
+                if (
+                    dungeon[i][j] == Tile["Floor"]
+                    and dungeon[i][j + 1] == Tile["VCorner"]
+                ):
+                    dungeon[i][j + 1] = Tile["HCorner"]
+            if j > 0:
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i][j - 1] == Tile["Dirt"]
+                ):
+                    dungeon[i][j - 1] = Tile["HWallEnd"]
+                if (
+                    dungeon[i][j] == Tile["VWallEnd"]
+                    and dungeon[i][j - 1] == Tile["Dirt"]
+                ):
+                    dungeon[i][j - 1] = Tile["DirtVwallEnd"]
+                if (
+                    dungeon[i][j] == Tile["HWallEnd"]
+                    and dungeon[i][j - 1] == Tile["DirtVwallEnd"]
+                ):
+                    dungeon[i][j - 1] = Tile["HDirtCorner"]
+                if (
+                    dungeon[i][j] == Tile["DirtHwall"]
+                    and dungeon[i][j - 1] == Tile["DirtVwallEnd"]
+                ):
+                    dungeon[i][j - 1] = Tile["HDirtCorner"]
+            i += 1
+        j += 1
+
+    for j in range(DMAXY):
+        for i in range(DMAXX):
+            if (
+                j + 1 < DMAXY
+                and dungeon[i][j] == Tile["DWall"]
+                and dungeon[i][j + 1] == Tile["HWall"]
+            ):
+                dungeon[i][j + 1] = Tile["HWallEnd"]
+            if (
+                i + 1 < DMAXX
+                and dungeon[i][j] == Tile["HWall"]
+                and dungeon[i + 1][j] == Tile["DirtVWall"]
+            ):
+                dungeon[i + 1][j] = Tile["HDirtCorner"]
+            if (
+                j + 1 < DMAXY
+                and dungeon[i][j] == Tile["DirtHWall"]
+                and dungeon[i][j + 1] == Tile["Dirt"]
+            ):
+                dungeon[i + 1][j] = Tile["VDirtCorner"]
+            i += 1
+        j += 1
+
+
+def make_dmt():
+    global dungeon
+    global dungeon_mask
+
+    for j in range(DMAXY - 1):
+        for i in range(DMAXX - 1):
+            if dungeon_mask[i][j]:
+                dungeon[i][j] = Tile["Floor"]
+            elif (
+                not dungeon_mask[i + 1][j + 1]
+                and dungeon_mask[i][j + 1]
+                and dungeon_mask[i + 1, j]
+            ):
+                dungeon[i][j] = Tile["Floor"]  # Remove diagonal corners
+            elif (
+                dungeon_mask[i + 1][j + 1]
+                and dungeon_mask[i][j + 1]
+                and dungeon_mask[i + 1][j]
+            ):
+                dungeon[i][j] = Tile["VCorner"]
+            elif dungeon_mask[i][j + 1]:
+                dungeon[i][j] = Tile["HWall"]
+            elif dungeon_mask[i + 1][j]:
+                dungeon[i][j] = Tile["VWall"]
+            elif dungeon_mask[i + 1][j + 1]:
+                dungeon[i][j] = Tile["DWall"]
+            else:
+                dungeon[i][j] = Tile["Dirt"]
+
+
 def generate_hall(start, length, verticalLayout):
     if verticalLayout:
         for i in range(start[1], start[1] + length):
@@ -508,7 +740,7 @@ def VerticalWallOk(position):
     return length
 
 
-def HorizontalWall(position: Tuple[int, int], start, maxX, map: GameMap):
+def HorizontalWall(position: Tuple[int, int], start, maxX):
     global protected
     x, y = position
     wallTile = Tile["HWall"]
@@ -538,7 +770,7 @@ def HorizontalWall(position: Tuple[int, int], start, maxX, map: GameMap):
         dungeon[x + x][y] = wallTile
 
     x = generate_rnd(maxX - 1) + 1
-    print("Setting door at", x, y)
+
     dungeon[x + x][y] = doorTile
 
     if doorTile == Tile["HDoor"]:
@@ -580,51 +812,42 @@ def VerticalWall(position, start, max_y):
         protected[x][y + y] = True
 
 
-def add_wall(map: GameMap):
+def add_wall():
     global protected
     global chamber
     global dungeon
-    DMAXX = map.width
-    DMAXY = map.height
 
-    print("add_wall")
     for j in range(DMAXY):
         for i in range(DMAXX):
             if protected[i][j] or chamber[i][j]:
                 continue
 
             if dungeon[i][j] == Tile["Corner"]:
-                # DiscardRandomValues(1)
                 max_x = HorizontalWallOk((i, j))
                 if max_x != -1:
-                    HorizontalWall((i, j), Tile["HWall"], max_x, map)
+                    HorizontalWall((i, j), Tile["HWall"], max_x)
 
             if dungeon[i][j] == Tile["Corner"]:
-                # DiscardRandomValues(1)
                 max_y = VerticalWallOk((i, j))
                 if max_y != -1:
                     VerticalWall((i, j), Tile["VWall"], max_y)
 
             if dungeon[i][j] == Tile["VWallEnd"]:
-                # DiscardRandomValues(1)
                 max_x = HorizontalWallOk((i, j))
                 if max_x != -1:
-                    HorizontalWall((i, j), Tile["DWall"], max_x, map)
+                    HorizontalWall((i, j), Tile["DWall"], max_x)
 
             if dungeon[i][j] == Tile["HWallEnd"]:
-                # DiscardRandomValues(1)
                 max_y = VerticalWallOk((i, j))
                 if max_y != -1:
                     VerticalWall((i, j), Tile["DWall"], max_y)
 
             if dungeon[i][j] == Tile["HWall"]:
-                # DiscardRandomValues(1)
                 max_x = HorizontalWallOk((i, j))
                 if max_x != -1:
-                    HorizontalWall((i, j), Tile["HWall"], max_x, map)
+                    HorizontalWall((i, j), Tile["HWall"], max_x)
 
             if dungeon[i][j] == Tile["VWall"]:
-                # DiscardRandomValues(1)
                 max_y = VerticalWallOk((i, j))
                 if max_y != -1:
                     VerticalWall((i, j), Tile["VWall"], max_y)
@@ -649,7 +872,13 @@ def map_dungeon(map: GameMap):
                 Tile["HCorner"],
                 Tile["VArchHWall"],
                 Tile["HWallVArch"],
+                Tile["DirtHwall"],
+                Tile["DirtVwall"],
+                Tile["VDirtCorner"],
                 Tile["HDirtCorner"],
+                Tile["DirtHwallEnd"],
+                Tile["DirtVwallEnd"],
+                Tile["HWallVFence"],
             ):
                 map.tiles[i][j] = tile_types.wall
             elif dungeon[i][j] in (
@@ -661,6 +890,7 @@ def map_dungeon(map: GameMap):
                 Tile["Corner"],
                 Tile["VArchEnd"],
                 Tile["HArchEnd"],
+                Tile["DirtVwall"],
             ):
                 map.tiles[i][j] = tile_types.arch
             elif dungeon[i][j] in (Tile["HFence"], Tile["HFenceVWall"], Tile["VFence"]):
@@ -670,7 +900,6 @@ def map_dungeon(map: GameMap):
             elif dungeon[i][j] in (Tile["HDoor"], Tile["VDoor"]):
                 map.tiles[i][j] = tile_types.closed_door
             elif dungeon[i][j] == Tile["Dirt"]:
-                map.tiles[i][j] = tile_types.wall
+                map.tiles[i][j] = tile_types.dirt_floor
             else:
-                print("unknown", dungeon[i][j])
                 map.tiles[i][j] = tile_types.unknown
