@@ -7,10 +7,10 @@ from map_gen.generate_dungeon import generate_dungeon
 from map_gen.generate_cathedral import generate_dungeon as generate_cathedral
 
 floor_map_generator = [
+    lambda **kwargs: generate_cathedral(**kwargs),
     lambda **kwargs: generate_cave(
         max_rooms=8, room_min_size=6, room_max_size=10, **kwargs
     ),
-    lambda **kwargs: generate_cathedral(**kwargs),
     lambda **kwargs: generate_dungeon(
         max_rooms=16, room_min_size=6, room_max_size=10, **kwargs
     ),
