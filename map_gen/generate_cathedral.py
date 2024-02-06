@@ -118,7 +118,6 @@ def generate_dungeon(
     floor = engine.game_world.current_floor
     max_encounters = get_max_value_for_floor(parameters.max_encounters_by_floor, floor)
 
-    print("## Generating Dungeon ##")
     while True:
         while True:
             first_room(map)
@@ -931,6 +930,6 @@ def map_dungeon(map: GameMap):
             elif dungeon[i][j] in (Tile["HDoor"], Tile["VDoor"]):
                 map.tiles[i][j] = tile_types.closed_door
             elif dungeon[i][j] == Tile["Dirt"]:
-                map.tiles[i][j] = tile_types.wall
+                map.tiles[i][j] = tile_types.dirt_floor
             else:
                 map.tiles[i][j] = tile_types.unknown
