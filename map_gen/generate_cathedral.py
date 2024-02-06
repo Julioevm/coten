@@ -104,7 +104,7 @@ def init_dungeon_flags(map: GameMap):
     chamber = np.full((DMAXX, DMAXY), fill_value=False, order="F")
 
 
-def generate_dungeon(
+def generate_cathedral(
     map_width: int,
     map_height: int,
     engine: Engine,
@@ -134,6 +134,8 @@ def generate_dungeon(
         if place_stairs(map):
             break
 
+    if player is not None:
+        player.place(*map.downstairs_location, map)
     return map
 
 
@@ -956,6 +958,6 @@ def map_dungeon(map: GameMap):
             elif dungeon[i][j] in (Tile["HDoor"], Tile["VDoor"]):
                 map.tiles[i][j] = tile_types.closed_door
             elif dungeon[i][j] == Tile["Dirt"]:
-                map.tiles[i][j] = tile_types.dirt_floor
+                map.tiles[i][j] = tile_types.wall
             else:
                 map.tiles[i][j] = tile_types.unknown
