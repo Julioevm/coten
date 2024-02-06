@@ -130,6 +130,7 @@ def generate_dungeon(
         fill_chambers()
         fix_tiles_patterns()
         add_wall()
+        # Todo: Place stairs!
         # if (PlaceStairs(entry))
         break
 
@@ -366,8 +367,6 @@ def fix_tiles_patterns():
                     dungeon[i][j + 1] = Tile["VWallEnd"]
                 if dungeon[i][j] == Tile["Floor"] and dungeon[i][j + 1] == Tile["Dirt"]:
                     dungeon[i][j + 1] = Tile["DirtVwall"]
-            i += 1
-        j += 1
 
     for j in range(DMAXY):
         for i in range(DMAXX):
@@ -537,8 +536,6 @@ def fix_tiles_patterns():
                     and dungeon[i][j - 1] == Tile["DirtVwallEnd"]
                 ):
                     dungeon[i][j - 1] = Tile["HDirtCorner"]
-            i += 1
-        j += 1
 
     for j in range(DMAXY):
         for i in range(DMAXX):
@@ -560,8 +557,41 @@ def fix_tiles_patterns():
                 and dungeon[i][j + 1] == Tile["Dirt"]
             ):
                 dungeon[i + 1][j] = Tile["VDirtCorner"]
-            i += 1
-        j += 1
+
+
+def fix_dirt_tiles():
+    for j in range(DMAXY - 1):
+        for i in range(DMAXX - 1):
+            if (
+                dungeon[i][j] == Tile["HDirtCorner"]
+                and dungeon[i + 1][j] != Tile["DirtVwall"]
+            ):
+                dungeon[i][j] = Tile["DirtCorner2"]
+            if (
+                dungeon[i][j] == Tile["DirtVwall"]
+                and dungeon[i + 1][j] != Tile["DirtVwall"]
+            ):
+                dungeon[i][j] = Tile["DirtVWall2"]
+            if (
+                dungeon[i][j] == Tile["DirtVwallEnd"]
+                and dungeon[i + 1][j] != Tile["DirtVwall"]
+            ):
+                dungeon[i][j] = Tile["DirtVWallEnd2"]
+            if (
+                dungeon[i][j] == Tile["DirtHwall"]
+                and dungeon[i][j + 1] != Tile["DirtHwall"]
+            ):
+                dungeon[i][j] = Tile["DirtHWall2"]
+            if (
+                dungeon[i][j] == Tile["HDirtCorner"]
+                and dungeon[i][j + 1] != Tile["DirtHwall"]
+            ):
+                dungeon[i][j] = Tile["DirtCorner2"]
+            if (
+                dungeon[i][j] == Tile["DirtHwallEnd"]
+                and dungeon[i][j + 1] != Tile["DirtHwall"]
+            ):
+                dungeon[i][j] = Tile["DirtHWallEnd2"]
 
 
 def make_dmt():
@@ -740,7 +770,7 @@ def VerticalWallOk(position):
     return length
 
 
-def HorizontalWall(position: Tuple[int, int], start, maxX):
+def HorizontalWall(position: Tuple[int, int], start: int, maxX: int):
     global protected
     x, y = position
     wallTile = Tile["HWall"]
@@ -766,15 +796,15 @@ def HorizontalWall(position: Tuple[int, int], start, maxX):
 
     dungeon[x][y] = start
 
-    for x in range(1, maxX):
-        dungeon[x + x][y] = wallTile
+    for i in range(1, maxX):
+        dungeon[x + i][y] = wallTile
 
-    x = generate_rnd(maxX - 1) + 1
+    i = generate_rnd(maxX - 1) + 1
 
-    dungeon[x + x][y] = doorTile
+    dungeon[x + i][y] = doorTile
 
     if doorTile == Tile["HDoor"]:
-        protected[x + x][y] = True
+        protected[x + i][y] = True
 
 
 def VerticalWall(position, start, max_y):
@@ -802,14 +832,14 @@ def VerticalWall(position, start, max_y):
 
     dungeon[x][y] = start
 
-    for y in range(1, max_y):
-        dungeon[x][y + y] = wall_tile
+    for j in range(1, max_y):
+        dungeon[x][y + j] = wall_tile
 
-    y = generate_rnd(max_y - 1) + 1
+    j = generate_rnd(max_y - 1) + 1
 
-    dungeon[x][y + y] = door_tile
+    dungeon[x][y + j] = door_tile
     if door_tile == Tile["VDoor"]:
-        protected[x][y + y] = True
+        protected[x][y + j] = True
 
 
 def add_wall():
@@ -879,10 +909,11 @@ def map_dungeon(map: GameMap):
                 Tile["DirtHwallEnd"],
                 Tile["DirtVwallEnd"],
                 Tile["HWallVFence"],
+                Tile["HFenceVWall"],
+                Tile["HArchVWall"],
             ):
                 map.tiles[i][j] = tile_types.wall
             elif dungeon[i][j] in (
-                Tile["HArchVWall"],
                 Tile["Arch"],
                 Tile["VArch"],
                 Tile["HArch"],
@@ -893,13 +924,13 @@ def map_dungeon(map: GameMap):
                 Tile["DirtVwall"],
             ):
                 map.tiles[i][j] = tile_types.arch
-            elif dungeon[i][j] in (Tile["HFence"], Tile["HFenceVWall"], Tile["VFence"]):
+            elif dungeon[i][j] in (Tile["HFence"], Tile["VFence"]):
                 map.tiles[i][j] = tile_types.fence
             elif dungeon[i][j] == Tile["Pillar"]:
                 map.tiles[i][j] = tile_types.pillar
             elif dungeon[i][j] in (Tile["HDoor"], Tile["VDoor"]):
                 map.tiles[i][j] = tile_types.closed_door
             elif dungeon[i][j] == Tile["Dirt"]:
-                map.tiles[i][j] = tile_types.dirt_floor
+                map.tiles[i][j] = tile_types.wall
             else:
                 map.tiles[i][j] = tile_types.unknown
