@@ -380,7 +380,7 @@ def generate_chamber(
     x, y = position
     if connectPrevious:
         if verticalLayout:
-            dungeon[x + 2][y] = Tile["HArch"]
+            dungeon[x + 2][y] = Tile["HWall"]
             dungeon[x + 3][y] = Tile["HArch"]
             dungeon[x + 4][y] = Tile["Corner"]
             dungeon[x + 7][y] = Tile["VArchEnd"]
@@ -397,7 +397,7 @@ def generate_chamber(
     if connectNext:
         if verticalLayout:
             y += 11
-            dungeon[x + 2][y] = Tile["HArchVWall"]
+            dungeon[x + 2][y] = Tile["HWall"]
             dungeon[x + 3][y] = Tile["HArch"]
             dungeon[x + 4][y] = Tile["HArchEnd"]
             dungeon[x + 7][y] = Tile["DArch"]
