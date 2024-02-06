@@ -281,6 +281,7 @@ const uint8_t TileDecorations[207] = {
 
 void ApplyShadowsPatterns()
 {
+	// Sets shadows, not useful.
 	uint8_t slice[2][2];
 
 	for (int y = 1; y < DMAXY; y++) {
@@ -367,6 +368,7 @@ bool CanReplaceTile(uint8_t replace, Point tile)
 
 void FillFloor()
 {
+	// Randomize floor tiles
 	for (int j = 0; j < DMAXY; j++) {
 		for (int i = 0; i < DMAXX; i++) {
 			if (dungeon[i][j] != Floor || Protected.test(i, j))
