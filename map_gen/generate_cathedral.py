@@ -141,7 +141,7 @@ def generate_cathedral(
         add_wall()
 
         map_dungeon(map)
-        if place_stairs(map):
+        if place_all_stairs(map):
             break
 
     if player is not None:
@@ -153,7 +153,6 @@ def map_room(room: RectangularRoom, map: GameMap):
     global rooms
     global dungeon_mask
     rooms.append(room)
-    # room_color = generate_random_rgb()
 
     for x, y in room.get_outer_points():
         if x > map.width - 1 or y > map.height - 1:
@@ -161,39 +160,26 @@ def map_room(room: RectangularRoom, map: GameMap):
         dungeon_mask[x, y] = True
 
 
-def place_stairs(map: GameMap) -> bool:
-    stairs_down = False
-    stairs_up = False
-    x = generate_rnd(map.width)
-    y = generate_rnd(map.height)
+def place_stairs(map: GameMap, tile_type, location_name: str) -> bool:
+    x = generate_rnd(map.width - 1)
+    y = generate_rnd(map.height - 1)
     j = y
-    for i in range(x, map.width):
+    for i in range(x, map.width - 1):
         if i == map.width - 1:
             i = 0
             j += 1
             if j == map.height - 1:
                 j = 0
         if dungeon[i][j] == Tile["Floor"]:
-            map.tiles[i][j] = tile_types.down_stairs
-            map.downstairs_location = (i, j)
-            stairs_down = True
-            break
+            map.tiles[i][j] = tile_type
+            setattr(map, location_name, (i, j))
+            return True
+    return False
 
-    x = generate_rnd(map.width)
-    y = generate_rnd(map.height)
-    j = y
-    for i in range(x, map.width):
-        if i == map.width - 1:
-            i = 0
-            j += 1
-            if j == map.height - 1:
-                j = 0
-        if dungeon[i][j] == Tile["Floor"]:
-            map.tiles[i][j] = tile_types.up_stairs
-            map.upstairs_location = (i, j)
-            stairs_up = True
-            break
 
+def place_all_stairs(map: GameMap) -> bool:
+    stairs_down = place_stairs(map, tile_types.down_stairs, "downstairs_location")
+    stairs_up = place_stairs(map, tile_types.up_stairs, "upstairs_location")
     return stairs_down and stairs_up
 
 
