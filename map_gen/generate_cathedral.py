@@ -16,7 +16,6 @@ from map_gen.procgen import (
     get_max_value_for_floor,
 )
 from map_gen.rectangular_room import RectangularRoom
-from utils import generate_random_rgb
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -582,41 +581,6 @@ def fix_tiles_patterns():
                 dungeon[i + 1][j] = Tile["VDirtCorner"]
 
 
-def fix_dirt_tiles():
-    for j in range(DMAXY - 1):
-        for i in range(DMAXX - 1):
-            if (
-                dungeon[i][j] == Tile["HDirtCorner"]
-                and dungeon[i + 1][j] != Tile["DirtVwall"]
-            ):
-                dungeon[i][j] = Tile["DirtCorner2"]
-            if (
-                dungeon[i][j] == Tile["DirtVwall"]
-                and dungeon[i + 1][j] != Tile["DirtVwall"]
-            ):
-                dungeon[i][j] = Tile["DirtVWall2"]
-            if (
-                dungeon[i][j] == Tile["DirtVwallEnd"]
-                and dungeon[i + 1][j] != Tile["DirtVwall"]
-            ):
-                dungeon[i][j] = Tile["DirtVWallEnd2"]
-            if (
-                dungeon[i][j] == Tile["DirtHwall"]
-                and dungeon[i][j + 1] != Tile["DirtHwall"]
-            ):
-                dungeon[i][j] = Tile["DirtHWall2"]
-            if (
-                dungeon[i][j] == Tile["HDirtCorner"]
-                and dungeon[i][j + 1] != Tile["DirtHwall"]
-            ):
-                dungeon[i][j] = Tile["DirtCorner2"]
-            if (
-                dungeon[i][j] == Tile["DirtHwallEnd"]
-                and dungeon[i][j + 1] != Tile["DirtHwall"]
-            ):
-                dungeon[i][j] = Tile["DirtHWallEnd2"]
-
-
 def make_dmt():
     global dungeon
     global dungeon_mask
@@ -667,15 +631,15 @@ def generate_chamber(
         if verticalLayout:
             dungeon[x + 2][y] = Tile["HWall"]
             dungeon[x + 3][y] = Tile["HArch"]
-            dungeon[x + 4][y] = Tile["Corner"]
-            dungeon[x + 7][y] = Tile["VArchEnd"]
+            dungeon[x + 4][y] = Tile["Pillar"]
+            dungeon[x + 7][y] = Tile["Pillar"]
             dungeon[x + 8][y] = Tile["HArch"]
             dungeon[x + 9][y] = Tile["HWall"]
         else:
             dungeon[x][y + 2] = Tile["VWall"]
             dungeon[x][y + 3] = Tile["VArch"]
-            dungeon[x][y + 4] = Tile["Corner"]
-            dungeon[x][y + 7] = Tile["HArchEnd"]
+            dungeon[x][y + 4] = Tile["Pillar"]
+            dungeon[x][y + 7] = Tile["Pillar"]
             dungeon[x][y + 8] = Tile["VArch"]
             dungeon[x][y + 9] = Tile["VWall"]
 
@@ -684,8 +648,8 @@ def generate_chamber(
             y += 11
             dungeon[x + 2][y] = Tile["HWall"]
             dungeon[x + 3][y] = Tile["HArch"]
-            dungeon[x + 4][y] = Tile["HArchEnd"]
-            dungeon[x + 7][y] = Tile["DArch"]
+            dungeon[x + 4][y] = Tile["Pillar"]
+            dungeon[x + 7][y] = Tile["Pillar"]
             dungeon[x + 8][y] = Tile["HArch"]
 
             if dungeon[x + 9][y] != Tile["DWall"]:
@@ -695,8 +659,8 @@ def generate_chamber(
             x += 11
             dungeon[x][y + 2] = Tile["HWallVArch"]
             dungeon[x][y + 3] = Tile["VArch"]
-            dungeon[x][y + 4] = Tile["VArchEnd"]
-            dungeon[x][y + 7] = Tile["DArch"]
+            dungeon[x][y + 4] = Tile["Pillar"]
+            dungeon[x][y + 7] = Tile["Pillar"]
             dungeon[x][y + 8] = Tile["VArch"]
 
             if dungeon[x][y + 9] != Tile["DWall"]:
