@@ -74,12 +74,15 @@ has_chamber1 = False
 has_chamber2 = False
 has_chamber3 = False
 
+chamber_offset = 0
+
 max_encounters = 0
 current_encounters = 0
 color_rooms = False
 
 DMAXX = 0
 DMAXY = 0
+
 
 def init_dungeon_flags(map: GameMap):
     global dungeon
@@ -259,7 +262,7 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
 
 
 def first_room(map: GameMap):
-    global rooms, dungeon_mask
+    global rooms, dungeon_mask, chamber_offset
     global vertical_layout, has_chamber1, has_chamber2, has_chamber3
 
     dungeon_mask = np.full((map.width, map.height), fill_value=False, order="F")
@@ -268,6 +271,7 @@ def first_room(map: GameMap):
     has_chamber1 = not flip_coin()
     has_chamber2 = not flip_coin()
     has_chamber3 = not flip_coin()
+    chamber_offset = generate_rnd(24)
 
     if not has_chamber1 or not has_chamber3:
         has_chamber2 = True
@@ -290,6 +294,11 @@ def first_room(map: GameMap):
         chamber3.x, chamber3.y = chamber3.y, chamber3.x
         hallway.x, hallway.y = hallway.y, hallway.x
         hallway.width, hallway.height = hallway.height, hallway.width
+
+    chamber1.x += chamber_offset
+    chamber2.x += chamber_offset
+    chamber3.x += chamber_offset
+    hallway.x += chamber_offset
 
     if has_chamber1:
         map_room(chamber1, map)
@@ -320,6 +329,7 @@ def find_area():
 def fill_chambers():
     global vertical_layout, has_chamber1, has_chamber2, has_chamber3
     chamber1 = (0, 14)
+    chamber2 = (14, 14)
     chamber3 = (28, 14)
     hall1 = (12, 18)
     hall2 = (26, 18)
@@ -330,10 +340,17 @@ def fill_chambers():
         hall1 = (hall1[1], hall1[0])
         hall2 = (hall2[1], hall2[0])
 
+    # Apply offset values
+    chamber1 = chamber1[0] + chamber_offset, chamber1[1]
+    chamber2 = chamber2[0] + chamber_offset, chamber2[1]
+    chamber3 = chamber3[0] + chamber_offset, chamber3[1]
+    hall1 = hall1[0] + chamber_offset, hall1[1]
+    hall2 = hall2[0] + chamber_offset, hall2[1]
+
     if has_chamber1:
         generate_chamber(chamber1, False, True, vertical_layout)
     if has_chamber2:
-        generate_chamber((14, 14), has_chamber1, has_chamber3, vertical_layout)
+        generate_chamber(chamber2, has_chamber1, has_chamber3, vertical_layout)
     if has_chamber3:
         generate_chamber(chamber3, True, False, vertical_layout)
 
@@ -612,7 +629,10 @@ def generate_hall(start, length, verticalLayout):
 
 
 def generate_chamber(
-    position: Tuple[int, int], connectPrevious, connectNext, verticalLayout
+    position: Tuple[int, int],
+    connectPrevious: bool,
+    connectNext: bool,
+    verticalLayout: bool,
 ):
     global dungeon, chamber
     x, y = position
@@ -707,7 +727,7 @@ def HorizontalWallOk(position: Tuple[int, int]):
     return length
 
 
-def VerticalWallOk(position):
+def VerticalWallOk(position: Tuple[int, int]):
     global protected, chamber
     x, y = position
     length = 1
@@ -783,7 +803,7 @@ def HorizontalWall(position: Tuple[int, int], start: int, maxX: int):
         protected[x + i][y] = True
 
 
-def VerticalWall(position, start, max_y):
+def VerticalWall(position: Tuple[int, int], start: int, max_y: int):
     x, y = position
     wall_tile = Tile["VWall"]
     door_tile = Tile["VDoor"]
