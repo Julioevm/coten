@@ -57,8 +57,8 @@ wall = new_tile(
 arch = new_tile(
     walkable=True,
     transparent=True,
-    dark=(ord("^"), (31, 32, 45), (22, 24, 43)),
-    light=(ord("^"), (70, 70, 100), (50, 50, 100)),
+    dark=(ord("Ω"), (31, 32, 45), (22, 24, 43)),
+    light=(ord("Ω"), (70, 70, 100), (50, 50, 100)),
 )
 pillar = new_tile(
     walkable=False,
