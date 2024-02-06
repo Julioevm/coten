@@ -121,7 +121,7 @@ def generate_cathedral(
 ) -> GameMap:
     global max_encounters, DMAXX, DMAXY
     player = engine.player
-    map = GameMap(engine, map_width, map_height, entities=[player], name="Cathedral")
+    map = GameMap(engine, map_width, map_height, entities=[player], name="Castle")
     DMAXX = map.width
     DMAXY = map.height
     floor = engine.game_world.current_floor
