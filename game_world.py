@@ -10,6 +10,7 @@ from map_gen.debug_room import create_debug_room
 from map_gen.generate_cave import generate_cave
 from map_gen.generate_dungeon import generate_dungeon
 from map_gen.top_floor import create_top_floor
+from map_gen.generate_cathedral import generate_cathedral
 
 if TYPE_CHECKING:
     from game_map import GameMap
@@ -33,12 +34,7 @@ floor_map_generator = {
     4: lambda **kwargs: generate_dungeon(
         max_rooms=16, room_min_size=6, room_max_size=10, **kwargs
     ),
-    6: lambda **kwargs: generate_dungeon(
-        max_rooms=10, room_min_size=8, room_max_size=16, **kwargs
-    ),
-    7: lambda **kwargs: generate_dungeon(
-        max_rooms=24, room_min_size=6, room_max_size=14, **kwargs
-    ),
+    6: lambda **kwargs: generate_cathedral(**kwargs),
     # Add more floors and corresponding functions with parameters as needed.
 }
 
