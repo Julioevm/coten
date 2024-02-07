@@ -1,10 +1,12 @@
 """Utilities for procedural generation of maps."""
+
 from __future__ import annotations
 from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
 import random
 import tcod
 
 from map_gen import parameters
+from utils import generate_rnd
 
 
 if TYPE_CHECKING:
@@ -109,9 +111,35 @@ def get_fixed_items(floor: int) -> List[Entity]:
     return result
 
 
-def place_entities(room: Room, dungeon: GameMap, floor: int):
+def place_room_entities(room: Room, dungeon: GameMap, floor: int):
     """
-    Place entities in a given room of a cave.
+    Place entities in a given room a GameMap.
+    """
+    max_monsters = get_max_value_for_floor(parameters.max_room_monsters_by_floor, floor)
+    max_items = get_max_value_for_floor(parameters.max_room_items_by_floor, floor)
+
+    num_monsters = random.randint(0, max_monsters)
+    num_items = random.randint(0, max_items)
+
+    monsters = get_entities_at_random(parameters.enemy_chances, num_monsters, floor)
+    items = get_entities_at_random(parameters.item_chances, num_items, floor)
+
+    for entity in monsters + items:
+        placed = False
+        while not placed:
+            x = random.randint(room.x1 + 1, room.x2 - 1)
+            y = random.randint(room.y1 + 1, room.y2 - 1)
+
+            if dungeon.tiles[x, y]["walkable"] and not any(
+                e.x == x and e.y == y for e in dungeon.entities
+            ):
+                entity.spawn(x, y, dungeon)
+                placed = True
+
+
+def place_level_entities(dungeon: GameMap, floor: int):
+    """
+    Place entities in a given room a GameMap.
     """
     max_monsters = get_max_value_for_floor(parameters.max_monsters_by_floor, floor)
     max_items = get_max_value_for_floor(parameters.max_items_by_floor, floor)
@@ -125,8 +153,8 @@ def place_entities(room: Room, dungeon: GameMap, floor: int):
     for entity in monsters + items:
         placed = False
         while not placed:
-            x = random.randint(room.x1 + 1, room.x2 - 1)
-            y = random.randint(room.y1 + 1, room.y2 - 1)
+            x = generate_rnd(dungeon.width)
+            y = generate_rnd(dungeon.height)
 
             if dungeon.tiles[x, y]["walkable"] and not any(
                 e.x == x and e.y == y for e in dungeon.entities

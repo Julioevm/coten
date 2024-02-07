@@ -14,6 +14,7 @@ import tile_types
 from game_map import GameMap
 from map_gen.procgen import (
     get_max_value_for_floor,
+    place_level_entities,
 )
 from map_gen.rectangular_room import RectangularRoom
 from utils import flip_coin, generate_rnd
@@ -136,6 +137,7 @@ def generate_cathedral(
             break
 
     if player is not None:
+        place_level_entities(map, floor)
         player.place(*map.downstairs_location, map)
     return map
 

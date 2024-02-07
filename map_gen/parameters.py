@@ -1,4 +1,5 @@
 """Parameters for different settings of the dungeon generation."""
+
 from __future__ import annotations
 from typing import Dict, List, Tuple, TYPE_CHECKING
 import actor_factories
@@ -12,16 +13,29 @@ if TYPE_CHECKING:
 # These parameters are used up to the next floor in the lists.
 # Something in floor 1 will be used in floor 2, etc.
 # Unless you override the values in the lists.
-max_items_by_floor = [
+max_room_items_by_floor = [
     (1, 1),
     (4, 2),
 ]
 
-max_monsters_by_floor = [
+max_room_monsters_by_floor = [
     (1, 1),
     (2, 2),
     (4, 3),
     (6, 5),
+]
+
+max_items_by_floor = [
+    (1, 10),
+    (3, 20),
+    (5, 30),
+]
+
+max_monsters_by_floor = [
+    (1, 20),
+    (3, 30),
+    (5, 40),
+    (7, 50),
 ]
 
 max_encounters_by_floor = [

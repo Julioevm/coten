@@ -8,7 +8,7 @@ from map_gen.cave_room import CaveLikeRoom
 from map_gen.procgen import (
     get_max_value_for_floor,
     place_encounter,
-    place_entities,
+    place_room_entities,
     tunnel_between,
 )
 
@@ -94,9 +94,9 @@ def generate_cave(
                 if place_encounter(new_room, dungeon, floor):
                     current_encounters += 1
                 else:
-                    place_entities(new_room, dungeon, floor)
+                    place_room_entities(new_room, dungeon, floor)
             else:
-                place_entities(new_room, dungeon, floor)
+                place_room_entities(new_room, dungeon, floor)
 
         rooms.append(new_room)
 
