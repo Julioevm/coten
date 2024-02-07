@@ -599,12 +599,6 @@ def make_dmt():
             if dungeon_mask[i][j]:
                 dungeon[i][j] = Tile["Floor"]
             elif (
-                not dungeon_mask[i + 1][j + 1]
-                and dungeon_mask[i][j + 1]
-                and dungeon_mask[i + 1, j]
-            ):
-                dungeon[i][j] = Tile["Floor"]  # Remove diagonal corners
-            elif (
                 not dungeon_mask[i - 1][j + 1]
                 and dungeon_mask[i][j + 1]
                 and dungeon_mask[i - 1, j]
