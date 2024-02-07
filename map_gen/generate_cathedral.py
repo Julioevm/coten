@@ -60,6 +60,7 @@ Tile = {
     "HWallVFence": 34,
     "DirtHWall": 35,
     "DirtVWall": 36,
+    "Test": 37,
 }
 
 rooms: List[RectangularRoom] = []
@@ -244,14 +245,14 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
         room2.x = area.x + area.width
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1 + 1, room2.y1, room2.width + 1, room2.height + 2),
+            RectangularRoom(room2.x1, room2.y1 - 1, room2.width + 1, room2.height + 2),
             dungeon,
         )
     else:
         room2.y = area.y + area.height
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1, room2.y1 + 1, room2.width + 2, room2.height + 1),
+            RectangularRoom(room2.x1 - 1, room2.y1, room2.width + 2, room2.height + 1),
             dungeon,
         )
 
@@ -603,6 +604,12 @@ def make_dmt():
                 and dungeon_mask[i + 1, j]
             ):
                 dungeon[i][j] = Tile["Floor"]  # Remove diagonal corners
+            elif (
+                not dungeon_mask[i - 1][j + 1]
+                and dungeon_mask[i][j + 1]
+                and dungeon_mask[i - 1, j]
+            ):
+                dungeon[i][j] = Tile["Floor"]
             elif (
                 dungeon_mask[i + 1][j + 1]
                 and dungeon_mask[i][j + 1]
