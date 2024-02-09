@@ -1,12 +1,13 @@
 from __future__ import annotations
 import itertools
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from typing import Iterable, Iterator, Optional, TYPE_CHECKING, Set
 
 import numpy as np
 import tcod  # type: ignore
 from tcod.console import Console
 from components.consumable import HealingConsumable
+from map_gen.rectangular_room import RectRoom
 
 import tile_types
 from entity import Actor, Item
@@ -36,7 +37,7 @@ class GameMap:
         self.entities = set(entities)
         self.fill_wall_tile = fill_wall_tile
         self.tiles = np.full((width, height), fill_value=fill_wall_tile, order="F")
-        self.theme_rooms = set()
+        self.theme_rooms = set[RectRoom]()
         self.bloody_tiles = set()
         self.name = name
 

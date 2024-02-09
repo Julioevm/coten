@@ -5,6 +5,7 @@ from typing import Dict, Iterator, List, Set, Tuple, TYPE_CHECKING
 import random
 import numpy as np
 import tcod
+from map_gen.rectangular_room import RectRoom
 import tile_types
 
 from map_gen import parameters, theme_factories
@@ -195,10 +196,10 @@ def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
 def is_near_theme_room(origin: Tuple[int, int], map: GameMap, offset: int = 5):
     for theme_room in map.theme_rooms:
         # Calculate the extended boundaries of the room
-        left_boundary = max(theme_room[0] - offset, 0)
-        right_boundary = min(theme_room[0] + theme_room[2] + offset, map.width)
-        top_boundary = max(theme_room[1] - offset, 0)
-        bottom_boundary = min(theme_room[1] + theme_room[3] + offset, map.height)
+        left_boundary = max(theme_room.x - offset, 0)
+        right_boundary = min(theme_room.x + theme_room.width + offset, map.width)
+        top_boundary = max(theme_room.y - offset, 0)
+        bottom_boundary = min(theme_room.y + theme_room.height + offset, map.height)
 
         # Check if the origin is within the extended boundaries
         if (
@@ -321,7 +322,7 @@ def find_theme_rooms(
                     if new_theme_y < min_dim or new_theme_y > max_dim:
                         new_theme_y = min_dim
 
-                map.theme_rooms.add((i, j, theme_size[0], theme_size[1]))
+                map.theme_rooms.add(RectRoom(i, j, theme_size[0], theme_size[1]))
 
 
 def paint_theme_rooms(map: GameMap):
@@ -330,8 +331,8 @@ def paint_theme_rooms(map: GameMap):
     """
 
     for room in map.theme_rooms:
-        for i in range(room[0], room[0] + room[2]):
-            for j in range(room[1], room[1] + room[3]):
+        for i in range(room.x, room.x + room.width):
+            for j in range(room.y, room.y + room.height):
                 i = min(i, map.width - 1)
                 j = min(j, map.height - 1)
                 if map.tiles[i][j] == tile_types.floor:
@@ -340,22 +341,22 @@ def paint_theme_rooms(map: GameMap):
                     map.tiles[i][j] = tile_types.blue
 
 
-def check_enclosed_room(room, map: GameMap):
+def check_enclosed_room(room: RectRoom, map: GameMap):
     """Checks if a room is enclosed by non floor walls"""
-    x, y, width, height = room
+
     # Check top and bottom rows of the area
-    for i in range(x, x + width):
+    for i in range(room.x, room.x + room.width):
         if (
-            map.tiles[i][y - 1] == tile_types.floor
-            or map.tiles[i][y + height] == tile_types.floor
+            map.tiles[i][room.y - 1] == tile_types.floor
+            or map.tiles[i][room.y + room.height] == tile_types.floor
         ):
             return False
 
     # Check left and right columns of the area
-    for i in range(y, y + height):
+    for i in range(room.y, room.y + room.height):
         if (
-            map.tiles[x - 1][i] == tile_types.floor
-            or map.tiles[x + width][i] == tile_types.floor
+            map.tiles[room.x - 1][i] == tile_types.floor
+            or map.tiles[room.x + room.width][i] == tile_types.floor
         ):
             return False
 
@@ -378,16 +379,22 @@ def create_theme_rooms(map: GameMap):
             enemies = theme_room.encounter.enemies
 
             for item in items:
-                position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+                position = map.get_random_empty_tile(
+                    room.x, room.y, room.width, room.height
+                )
                 if position:
                     item.spawn(*position, map)
 
             for enemy in enemies:
-                position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+                position = map.get_random_empty_tile(
+                    room.x, room.y, room.width, room.height
+                )
                 if position:
                     enemy.spawn(*position, map)
 
             for decoration in decorations:
-                position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+                position = map.get_random_empty_tile(
+                    room.x, room.y, room.width, room.height
+                )
                 if position:
                     decoration.spawn(*position, map)
