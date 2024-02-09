@@ -251,7 +251,7 @@ def get_size_for_theme_room(
     DMAXY = map.height
     if origin[0] + max_size > DMAXX and origin[1] + max_size > DMAXY:
         return None
-    if is_near_theme_room(origin, map):
+    if is_near_theme_room(origin, map, max_size):
         return None
 
     max_width = min(max_size, DMAXX - origin[0])
@@ -340,27 +340,54 @@ def paint_theme_rooms(map: GameMap):
                     map.tiles[i][j] = tile_types.blue
 
 
+def check_enclosed_room(room, map: GameMap):
+    """Checks if a room is enclosed by non floor walls"""
+    x, y, width, height = room
+    # Check top and bottom rows of the area
+    for i in range(x, x + width):
+        if (
+            map.tiles[i][y - 1] == tile_types.floor
+            or map.tiles[i][y + height] == tile_types.floor
+        ):
+            return False
+
+    # Check left and right columns of the area
+    for i in range(y, y + height):
+        if (
+            map.tiles[x - 1][i] == tile_types.floor
+            or map.tiles[x + width][i] == tile_types.floor
+        ):
+            return False
+
+    return True
+
+
 def create_theme_rooms(map: GameMap):
     theme_rooms_stack = [theme_factories.shrine]
-    for room in map.theme_rooms:
-        if len(theme_rooms_stack) == 0:
-            break
-        theme_room = theme_rooms_stack.pop()
-        items = theme_room.encounter.items
-        decorations = theme_room.encounter.decorations
-        enemies = theme_room.encounter.enemies
 
-        for item in items:
-            position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
-            if position:
-                item.spawn(*position, map)
+    while theme_rooms_stack:
+        theme_room = theme_rooms_stack.pop(generate_rnd(len(theme_rooms_stack)))
 
-        for enemy in enemies:
-            position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
-            if position:
-                enemy.spawn(*position, map)
+        for room in map.theme_rooms:
 
-        for decoration in decorations:
-            position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
-            if position:
-                decoration.spawn(*position, map)
+            if theme_room.enclosed and not check_enclosed_room(room, map):
+                continue
+
+            items = theme_room.encounter.items
+            decorations = theme_room.encounter.decorations
+            enemies = theme_room.encounter.enemies
+
+            for item in items:
+                position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+                if position:
+                    item.spawn(*position, map)
+
+            for enemy in enemies:
+                position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+                if position:
+                    enemy.spawn(*position, map)
+
+            for decoration in decorations:
+                position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+                if position:
+                    decoration.spawn(*position, map)
