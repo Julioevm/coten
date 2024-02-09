@@ -325,6 +325,10 @@ def find_theme_rooms(
 
 
 def paint_theme_rooms(map: GameMap):
+    """
+    Debug function that paints theme rooms on the game map with red and blue tiles.
+    """
+
     for room in map.theme_rooms:
         for i in range(room[0], room[0] + room[2]):
             for j in range(room[1], room[1] + room[3]):
