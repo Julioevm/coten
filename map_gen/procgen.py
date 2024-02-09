@@ -247,33 +247,41 @@ def flood_fill(
 def get_size_for_theme_room(
     floor, origin, min_size, max_size, map: GameMap, dungeon: np.ndarray
 ) -> Tuple[int, int] | None:
+    DMAXX = map.width
+    DMAXY = map.height
+    if origin[0] + max_size > DMAXX and origin[1] + max_size > DMAXY:
+        return None
     if is_near_theme_room(origin, map):
         return None
 
-    visited = set()
-    visited = flood_fill(origin, dungeon, floor, visited, map)
+    max_width = min(max_size, DMAXX - origin[0])
+    max_height = min(max_size, DMAXY - origin[1])
 
-    # Convert the set of visited positions into a list of x and y coordinates
-    visited_x = [pos[0] for pos in visited]
-    visited_y = [pos[1] for pos in visited]
+    room = (max_width, max_height)
 
-    # Determine the bounding box of the visited positions
-    min_x, max_x = min(visited_x), max(visited_x)
-    min_y, max_y = min(visited_y), max(visited_y)
+    for i in range(max_size):
+        width = i if i < room[1] else 0
+        if i < max_height:
+            while width < room[0]:
+                if dungeon[origin[0] + width][origin[1] + i] != floor:
+                    break
+                width += 1
 
-    # Calculate the width and height
-    width = max_x - min_x + 1
-    height = max_y - min_y + 1
+        height = i if i < room[0] else 0
+        if i < max_width:
+            while height < room[1]:
+                if dungeon[origin[0] + i][origin[1] + height] != floor:
+                    break
+                height += 1
 
-    # Check if the room meets the minimum size requirements
-    if width < min_size or height < min_size:
-        return None
+        if width < min_size or height < min_size:
+            if i < min_size:
+                return None
+            break
 
-    # Check if the room exceeds the maximum size
-    if width > max_size or height > max_size:
-        return None
+        room = (min(room[0], width), min(room[1], height))
 
-    return (width, height)
+    return (room[0], room[1])
 
 
 def find_theme_rooms(
@@ -282,14 +290,12 @@ def find_theme_rooms(
     floor: int,
     map: GameMap,
     dungeon: np.ndarray,
-    max_rooms: int = 10,
     rnd_size: bool = False,
     freq: int = 0,
 ):
     DMAXX = map.width
     DMAXY = map.height
 
-    theme_rooms = set()
     roll = flip_coin(freq) if freq > 0 else True
 
     for j in range(DMAXY - 1):
@@ -315,11 +321,19 @@ def find_theme_rooms(
                     if new_theme_y < min_dim or new_theme_y > max_dim:
                         new_theme_y = min_dim
 
-                theme_rooms.add((i, j, theme_size[0], theme_size[1]))
-                if len(theme_rooms) >= max_rooms:
-                    return theme_rooms
+                map.theme_rooms.add((i, j, theme_size[0], theme_size[1]))
 
-    return theme_rooms
+
+def paint_theme_rooms(map: GameMap):
+    for room in map.theme_rooms:
+        for i in range(room[0], room[0] + room[2]):
+            for j in range(room[1], room[1] + room[3]):
+                i = min(i, map.width - 1)
+                j = min(j, map.height - 1)
+                if map.tiles[i][j] == tile_types.floor:
+                    map.tiles[i][j] = tile_types.red
+                else:
+                    map.tiles[i][j] = tile_types.blue
 
 
 def create_theme_rooms(map: GameMap):
