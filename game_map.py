@@ -131,8 +131,8 @@ class GameMap:
         self, x: int, y: int, width: int, height: int
     ) -> Optional[tuple[int, int]]:
         for _ in range(100):
-            x = max(np.random.randint(x, x + width - 1), self.width)
-            y = max(np.random.randint(y, y + height - 1), self.height)
+            x = min(np.random.randint(x, x + width - 1), self.width - 1)
+            y = min(np.random.randint(y, y + height - 1), self.height - 1)
             if (
                 self.tiles[x, y]["walkable"]
                 and not self.get_blocking_entity_at_location(x, y)

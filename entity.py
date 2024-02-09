@@ -63,7 +63,7 @@ class Entity:
         clone.parent = gamemap
         gamemap.entities.add(clone)
 
-        if isinstance(self, Actor):
+        if isinstance(clone, Actor):
             gamemap.engine.turn_manager.add_actor(clone)
         return clone
 
