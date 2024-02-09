@@ -1,12 +1,14 @@
 """Utilities for procedural generation of maps."""
 
 from __future__ import annotations
-from typing import Dict, Iterator, List, Tuple, TYPE_CHECKING
+from typing import Dict, Iterator, List, Set, Tuple, TYPE_CHECKING
 import random
+import numpy as np
 import tcod
+import tile_types
 
-from map_gen import parameters
-from utils import generate_rnd
+from map_gen import parameters, theme_factories
+from utils import flip_coin, generate_rnd
 
 
 if TYPE_CHECKING:
@@ -188,3 +190,159 @@ def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
                 placed = True
 
     return True
+
+
+def is_near_theme_room(origin: Tuple[int, int], map: GameMap, offset: int = 5):
+    for theme_room in map.theme_rooms:
+        # Calculate the extended boundaries of the room
+        left_boundary = max(theme_room[0] - offset, 0)
+        right_boundary = min(theme_room[0] + theme_room[2] + offset, map.width)
+        top_boundary = max(theme_room[1] - offset, 0)
+        bottom_boundary = min(theme_room[1] + theme_room[3] + offset, map.height)
+
+        # Check if the origin is within the extended boundaries
+        if (
+            left_boundary <= origin[0] <= right_boundary
+            and top_boundary <= origin[1] <= bottom_boundary
+        ):
+            return True
+
+    return False
+
+
+def flood_fill(
+    start: Tuple[int, int],
+    dungeon: np.ndarray,
+    floor: int,
+    visited: Set[Tuple[int, int]],
+    map: GameMap,
+) -> Set[Tuple[int, int]]:
+    stack = [start]
+    while stack:
+        x, y = stack.pop()
+        if (
+            (x, y) not in visited
+            and dungeon[x][y] == floor
+            and 0 <= x < map.width
+            and 0 <= y < map.height
+        ):
+            visited.add((x, y))
+            # Add the neighboring tiles to the stack if they're within bounds
+            neighbors = [
+                (x - 1, y),
+                (x + 1, y),
+                (x, y - 1),
+                (x, y + 1),
+                (x - 1, y - 1),
+                (x - 1, y + 1),
+                (x + 1, y - 1),
+                (x + 1, y + 1),
+            ]
+            for nx, ny in neighbors:
+                stack.append((nx, ny))
+
+    return visited
+
+
+def get_size_for_theme_room(
+    floor, origin, min_size, max_size, map: GameMap, dungeon: np.ndarray
+) -> Tuple[int, int] | None:
+    if is_near_theme_room(origin, map):
+        return None
+
+    visited = set()
+    visited = flood_fill(origin, dungeon, floor, visited, map)
+
+    # Convert the set of visited positions into a list of x and y coordinates
+    visited_x = [pos[0] for pos in visited]
+    visited_y = [pos[1] for pos in visited]
+
+    # Determine the bounding box of the visited positions
+    min_x, max_x = min(visited_x), max(visited_x)
+    min_y, max_y = min(visited_y), max(visited_y)
+
+    # Calculate the width and height
+    width = max_x - min_x + 1
+    height = max_y - min_y + 1
+
+    # Check if the room meets the minimum size requirements
+    if width < min_size or height < min_size:
+        return None
+
+    # Check if the room exceeds the maximum size
+    if width > max_size or height > max_size:
+        return None
+
+    return (width, height)
+
+
+def find_theme_rooms(
+    min_size: int,
+    max_size: int,
+    floor: int,
+    map: GameMap,
+    dungeon: np.ndarray,
+    max_rooms: int = 10,
+    rnd_size: bool = False,
+    freq: int = 0,
+):
+    DMAXX = map.width
+    DMAXY = map.height
+
+    theme_rooms = set()
+    roll = flip_coin(freq) if freq > 0 else True
+
+    for j in range(DMAXY - 1):
+        for i in range(DMAXX - 1):
+            if dungeon[i][j] == floor and roll:
+                theme_size = get_size_for_theme_room(
+                    floor, [i, j], min_size, max_size, map, dungeon
+                )
+                if theme_size is None:
+                    continue
+
+                if rnd_size:
+                    min_dim = min_size - 2
+                    max_dim = max_size - 2
+                    rand_theme_x = min_dim + generate_rnd(
+                        generate_rnd(theme_size[0] - min_dim + 1)
+                    )
+                    if rand_theme_x < min_dim or rand_theme_x > max_dim:
+                        rand_theme_x = min_dim
+                    new_theme_y = min_dim + generate_rnd(
+                        generate_rnd(theme_size[1] - min_dim + 1)
+                    )
+                    if new_theme_y < min_dim or new_theme_y > max_dim:
+                        new_theme_y = min_dim
+
+                theme_rooms.add((i, j, theme_size[0], theme_size[1]))
+                if len(theme_rooms) >= max_rooms:
+                    return theme_rooms
+
+    return theme_rooms
+
+
+def create_theme_rooms(map: GameMap):
+    theme_rooms_stack = [theme_factories.shrine]
+    for room in map.theme_rooms:
+        if len(theme_rooms_stack) == 0:
+            break
+        theme_room = theme_rooms_stack.pop()
+        items = theme_room.encounter.items
+        decorations = theme_room.encounter.decorations
+        enemies = theme_room.encounter.enemies
+
+        for item in items:
+            position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+            if position:
+                item.spawn(*position, map)
+
+        for enemy in enemies:
+            position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+            if position:
+                enemy.spawn(*position, map)
+
+        for decoration in decorations:
+            position = map.get_random_empty_tile(room[0], room[1], room[2], room[3])
+            if position:
+                decoration.spawn(*position, map)

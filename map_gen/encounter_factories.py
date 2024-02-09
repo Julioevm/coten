@@ -13,3 +13,10 @@ zombie_mob = Encounter(
     items=[item_factories.health_potion],
     decorations=[entity_factories.grave for _ in range(4)],
 )
+
+
+shrine = Encounter(
+    enemies=[],
+    items=[item_factories.health_potion],
+    decorations=[entity_factories.shrine],
+)

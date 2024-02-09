@@ -120,6 +120,12 @@ cave_up_stairs = new_tile(
     dark=(ord("<"), (0, 0, 100), (93, 82, 32)),
     light=(ord("<"), (255, 255, 255), (200, 180, 50)),
 )
+red = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(" "), (255, 255, 255), (82, 24, 43)),
+    light=(ord(" "), (255, 255, 255), (70, 50, 100)),
+)
 
 
 stair_tiles = [down_stairs, up_stairs, cave_down_stairs, cave_up_stairs]

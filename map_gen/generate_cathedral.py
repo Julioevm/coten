@@ -14,7 +14,9 @@ import tile_types
 from game_map import GameMap
 from map_gen.procgen import (
     get_max_value_for_floor,
+    create_theme_rooms,
     place_level_entities,
+    find_theme_rooms,
 )
 from map_gen.rectangular_room import RectangularRoom
 from utils import flip_coin, generate_rnd
@@ -116,6 +118,7 @@ def generate_cathedral(
     global max_encounters, DMAXX, DMAXY
     player = engine.player
     map = GameMap(engine, map_width, map_height, entities=[player], name="Castle")
+    theme_rooms = set()
     DMAXX = map.width
     DMAXY = map.height
     floor = engine.game_world.current_floor
@@ -140,6 +143,10 @@ def generate_cathedral(
     if player is not None:
         place_level_entities(map, floor)
         player.place(*map.downstairs_location, map)
+
+    map.theme_rooms = find_theme_rooms(4, 6, Tile["Floor"], map, dungeon)
+    create_theme_rooms(map)
+
     return map
 
 

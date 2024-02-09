@@ -36,6 +36,7 @@ class GameMap:
         self.entities = set(entities)
         self.fill_wall_tile = fill_wall_tile
         self.tiles = np.full((width, height), fill_value=fill_wall_tile, order="F")
+        self.theme_rooms = set()
         self.bloody_tiles = set()
         self.name = name
 
@@ -83,7 +84,8 @@ class GameMap:
     ) -> Optional[Entity]:
         for entity in self.entities:
             if (
-                entity.blocks_movement
+                entity is not None
+                and entity.blocks_movement
                 and entity.x == location_x
                 and entity.y == location_y
             ):
@@ -124,6 +126,20 @@ class GameMap:
 
     def get_item_at_location(self, x: int, y: int) -> Optional[Item]:
         return next((item for item in self.items if item.x == x and item.y == y), None)
+
+    def get_random_empty_tile(
+        self, x: int, y: int, width: int, height: int
+    ) -> Optional[tuple[int, int]]:
+        for _ in range(100):
+            x = max(np.random.randint(x, x + width - 1), self.width)
+            y = max(np.random.randint(y, y + height - 1), self.height)
+            if (
+                self.tiles[x, y]["walkable"]
+                and not self.get_blocking_entity_at_location(x, y)
+                and not self.get_actor_at_location(x, y)
+                and not self.get_item_at_location(x, y)
+            ):
+                return x, y
 
     def in_bounds(self, x: int, y: int) -> bool:
         """Return True if x and y are inside of the bounds of this map."""
@@ -215,7 +231,9 @@ class GameMap:
             if self.visible[entity.x, entity.y]:
                 console.print(entity.x, entity.y, entity.char, fg=dimmed_color)
 
-    def calculate_dim_factor(self, distance: float, adjustment: float) -> float:
+    def calculate_dim_factor(
+        self, distance: float | np.ndarray, adjustment: float
+    ) -> np.ndarray:
         dim_factor = 1 / (distance + 1) + adjustment
         return np.clip(dim_factor, 0, 1)
 
