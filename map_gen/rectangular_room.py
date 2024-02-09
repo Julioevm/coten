@@ -4,7 +4,7 @@ from typing import Iterator, Tuple
 from map_gen.base_room import Room
 
 
-class RectangularRoom(Room):
+class RectRoom(Room):
     """A rectangular room on the map."""
 
     @property

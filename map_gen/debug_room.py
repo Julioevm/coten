@@ -1,6 +1,6 @@
 from copy import deepcopy
 from game_map import GameMap
-from map_gen.rectangular_room import RectangularRoom
+from map_gen.rectangular_room import RectRoom
 import tile_types
 import item_factories
 
@@ -14,7 +14,7 @@ def create_debug_room(map_width: int, map_height: int, engine: Engine) -> GameMa
     room_height = 20
     dungeon = GameMap(engine, map_width, map_height, entities=[player])
 
-    new_room = RectangularRoom(map_width // 2, map_height // 2, room_width, room_height)
+    new_room = RectRoom(map_width // 2, map_height // 2, room_width, room_height)
 
     # Set all tiles in the room to floor tiles
     dungeon.tiles[new_room.inner] = tile_types.floor

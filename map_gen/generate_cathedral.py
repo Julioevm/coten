@@ -19,7 +19,7 @@ from map_gen.procgen import (
     place_level_entities,
     find_theme_rooms,
 )
-from map_gen.rectangular_room import RectangularRoom
+from map_gen.rectangular_room import RectRoom
 from utils import flip_coin, generate_rnd
 
 if TYPE_CHECKING:
@@ -66,7 +66,7 @@ Tile = {
     "Test": 37,
 }
 
-rooms: List[RectangularRoom] = []
+rooms: List[RectRoom] = []
 
 dungeon_mask = np.array([])
 protected = np.array([])
@@ -150,7 +150,7 @@ def generate_cathedral(
     return map
 
 
-def map_room(room: RectangularRoom, map: GameMap):
+def map_room(room: RectRoom, map: GameMap):
     global rooms
     global dungeon_mask
     rooms.append(room)
@@ -184,7 +184,7 @@ def place_all_stairs(map: GameMap) -> bool:
     return stairs_down and stairs_up
 
 
-def check_room(room: RectangularRoom, dungeon: GameMap):
+def check_room(room: RectRoom, dungeon: GameMap):
     global rooms
     global dungeon_mask
     if (
@@ -202,7 +202,7 @@ def check_room(room: RectangularRoom, dungeon: GameMap):
     return True
 
 
-def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool):
+def generate_room(area: RectRoom, dungeon: GameMap, vertical_layout: bool):
     place_room1 = False
 
     rotate = flip_coin(4)
@@ -210,7 +210,7 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
         vertical_layout and not rotate
     )
 
-    room1 = RectangularRoom(0, 0, 0, 0)
+    room1 = RectRoom(0, 0, 0, 0)
 
     for _ in range(20):
         random_width = (random.randint(0, 4) + 2) & ~1
@@ -224,18 +224,14 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
             room1.x += -room1.width
             room1.y += int(area.height / 2 - room1.height / 2)
             place_room1 = check_room(
-                RectangularRoom(
-                    room1.x - 1, room1.y - 1, room1.width + 1, room1.height + 2
-                ),
+                RectRoom(room1.x - 1, room1.y - 1, room1.width + 1, room1.height + 2),
                 dungeon,
             )
         else:
             room1.x += int(area.width / 2 - random_width / 2)
             room1.y += -room1.height
             place_room1 = check_room(
-                RectangularRoom(
-                    room1.x - 1, room1.y - 1, room1.width + 2, room1.height + 1
-                ),
+                RectRoom(room1.x - 1, room1.y - 1, room1.width + 2, room1.height + 1),
                 dungeon,
             )
 
@@ -252,14 +248,14 @@ def generate_room(area: RectangularRoom, dungeon: GameMap, vertical_layout: bool
         room2.x = area.x + area.width
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1, room2.y1 - 1, room2.width + 1, room2.height + 2),
+            RectRoom(room2.x1, room2.y1 - 1, room2.width + 1, room2.height + 2),
             dungeon,
         )
     else:
         room2.y = area.y + area.height
 
         place_room2 = check_room(
-            RectangularRoom(room2.x1 - 1, room2.y1, room2.width + 2, room2.height + 1),
+            RectRoom(room2.x1 - 1, room2.y1, room2.width + 2, room2.height + 1),
             dungeon,
         )
 
@@ -286,9 +282,9 @@ def first_room(map: GameMap):
     if not has_chamber1 or not has_chamber3:
         has_chamber2 = True
 
-    chamber1 = RectangularRoom(1, 15, 10, 10)
-    chamber2 = RectangularRoom(15, 15, 10, 10)
-    chamber3 = RectangularRoom(29, 15, 10, 10)
+    chamber1 = RectRoom(1, 15, 10, 10)
+    chamber2 = RectRoom(15, 15, 10, 10)
+    chamber3 = RectRoom(29, 15, 10, 10)
     hallway_x1 = 1
     hallway_width = 38
     if not has_chamber1:
@@ -297,7 +293,7 @@ def first_room(map: GameMap):
     if not has_chamber3:
         hallway_width -= 16
 
-    hallway = RectangularRoom(hallway_x1, 17, hallway_width, 6)
+    hallway = RectRoom(hallway_x1, 17, hallway_width, 6)
 
     if vertical_layout:
         chamber1.x, chamber1.y = chamber1.y, chamber1.x

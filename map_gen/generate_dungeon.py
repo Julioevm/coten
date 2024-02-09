@@ -16,7 +16,7 @@ from map_gen.procgen import (
     place_room_entities,
     tunnel_between,
 )
-from map_gen.rectangular_room import RectangularRoom
+from map_gen.rectangular_room import RectRoom
 
 if TYPE_CHECKING:
     from base_room import Room
@@ -53,7 +53,7 @@ def generate_dungeon(
             # Theres a chance of the room being an ellipsis, use only with to keep them as circles.
             new_room = EllipsisRoom(x, y, room_width, room_width)
         else:
-            new_room = RectangularRoom(x, y, room_width, room_height)
+            new_room = RectRoom(x, y, room_width, room_height)
 
         # Run through the other rooms and see if they intersect with this one.
         if any(new_room.intersects(other_room) for other_room in rooms):
