@@ -1,7 +1,7 @@
 from __future__ import annotations
 import itertools
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING, Set
+from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
 import numpy as np
 import tcod  # type: ignore
