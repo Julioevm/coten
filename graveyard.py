@@ -4,13 +4,13 @@ import os
 from engine import Engine
 from entity import Actor
 
-GRAVERYARD_FILE = "graveyard.txt"
+GRAVEYARD_FILE = "graveyard.txt"
 
 
 def check_graveyard_file_exists():
     root_dir = os.getcwd()  # Get the current working directory
     graveyard_file = os.path.join(
-        root_dir, GRAVERYARD_FILE
+        root_dir, GRAVEYARD_FILE
     )  # Assuming the file name is "graveyard.txt"
 
     if os.path.isfile(graveyard_file):
@@ -22,7 +22,7 @@ def check_graveyard_file_exists():
 def create_graveyard_entry(player: Actor, engine: Engine) -> None:
     root_dir = os.getcwd()  # Get the current working directory
     graveyard_file = os.path.join(
-        root_dir, GRAVERYARD_FILE
+        root_dir, GRAVEYARD_FILE
     )  # Assuming the file name is "graveyard.txt"
 
     current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
