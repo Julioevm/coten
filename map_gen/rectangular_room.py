@@ -1,7 +1,11 @@
 from __future__ import annotations
-from typing import Iterator, Tuple
+from typing import TYPE_CHECKING, Iterator, Tuple
+import tile_types
 
 from map_gen.base_room import Room
+
+if TYPE_CHECKING:
+    from game_map import GameMap
 
 
 class RectRoom(Room):
@@ -20,6 +24,25 @@ class RectRoom(Room):
     @property
     def outer_size(self) -> int:
         return self.width * self.height
+
+    def is_enclosed(self, map: GameMap) -> bool:
+        # Check top and bottom rows of the area
+        for i in range(self.x, self.x + self.width):
+            if (
+                map.tiles[i][self.y - 1] == tile_types.floor
+                or map.tiles[i][self.y + self.height] == tile_types.floor
+            ):
+                return False
+
+        # Check left and right columns of the area
+        for i in range(self.y, self.y + self.height):
+            if (
+                map.tiles[self.x - 1][i] == tile_types.floor
+                or map.tiles[self.x + self.width][i] == tile_types.floor
+            ):
+                return False
+
+        return True
 
     def is_within_inner_bounds(self, x: int, y: int) -> bool:
         """Return True if the x and y coordinates are inside this room."""
