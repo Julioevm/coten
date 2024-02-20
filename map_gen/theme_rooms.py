@@ -1,7 +1,5 @@
 from collections import namedtuple
 import random
-from re import T
-from typing import Optional, Tuple
 import numpy as np
 from game_map import GameMap
 from map_gen import encounter_factories
@@ -87,7 +85,6 @@ class ShrineRoom(ThemeRoom):
 
         # Check top and bottom walls
         for x in range(room.x1, room.x2):
-            print("checking", x, room.y1, map.tiles[x, room.y1])
             if map.tiles[x, room.y1 - 1] != tile_types.wall:
                 found_top = False
             if map.tiles[x, room.y2 + 1] != tile_types.wall:
