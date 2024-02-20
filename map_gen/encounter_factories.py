@@ -17,5 +17,5 @@ zombie_mob = Encounter(
 shrine = Encounter(
     enemies=[],
     items=[item_factories.health_potion],
-    decorations=[entity_factories.shrine],
+    decorations=[],
 )
