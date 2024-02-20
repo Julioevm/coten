@@ -14,7 +14,7 @@ class Status(BaseComponent):
 
     parent: Actor
 
-    def __init__(self, status_effects: list[Tuple[StatusEffect, int]] = []):
+    def __init__(self, status_effects: list[Tuple[StatusEffect, float]] = []):
         # a list of tuples with a status effect that the entity can cause and the chance of triggering
         self.status_effects = status_effects
         # a list of currently active status effects of the entity
