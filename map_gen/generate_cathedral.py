@@ -18,6 +18,7 @@ from map_gen.procgen import (
     paint_theme_rooms,
     place_level_entities,
     find_theme_rooms,
+    place_level_torches,
 )
 from map_gen.rectangular_room import RectRoom
 from utils import flip_coin, generate_rnd
@@ -142,6 +143,7 @@ def generate_cathedral(
 
     if player is not None:
         place_level_entities(map, floor)
+        place_level_torches(map, 4, 10)
         player.place(*map.downstairs_location, map)
 
     find_theme_rooms(4, 8, Tile["Floor"], map, dungeon)

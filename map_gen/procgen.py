@@ -7,6 +7,7 @@ import numpy as np
 import tcod
 from map_gen.rectangular_room import RectRoom
 import tile_types
+import entity_factories
 
 from map_gen import parameters, theme_factories
 from utils import flip_coin, generate_rnd
@@ -164,6 +165,16 @@ def place_level_entities(dungeon: GameMap, floor: int):
             ):
                 entity.spawn(x, y, dungeon)
                 placed = True
+
+
+def place_level_torches(map: GameMap, min_torches: int, rand_torches: int):
+    torch = entity_factories.torch
+    torches = generate_rnd(rand_torches) + min_torches
+    while torches > 0:
+        position = map.get_random_empty_tile(0, 0, map.width, map.height)
+        if position:
+            torch.spawn(*position, map)
+            torches -= 1
 
 
 def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
