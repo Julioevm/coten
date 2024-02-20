@@ -113,11 +113,11 @@ class ShrineRoom(ThemeRoom):
     def _place_decorations(self, wall: Wall, map: GameMap) -> None:
         if wall.is_vertical:
             x = wall.x
-            y = wall.y + wall.length // 2
+            y = wall.y + wall.length // 2 - 1
             for i, decoration in enumerate(self.decorations):
                 decoration.spawn(x, y + i, map)
         else:
-            x = wall.x + wall.length // 2
+            x = wall.x + wall.length // 2 - 1
             y = wall.y
             for j, decoration in enumerate(self.decorations):
                 decoration.spawn(x + j, y, map)
