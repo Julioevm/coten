@@ -20,6 +20,7 @@ player = Actor(
     inventory=Inventory(capacity=26),
     level=Level(level_up_base=200),
     status=Status(),
+    has_light=True,
 )
 
 bat = Actor(

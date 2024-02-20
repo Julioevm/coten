@@ -11,7 +11,9 @@ bones = Entity(char="%", color=(225, 215, 235), name="bones", blocks_movement=Fa
 
 shrine = Entity(char="+", color=(255, 215, 0), name="shrine", blocks_movement=True)
 
-torch = Entity(char="t", color=(255, 147, 41), name="torch", blocks_movement=False)
+torch = Entity(
+    char="t", color=(255, 147, 41), name="torch", blocks_movement=False, has_light=True
+)
 
 statue = Entity(char="S", color=(192, 192, 192), name="statue", blocks_movement=True)
 
