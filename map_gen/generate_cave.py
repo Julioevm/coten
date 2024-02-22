@@ -18,7 +18,6 @@ import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
 
 
 def generate_cave(

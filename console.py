@@ -20,5 +20,5 @@ def set_context(value: tcod.context.Context):
     CONTEXT = value
 
 
-def get_context() -> tcod.context.Context:
+def get_context() -> tcod.context.Context | None:
     return CONTEXT

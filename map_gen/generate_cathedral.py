@@ -15,7 +15,6 @@ from game_map import GameMap
 from map_gen.procgen import (
     get_max_value_for_floor,
     create_theme_rooms,
-    paint_theme_rooms,
     place_level_entities,
     find_theme_rooms,
     place_level_torches,
