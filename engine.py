@@ -52,6 +52,7 @@ class Engine:
 
         while self.turn_manager.has_actors:
             entity = self.turn_manager.get_next_actor()
+            assert entity
             can_act = True
             entity.fighter.regain_energy()
 
@@ -77,9 +78,10 @@ class Engine:
                                 self.update_fov()
                                 # Render the console
                                 root_console = console.get_root_console()
-                                root_console.clear()
-                                self.render(console=root_console)
-                                console.get_context().present(root_console)
+                                if root_console:
+                                    root_console.clear()
+                                    self.render(console=root_console)
+                                    console.get_context().present(root_console)
                             can_act = True
                             action.exhaust_energy()
                             action.perform()
