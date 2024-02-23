@@ -39,13 +39,22 @@ def generate_random_rgb():
         r, g, b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
         if (r > 30 or g > 30 or b > 30) and (r < 225 or g < 225 or b < 225):
             return (r, g, b)
-        
+
+
 def flip_coin(times=1):
+    """
+    Simulates flipping a coin a specified number of times.
+    Calling once is equivalent to flipping a coin once 50% chance.
+    Calling twice is equivalent to flipping a coin twice 25% chance. And so on.
+    """
     flip = False
     for _ in range(times):
         flip = random.choice([True, False])
     return flip
 
 
-def generate_rnd(upper_bound):
+def generate_rnd(upper_bound: int):
+    """
+    Generate a random number between 0 and upper_bound - 1.
+    """
     return random.randint(0, upper_bound - 1)

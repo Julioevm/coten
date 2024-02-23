@@ -1,7 +1,10 @@
 from __future__ import annotations
 import itertools
 
+import random
+from re import S
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from unittest import skip
 
 import numpy as np
 import tcod  # type: ignore
@@ -167,6 +170,91 @@ class GameMap:
                 continue
             return True
         return False
+
+    def _find_suitable_walls(self, room: RectRoom):
+        """Find a suitable wall to place a door on.
+        A suitable wall is a wall that is surrounded by floor tiles on both sides.
+        And most not have a door already placed on it."""
+        suitable_walls = []
+
+        skip_top = False
+        skip_bottom = False
+        skip_left = False
+        skip_right = False
+
+        # Check top and bottom walls
+        for x in range(room.x, room.x + room.width):
+            if self.tiles[x, room.y] == tile_types.closed_door:
+                skip_top = True
+
+        if not skip_top:
+            top_wall = [
+                (x, room.y)
+                for x in range(room.x, room.x + room.width)
+                if self.tiles[x, room.y] == tile_types.wall
+                and self.tiles[x, room.y - 1] == tile_types.floor
+                and self.tiles[x, room.y + 1] == tile_types.floor
+            ]
+
+            suitable_walls.extend(top_wall)
+
+        for x in range(room.x, room.x + room.width):
+            if self.tiles[x, room.y + room.height] == tile_types.closed_door:
+                skip_bottom = True
+
+        if not skip_bottom:
+            bottom_wall = [
+                (x, room.y + room.height)
+                for x in range(room.x, room.x + room.width)
+                if self.tiles[x, room.y + room.height] == tile_types.wall
+                and self.tiles[x, min(room.y + room.height + 1, self.height - 1)]
+                == tile_types.floor
+                and self.tiles[x, max(room.y + room.height - 1, 0)] == tile_types.floor
+            ]
+
+            suitable_walls.extend(bottom_wall)
+
+        # Check left and right walls
+
+        for y in range(room.y, room.y + room.height):
+            if self.tiles[room.x, y] == tile_types.closed_door:
+                skip_left = True
+
+        if not skip_left:
+            left_wall = [
+                (room.x, y)
+                for y in range(room.y, room.y + room.height)
+                if self.tiles[room.x, y] == tile_types.wall
+                and self.tiles[room.x - 1, y] == tile_types.floor
+                and self.tiles[room.x + 1, y] == tile_types.floor
+            ]
+
+            suitable_walls.extend(left_wall)
+
+        for y in range(room.y, room.y + room.height):
+            if self.tiles[room.x + room.width, y] == tile_types.closed_door:
+                skip_right = True
+
+        if not skip_right:
+            right_wall = [
+                (room.x + room.width, y)
+                for y in range(room.y, room.y + room.height)
+                if self.tiles[room.x + room.width, y] == tile_types.wall
+                and self.tiles[min(room.x + room.width + 1, self.width - 1), y]
+                == tile_types.floor
+                and self.tiles[room.x + room.width - 1, y] == tile_types.floor
+            ]
+
+            suitable_walls.extend(right_wall)
+
+        return suitable_walls
+
+    def place_door(self, room: RectRoom):
+        """Place a door on a random suitable wall of the room."""
+        suitable_walls = self._find_suitable_walls(room)
+        if suitable_walls:
+            chosen_wall = random.choice(suitable_walls)
+            self.tiles[chosen_wall] = tile_types.closed_door
 
     def render_basic(self, console: Console) -> None:
         console.rgb[0 : self.width, 0 : self.height] = self.tiles["light"]
