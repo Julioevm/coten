@@ -157,7 +157,9 @@ class MoveToTileAction(EnergyAction):
         self.entity.ai = MoveToTile(self.entity, self.tile_x, self.tile_y)
         # Get the action and perform it in the same turn we set the AI for subsequent turns
         # otherwise the turn will be 'lost' just setting the AI.
-        self.entity.ai.get_action().perform()
+        action = self.entity.ai.get_action()
+        if action is not None:
+            action.perform()
 
 
 class TakeStairsAction(EnergyAction):
@@ -463,7 +465,14 @@ class QuickHealAction(EnergyAction):
             # Todo: Maybe use the item that wastes less if it would over heal the player?
             # Get the first item in the list
             item = healing_items[0]
-            item.consumable.activate(item.consumable.get_action(self.entity))
+            if item.consumable is not None:
+                action = item.consumable.get_action(self.entity)
+                if isinstance(action, ItemAction):
+                    item.consumable.activate(action)
+                else:
+                    raise Impossible("Invalid action for the item.")
+            else:
+                raise Impossible("The item cannot be activated.")
         else:
             raise Impossible("You don't have any healing items.")
 

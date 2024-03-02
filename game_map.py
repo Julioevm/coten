@@ -1,7 +1,7 @@
 from __future__ import annotations
 import itertools
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING, Set
+from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
 import numpy as np
 import tcod  # type: ignore
@@ -172,32 +172,32 @@ class GameMap:
         console.rgb[0 : self.width, 0 : self.height] = self.tiles["light"]
 
     def render_with_light(self, console: Console) -> None:
-        """
-        Renders the map with dimming light effect based on distance from the player position.
-        """
-
+        """Render the map with the light effect. Entities with the has_light will generate light."""
         dim_adjustment = 0.4  # Increase this value to decrease the dimming effect
-        # Calculate the distance from the player position for each tile
-        distance_from_player = np.sqrt(
-            (np.arange(self.width)[:, None] - self.engine.player.x) ** 2
-            + (np.arange(self.height) - self.engine.player.y) ** 2
-        )
 
-        # Apply dimming effect based on the distance from the player position
-        dim_factor = self.calculate_dim_factor(distance_from_player, dim_adjustment)
+        lights = [entity for entity in self.entities if entity.has_light]
 
-        # Apply the dimming factor to the light colors
+        # Calculate the distance from each light object to each tile on the map
+        distances = np.zeros((self.width, self.height, len(lights)))
+        for i, light in enumerate(lights):
+            distances[:, :, i] = np.sqrt(
+                (np.arange(self.width)[:, None] - light.x) ** 2
+                + (np.arange(self.height) - light.y) ** 2
+            )
+
+        # Calculate the dim factor for each tile based on the distance to the closest light object
+        dim_factor = np.min(distances, axis=2)
+        dim_factor = self.calculate_dim_factor(dim_factor, dim_adjustment)
+
+        # Apply the dimming effect to the light colors
         light_colors = self.tiles["light"]
         dimmed_light_colors = np.empty_like(light_colors)
         dimmed_light_colors["ch"] = light_colors["ch"]
         for color in ["fg", "bg"]:
-            # Reshape dim_factor to be broadcastable with the color arrays
             dim_factor_reshaped = dim_factor.reshape(self.width, self.height, 1)
             dimmed_light_colors[color] = (
                 light_colors[color].astype(np.float32) * dim_factor_reshaped
-            ).astype(
-                np.uint8
-            )  # Assuming colors are 8-bit
+            ).astype(np.uint8)
 
         # Render the dimmed tiles
         console.rgb[0 : self.width, 0 : self.height] = np.select(
@@ -216,8 +216,14 @@ class GameMap:
         )
 
         for entity in entities_sorted_for_rendering:
-            # Calculate the distance from the entity to the player
-            distance = entity.distance(self.engine.player.x, self.engine.player.y)
+            # Calculate the distance from the entity to the closest light object
+            distances = np.sqrt(
+                list(
+                    (entity.x - light.x) ** 2 + (entity.y - light.y) ** 2
+                    for light in lights
+                )
+            )
+            distance = np.min(distances)
 
             entity_dim_factor = self.calculate_dim_factor(distance, dim_adjustment)
 

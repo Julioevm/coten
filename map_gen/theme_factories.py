@@ -1,6 +1,4 @@
-from map_gen import encounter_factories
-from map_gen.encounter import Encounter
-from map_gen.theme_rooms import ThemeRoom
+from map_gen.theme_rooms import ShrineRoom
 
 
-shrine = ThemeRoom("Shrine", encounter=encounter_factories.shrine, enclosed=True)
+shrine = ShrineRoom()

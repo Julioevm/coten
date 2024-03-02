@@ -11,6 +11,7 @@ import color
 from event_handlers.event_handler import EventHandler
 from event_handlers.main_game_event_handler import MainGameEventHandler
 import exceptions
+from graveyard import create_graveyard_entry
 
 
 class GameOverEventHandler(EventHandler):
@@ -43,6 +44,7 @@ class GameOverEventHandler(EventHandler):
 
     def on_quit(self) -> None:
         """Handle exiting out of a finished game."""
+        create_graveyard_entry(self.engine.player, self.engine)
         if os.path.exists("savegame.sav"):
             os.remove("savegame.sav")  # Deletes the active save file.
         raise exceptions.QuitWithoutSaving()  # Avoid saving a finished game.
@@ -51,6 +53,7 @@ class GameOverEventHandler(EventHandler):
         """Handle restarting the game."""
         from setup_game import new_game  # pylint: disable=import-outside-toplevel
 
+        create_graveyard_entry(self.engine.player, self.engine)
         if os.path.exists("savegame.sav"):
             os.remove("savegame.sav")  # Deletes the active save file.
 

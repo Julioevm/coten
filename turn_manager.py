@@ -8,15 +8,15 @@ if TYPE_CHECKING:
 class Node:
     def __init__(self, actor: Actor):
         self.actor = actor
-        self.next = None
+        self.next: Node | None = None
 
 
 class TurnManager:
     """Turn Manager is a circular linked list that keeps track of the actors."""
 
     def __init__(self):
-        self.head = None
-        self.current = None
+        self.head: Node | None = None
+        self.current: Node | None = None
 
     def add_actor(self, actor: Actor):
         new_node = Node(actor)
@@ -28,9 +28,10 @@ class TurnManager:
             new_node.next = self.head
             # Find the node before head to complete the circle
             last_node = self.head
-            while last_node.next != self.head:
+            while last_node and last_node.next != self.head:
                 last_node = last_node.next
-            last_node.next = new_node
+            if last_node:
+                last_node.next = new_node
             self.head = new_node
 
     def get_next_actor(self) -> Actor | None:
@@ -57,9 +58,10 @@ class TurnManager:
         if self.head.actor == actor:
             # Find the node before head to update its next pointer
             last_node = self.head
-            while last_node.next != self.head:
+            while last_node and last_node.next != self.head:
                 last_node = last_node.next
-            last_node.next = self.head.next
+            if last_node:
+                last_node.next = self.head.next
             self.head = self.head.next
             # Adjust current if necessary
             if self.current and self.current.actor == actor:
@@ -68,8 +70,8 @@ class TurnManager:
 
         # Search for the node with the actor to be removed
         current_node = self.head
-        while current_node.next != self.head:
-            if current_node.next.actor == actor:
+        while current_node and current_node.next != self.head:
+            if current_node.next and current_node.next.actor == actor:
                 # Remove the node from the list
                 if self.current and self.current.actor == actor:
                     self.current = (
@@ -91,6 +93,8 @@ class TurnManager:
         # Loop through the circular linked list and count the nodes
         while True:
             count += 1
+            if current_node.next is None:
+                break
             current_node = current_node.next
             if current_node == self.head:
                 break

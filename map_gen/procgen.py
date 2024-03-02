@@ -7,6 +7,7 @@ import numpy as np
 import tcod
 from map_gen.rectangular_room import RectRoom
 import tile_types
+import entity_factories
 
 from map_gen import parameters, theme_factories
 from utils import flip_coin, generate_rnd
@@ -164,6 +165,16 @@ def place_level_entities(dungeon: GameMap, floor: int):
             ):
                 entity.spawn(x, y, dungeon)
                 placed = True
+
+
+def place_level_torches(map: GameMap, min_torches: int, rand_torches: int):
+    torch = entity_factories.torch
+    torches = generate_rnd(rand_torches) + min_torches
+    while torches > 0:
+        position = map.get_random_empty_tile(0, 0, map.width, map.height)
+        if position:
+            torch.spawn(*position, map)
+            torches -= 1
 
 
 def place_encounter(room: Room, dungeon: GameMap, floor: int) -> bool:
@@ -341,28 +352,6 @@ def paint_theme_rooms(map: GameMap):
                     map.tiles[i][j] = tile_types.blue
 
 
-def check_enclosed_room(room: RectRoom, map: GameMap):
-    """Checks if a room is enclosed by non floor walls"""
-
-    # Check top and bottom rows of the area
-    for i in range(room.x, room.x + room.width):
-        if (
-            map.tiles[i][room.y - 1] == tile_types.floor
-            or map.tiles[i][room.y + room.height] == tile_types.floor
-        ):
-            return False
-
-    # Check left and right columns of the area
-    for i in range(room.y, room.y + room.height):
-        if (
-            map.tiles[room.x - 1][i] == tile_types.floor
-            or map.tiles[room.x + room.width][i] == tile_types.floor
-        ):
-            return False
-
-    return True
-
-
 def create_theme_rooms(map: GameMap):
     theme_rooms_stack = [theme_factories.shrine]
 
@@ -371,30 +360,7 @@ def create_theme_rooms(map: GameMap):
 
         for room in map.theme_rooms:
 
-            if theme_room.enclosed and not check_enclosed_room(room, map):
+            if theme_room.enclosed and not room.is_enclosed(map):
                 continue
 
-            items = theme_room.encounter.items
-            decorations = theme_room.encounter.decorations
-            enemies = theme_room.encounter.enemies
-
-            for item in items:
-                position = map.get_random_empty_tile(
-                    room.x, room.y, room.width, room.height
-                )
-                if position:
-                    item.spawn(*position, map)
-
-            for enemy in enemies:
-                position = map.get_random_empty_tile(
-                    room.x, room.y, room.width, room.height
-                )
-                if position:
-                    enemy.spawn(*position, map)
-
-            for decoration in decorations:
-                position = map.get_random_empty_tile(
-                    room.x, room.y, room.width, room.height
-                )
-                if position:
-                    decoration.spawn(*position, map)
+            theme_room.place(room, map)
