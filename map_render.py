@@ -2,11 +2,13 @@ import tcod
 import time
 from engine import Engine
 from game_world import GameWorld
+from map_gen.generate_interior import generate_interior
 from map_gen.generate_cave import generate_cave
 from map_gen.generate_dungeon import generate_dungeon
 from map_gen.generate_cathedral import generate_cathedral
 
 floor_map_generator = [
+    lambda **kwargs: generate_interior(**kwargs),
     lambda **kwargs: generate_cathedral(**kwargs),
     lambda **kwargs: generate_cave(
         max_rooms=8, room_min_size=6, room_max_size=10, **kwargs
