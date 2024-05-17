@@ -2,9 +2,7 @@ from __future__ import annotations
 import itertools
 
 import random
-from re import S
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING
-from unittest import skip
+from typing import Iterable, Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 import numpy as np
 import tcod  # type: ignore
@@ -148,6 +146,21 @@ class GameMap:
     def in_bounds(self, x: int, y: int) -> bool:
         """Return True if x and y are inside of the bounds of this map."""
         return 0 <= x < self.width and 0 <= y < self.height
+
+    def get_walkable_tiles_from_position(
+        self, origin: Tuple[int, int], game_map: GameMap
+    ) -> List[Tuple[int, int]]:
+        """Perform a flood-fill to find which areas the current position has access to."""
+        walkable_tiles = []
+        stack = [(origin[0], origin[1])]
+        while stack:
+            x, y = stack.pop()
+            if (x, y) not in walkable_tiles and game_map.tiles["walkable"][x, y]:
+                walkable_tiles.append((x, y))
+                stack.extend(
+                    [(x + dx, y + dy) for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]]
+                )
+        return walkable_tiles
 
     def get_walkable_adjacent_tiles(self, x: int, y: int) -> Iterator[tuple[int, int]]:
         """Get all walkable adjacent tiles to the given (x, y) coordinate."""

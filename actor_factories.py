@@ -186,3 +186,19 @@ seducer = Actor(
     level=Level(xp_given=70),
     status=Status(status_effects=[(Confused(duration=3), 0.3)]),
 )
+
+dark_knight = Actor(
+    char="K",
+    color=(0, 0, 0),  # Black color for the "dark" knight
+    name="Dark Knight",
+    ai_cls=components.ai.DarkKnightAI,  # You'll need to define this AI class
+    equipment=Equipment(),  # Add any specific equipment the Dark Knight should have
+    fighter=Fighter(
+        hp=25, base_defense=40, base_power=6, base_damage=(2, 6), base_speed=90
+    ),  # Adjust these values as needed for your game balance
+    inventory=Inventory(
+        capacity=0
+    ),  # Adjust capacity if the Dark Knight should be able to carry items
+    level=Level(xp_given=120),  # Adjust XP given upon defeat
+    status=Status(),  # Add any status effects the Dark Knight should have
+)

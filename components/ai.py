@@ -24,6 +24,7 @@ from actions import (
 from exceptions import Impossible
 
 if TYPE_CHECKING:
+    from game_map import GameMap
     from entity import Actor
 
 
@@ -130,6 +131,38 @@ class BasicMeleeEnemyAI(BaseAI):
             )
 
         return WaitAction(self.entity)
+
+
+class PatrollingMeleeEnemyAI(BasicMeleeEnemyAI):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target = None
+
+    def get_action(self) -> Action:
+
+        if self.engine.game_map.visible[self.entity.x, self.entity.y]:
+            # If the player is in sight, behave like the BasicMeleeEnemyAI
+            return super().get_action()
+        else:
+            # Otherwise, patrol the map
+            if self.target is None or (self.entity.x, self.entity.y) == self.target:
+                # If there is no current target or the current target has been reached, find a new target
+                walkable_tiles = self.engine.game_map.get_walkable_tiles_from_position(
+                    (self.entity.x, self.entity.y), self.engine.game_map
+                )
+                self.target = random.choice(walkable_tiles)
+
+            # Move towards the target
+            self.path = self.get_path_to(self.target[0], self.target[1])
+
+            if self.path:
+                dest_x, dest_y = self.path.pop(0)
+
+            return MovementAction(
+                self.entity,
+                dest_x - self.entity.x,
+                dest_y - self.entity.y,
+            )
 
 
 class MoveToTile(BaseAI):
@@ -343,3 +376,8 @@ class WerewolfAI(BaseAI):
             for entity in self.engine.game_map.entities
             if entity.blocks_movement and entity.x == x and entity.y == y
         )
+
+
+class DarkKnightAI(PatrollingMeleeEnemyAI):
+    def __init__(self, entity: Actor):
+        super().__init__(entity)
