@@ -425,7 +425,7 @@ class MovementAction(ActionWithDirection):
         self.entity.move(self.dx, self.dy)
 
         item = self.engine.game_map.get_item_at_location(dest_x, dest_y)
-        if item is not None:
+        if self.entity is self.engine.player and item is not None:
             self.engine.message_log.add_message(f"There is a {item.name} here.")
 
 
