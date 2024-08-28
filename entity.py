@@ -35,6 +35,7 @@ class Entity:
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
+        description: str = "",
         blocks_movement: bool = False,
         render_order: RenderOrder = RenderOrder.CORPSE,
         has_light: bool = False,
@@ -44,6 +45,7 @@ class Entity:
         self.char = char
         self.color = color
         self.name = name
+        self.description = description
         self.blocks_movement = blocks_movement
         self.render_order = render_order
         self.has_light = has_light
@@ -197,6 +199,7 @@ class Item(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
+        description: str = "",
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
     ):
@@ -206,6 +209,7 @@ class Item(Entity):
             char=char,
             color=color,
             name=name,
+            description=description,
             blocks_movement=False,
             render_order=RenderOrder.ITEM,
         )

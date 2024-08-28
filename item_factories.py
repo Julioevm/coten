@@ -7,6 +7,7 @@ health_potion = Item(
     char="!",
     color=(127, 0, 255),
     name="Health Potion",
+    description="Heals small wounds.",
     consumable=consumable.HealingConsumable(amount=5),
 )
 
@@ -79,6 +80,7 @@ dagger = Item(
     char="/",
     color=(0, 191, 255),
     name="Dagger",
+    description="A small blade.",
     equippable=equippable.Dagger(damage=(1, 3)),
 )
 
