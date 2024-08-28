@@ -6,7 +6,7 @@ from equipment_types import EquipmentType
 from event_handlers.ask_user_event_handler import AskUserEventHandler
 from event_handlers.base_event_handler import ActionOrHandler
 import color
-from actions import Action, DropItem, EquipAction
+from actions import DropItem, EquipAction
 from entity import Item
 
 if TYPE_CHECKING:
@@ -85,7 +85,7 @@ class InventoryEventHandler(AskUserEventHandler):
 
                 # Display item description on the right side
                 if i == self.selected_index and item.description:
-                    desc_x = x + width // 2 + 1
+                    desc_x = x + width // 3 + 1
                     desc_y = y + 1
                     max_desc_width = width // 2 - 2
                     wrapped_description = textwrap.wrap(item.description, width=max_desc_width)
