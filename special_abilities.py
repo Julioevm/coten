@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING
+import color
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -14,6 +15,7 @@ def whirlwind_attack(engine: "Engine", actor: "Actor") -> None:
             if target and target != engine.player:
                 damage = actor.fighter.melee_damage
                 engine.message_log.add_message(
-                    f"You hit {target.name} with your whirlwind attack for {damage} damage!"
+                    f"You hit {target.name} with your whirlwind attack for {damage} damage!",
+                    color.yellow,
                 )
                 target.fighter.hp -= damage
