@@ -62,11 +62,21 @@ class InventoryEventHandler(AskUserEventHandler):
         )
 
         if number_of_items_in_inventory > 0:
-            for i, item in enumerate(self.engine.player.inventory.items):
+            # Group items by type and count occurrences
+            item_counts = {}
+            for item in self.engine.player.inventory.items:
+                item_name = item.name
+                if item_name in item_counts:
+                    item_counts[item_name]['count'] += 1
+                else:
+                    item_counts[item_name] = {'count': 1, 'item': item}
+
+            for i, (item_name, item_info) in enumerate(item_counts.items()):
+                item = item_info['item']
                 item_key = chr(ord("a") + i)
                 is_equipped = self.engine.player.equipment.item_is_equipped(item)
                 is_ammo = item.equippable and item.equippable.equipment_type == EquipmentType.AMMO
-                item_string = f"({item_key}) {item.name}"
+                item_string = f"({item_key}) {item_name} (x{item_info['count']})"
 
                 if is_ammo:
                     ammo = item.equippable

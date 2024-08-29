@@ -2,6 +2,7 @@
 from components import consumable, equippable
 from entity import Item
 from equipment_types import AmmoType
+import special_abilities
 
 health_potion = Item(
     char="!",
@@ -117,7 +118,7 @@ broad_sword = Item(
     color=(10, 200, 255),
     name="Broad Sword",
     description="A large sword with a wide blade.",
-    equippable=equippable.Sword(damage=(4, 8)),
+    equippable=equippable.Sword(damage=(4, 8), special_ability=special_abilities.whirlwind_attack),
 )
 
 axe = Item(
@@ -125,7 +126,7 @@ axe = Item(
     color=(0, 191, 255),
     name="Axe", 
     description="A heavy weapon with a sharp edge.",
-    equippable=equippable.Axe(damage=(3, 6))
+    equippable=equippable.Axe(damage=(3, 6), special_ability=special_abilities.whirlwind_attack)
 )
 
 bow = Item(

@@ -33,6 +33,7 @@ class HelpMenu(EventHandler):
         "F fire ranged weapon. Equip both the weapon and the right ammo!",
         "/ To look around and inspect the map. You can use the mouse as well.",
         "< or > Go up or down stairs.",
+        "SPACE - Use equipped weapon's special ability",
     )
 
     def __init__(self, engine: Engine):

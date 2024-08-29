@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Callable
 
 from components.base_component import BaseComponent
 from equipment_types import AmmoType, EquipmentType
@@ -32,10 +32,18 @@ class Equippable(BaseComponent):
 
 
 class Melee(Equippable):
-    def __init__(self, damage: tuple[int, int], power_bonus: int = 0) -> None:
+    def __init__(
+        self,
+        damage: tuple[int, int],
+        power_bonus: int = 0,
+        special_ability: Optional[Callable] = None
+    ) -> None:
         super().__init__(
-            equipment_type=EquipmentType.WEAPON, power_bonus=power_bonus, damage=damage
+            equipment_type=EquipmentType.WEAPON,
+            power_bonus=power_bonus,
+            damage=damage,
         )
+        self.special_ability = special_ability
 
 
 class Ranged(Equippable):
@@ -70,13 +78,13 @@ class Dagger(Melee):
 
 
 class Axe(Melee):
-    def __init__(self, damage: tuple[int, int]) -> None:
-        super().__init__(damage=damage)
+    def __init__(self, damage: tuple[int, int], special_ability: Optional[Callable] = None) -> None:
+        super().__init__(damage=damage, special_ability=special_ability)
 
 
 class Sword(Melee):
-    def __init__(self, damage: tuple[int, int]) -> None:
-        super().__init__(damage=damage)
+    def __init__(self, damage: tuple[int, int], special_ability: Optional[Callable] = None) -> None:
+        super().__init__(damage=damage, special_ability=special_ability)
 
 
 class Spear(Melee):

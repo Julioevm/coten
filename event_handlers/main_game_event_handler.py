@@ -12,6 +12,7 @@ from actions import (
     MoveToTileAction,
     PickupAction,
     QuickHealAction,
+    SpecialAbilityAction,
     WaitAction,
     RangedAttackAction,
 )
@@ -120,6 +121,9 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.KeySym.F1:
             return HelpMenu(self.engine)
+
+        elif key == tcod.event.KeySym.SPACE:
+            return SpecialAbilityAction(player)
 
         # No valid key was pressed
         return action

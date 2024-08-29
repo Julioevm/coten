@@ -8,6 +8,7 @@ import tile_types
 from entity import Actor
 from exceptions import Impossible
 from global_vars import HIT_CHANCE_BASE
+from components.equippable import Melee
 from map_gen.map_utils import set_bloody_tiles
 
 if TYPE_CHECKING:
@@ -510,3 +511,12 @@ class SpawnEnemiesAction(EnergyAction):
                 ):
                     valid = True
                     self.enemy.spawn(x, y, game_map)
+
+
+class SpecialAbilityAction(EnergyAction):
+    def perform(self) -> None:
+        player = self.entity
+        if player.equipment.weapon and isinstance(player.equipment.weapon.equippable, Melee) and player.equipment.weapon.equippable.special_ability:
+            player.equipment.weapon.equippable.special_ability(self.engine, player)
+        else:
+            raise Impossible("You don't have a weapon with a special ability equipped!")
