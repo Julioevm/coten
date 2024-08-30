@@ -81,7 +81,9 @@ class Engine:
                                 if root_console:
                                     root_console.clear()
                                     self.render(console=root_console)
-                                    console.get_context().present(root_console)
+                                    context = console.get_context()
+                                    if context:
+                                        context.present(root_console)
                             can_act = True
                             action.exhaust_energy()
                             action.perform()
