@@ -37,11 +37,13 @@ class InventoryEventHandler(AskUserEventHandler):
         width = console.width - 6
         x = 3
         y = 3
+        
+        description_x = (width // 3) + 5
 
         console.draw_frame(
             x=x,
             y=y,
-            width=width // 3,
+            width=description_x,
             height=height // 3,
             title=self.TITLE,
             clear=True,
@@ -51,7 +53,7 @@ class InventoryEventHandler(AskUserEventHandler):
         
         # Draw smaller frame for item description
         console.draw_frame(
-            x=x + width // 3,
+            x=x + description_x,
             y=y,
             width=width //  3 * 2,
             height=height,
@@ -95,7 +97,7 @@ class InventoryEventHandler(AskUserEventHandler):
 
                 # Display item description on the right side
                 if i == self.selected_index and item.description:
-                    desc_x = x + width // 3 + 1
+                    desc_x = description_x + 5
                     desc_y = y + 1
                     max_desc_width = width // 2 - 2
                     wrapped_description = textwrap.wrap(item.description, width=max_desc_width)
@@ -108,7 +110,6 @@ class InventoryEventHandler(AskUserEventHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
         player = self.engine.player
         key = event.sym
-        modifier = event.mod
         index = key - tcod.event.KeySym.a
 
         if 0 <= index <= 26:
