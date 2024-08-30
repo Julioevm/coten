@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from actions import EnergyAction
-
 import color
-from components.base_component import BaseComponent
 from render_order import RenderOrder
 from utils import triangular_dist
 
 if TYPE_CHECKING:
     from actions import Action
     from entity import Actor
+    from engine import Engine
+    from game_map import GameMap
 
 
-class Fighter(BaseComponent):
+class Fighter():
     """Actor component that holds the relevant information to handle combat."""
 
     parent: Actor
@@ -54,6 +54,14 @@ class Fighter(BaseComponent):
         if self._hp == 0:
             self.die()
 
+    @property
+    def gamemap(self) -> GameMap:
+        return self.parent.gamemap
+    
+    @property
+    def engine(self) -> Engine:
+        return self.gamemap.engine
+        
     @property
     def defense(self) -> int:
         return self.base_defense + self.defense_bonus + self.defense_boost
