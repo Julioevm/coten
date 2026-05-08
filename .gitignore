@@ -8,3 +8,6 @@ savegame.sav
 *.zip
 .tool-versions
 graveyard.txt
+
+# UV / Python
+.cache/

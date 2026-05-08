@@ -4,11 +4,29 @@ COTEN for short, is a classic roguelike built with python and the libtcod librar
 
 ## Requirements
 
-Run `pip install -r requirements.txt` to install the necessary dependencies.
+This project uses [UV](https://docs.astral.sh/uv/) for dependency management. Install UV, then:
+
+```bash
+uv sync
+```
+
+This will:
+- Download the correct Python version (3.11.x) if needed
+- Create a virtual environment (`.venv/`)
+- Install all dependencies (including dev tools like Nuitka)
 
 ## Play
 
-Run `python main.py`
+```bash
+uv run python main.py
+```
+
+Or activate the environment first:
+
+```bash
+.venv\Scripts\activate
+python main.py
+```
 
 ### Controls
 
@@ -38,8 +56,29 @@ q quick heal (uses a potion from the inventory)
 
 ## Develop
 
-You can build a local executable with the following command:
+### Add a dependency
 
-`nuitka --standalone --onefile --disable-console --include-data-dir=assets=assets --output-filename=coten  main.py`
+```bash
+uv add <package-name>
+```
 
-Note: You cant use python > 3.11 for the build, as it is not yet supported.
+### Update all dependencies
+
+```bash
+uv sync --upgrade
+```
+
+### Build a local executable
+
+```bash
+uv run nuitka --standalone --onefile --disable-console --include-data-dir=assets=assets --output-filename=coten main.py
+```
+
+Note: You can't use Python > 3.11 for the build, as Nuitka does not yet support it.
+
+### See environment info
+
+```bash
+uv run python --version
+uv tree
+```
